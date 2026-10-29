@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Healthai - Adaptive Healthcare Platform & Dynamic Thread Pool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #edf2f7;
+            --bg-card: #ffffff;
+            --primary: #299fa8;
+            --primary-hover: #22868e;
+            --primary-light: #e6f6f7;
+            --text-dark: #1a2238;
+            --text-muted: #8b95a5;
+            --border-light: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #fafbfc;
+            color: var(--text-dark);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        /* App Wrapper - Full Screen Edge-to-Edge */
+        .app-window {
+            width: 100%;
+            min-height: 100vh;
+            background: #ffffff;
+            border-radius: 0;
+            box-shadow: none;
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 1. SIDEBAR */
+        .sidebar {
+            background: #ffffff;
+            border-right: 1px solid #f0f3f6;
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 32px;
+            padding-left: 8px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-item.active {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(41, 159, 168, 0.35);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        /* Sidebar OS Status Card */
+        .sidebar-os-card {
+            background: #111827;
+            color: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-top: 24px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .os-card-title {
+            font-size: 11px;
+            color: #38bdf8;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .os-card-val {
+            font-size: 13px;
+            color: #f1f5f9;
+            margin-bottom: 4px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            display: inline-block;
+            box-shadow: 0 0 8px #10b981;
+        }
+
+        .pulse-dot.offline {
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+        }
+
+        /* 2. MAIN CONTENT AREA */
+        .main-content {
+            padding: 28px 36px;
+            overflow-y: auto;
+            background: #fafbfc;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .welcome-text h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .welcome-text p {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .search-strip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 10px 16px;
+            width: 320px;
+        }
+
+        .search-strip input {
+            border: none;
+            outline: none;
+            font-size: 13px;
+            width: 100%;
+            color: var(--text-dark);
+        }
+
+        .top-os-pill {
+            background: #111827;
+            color: #ffffff;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .top-os-pill b {
+            color: #38bdf8;
+        }
+
+        /* Views switcher */
+        .tab-view {
+            display: none;
+        }
+
+        .tab-view.active {
+            display: block;
+        }
+
+        /* 3. HERO BANNER */
+        .hero-banner {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%);
+            border-radius: 20px;
+            padding: 24px 32px;
+            color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+        }
+
+        .banner-text h3 {
+            font-size: 20px;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 4px;
+        }
+
+        .banner-text p {
+            font-size: 13px;
+            opacity: 0.95;
+            margin-bottom: 12px;
+        }
+
+        .btn-surge {
+            background: #ffffff;
+            color: #dc2626;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-surge:hover {
+            transform: scale(1.02);
+            background: #fef2f2;
+        }
+
+        /* 4. DASHBOARD GRID (Left + Right Columns) */
+        .dashboard-body-grid {
+            display: grid;
+            grid-template-columns: 2.1fr 1fr;
+            gap: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .section-header h4 {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .section-header span {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Nearby Hospital Cards (Live from SQLite /api/hospitals) */
+        .nearby-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .nearby-card {
+            background: #ffffff;
+            border: 1px solid #edf1f5;
+            border-radius: 16px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .nearby-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .nearby-details {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .icu-badge {
+            font-size: 10px;
+            font-weight: 700;
+            background: #ecfdf5;
+            color: #059669;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        /* Recommended Doctors Grid */
+        .recommended-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+
+        .doc-card {
+            background: #ffffff;
+            border: 1px solid #edf1f5;
+            border-radius: 18px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+
+        .doc-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .doc-exp {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .doc-spec {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: #e6f6f7;
+            color: var(--primary);
+            margin: 6px 0;
+        }
+
+        .doc-slot-select {
+            width: 100%;
+            padding: 6px 8px;
+            font-size: 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin: 8px 0;
+            outline: none;
+            background: #f8fafc;
+        }
+
+        .btn-book {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-book:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 4px 12px rgba(41, 159, 168, 0.3);
+        }
+
+        /* 5. RIGHT PANEL: LIVE UPCOMING APPOINTMENTS */
+        .right-panel {
+            background: #ffffff;
+            border: 1px solid #edf1f5;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .upcoming-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upcoming-header h4 {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .appointment-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 480px;
+            overflow-y: auto;
+        }
+
+        .appt-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border-left: 4px solid var(--primary);
+            transition: all 0.2s;
+        }
+
+        .appt-card.new-booked {
+            background: #ecfdf5;
+            border-left-color: #10b981;
+            animation: highlight-fade 2s;
+        }
+
+        @keyframes highlight-fade {
+            0% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+
+        .appt-info h6 {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .appt-info span {
+            font-size: 11px;
+            color: var(--text-muted);
+            display: block;
+        }
+
+        .appt-worker-badge {
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            background: #e2e8f0;
+            padding: 3px 6px;
+            border-radius: 6px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        /* 6. DEDICATED OS ENGINE VIEW (Tab 2) */
+        .os-view-container {
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 24px;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .os-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1e293b;
+            padding-bottom: 16px;
+        }
+
+        .os-header-row h3 {
+            font-size: 18px;
+            color: #38bdf8;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .os-metric-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+        }
+
+        .os-mcard {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .os-mcard-label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .os-mcard-val {
+            font-size: 26px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            margin: 8px 0 4px 0;
+            color: #ffffff;
+        }
+
+        .os-mcard-sub {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* 16 Worker Threads Grid */
+        .workers-big-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .w-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+        }
+
+        .w-card.alive-busy {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .w-card.alive-idle {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+        }
+
+        .w-card.dead {
+            opacity: 0.3;
+            border-style: dashed;
+        }
+
+        .w-card-top {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .w-badge-busy { color: #ef4444; }
+        .w-badge-idle { color: #10b981; }
+        .w-badge-dead { color: #64748b; }
+
+        /* Notification Toast (Bottom Right so it never covers the top metrics) */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e293b;
+            color: #ffffff;
+            padding: 14px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            z-index: 9999;
+            border-left: 4px solid #10b981;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="toast" id="toast-msg"></div>
+
+    <div class="app-window">
+        <!-- 1. SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <div class="logo">
+                    <div class="logo-icon">+</div>
+                    <span>Healthai</span>
+                </div>
+
+                <ul class="nav-list">
+                    <li>
+                        <button class="nav-item active" onclick="switchTab('portal')">
+                            <span>🩺</span> Patient Portal
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" onclick="switchTab('os')">
+                            <span>⚡</span> OS Thread Pool
+                        </button>
+                    </li>
+                    <li>
+                        <button class="nav-item" onclick="triggerOutbreakSurge()">
+                            <span>🚨</span> Outbreak Surge
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Live Server OS Status Widget -->
+            <div class="sidebar-os-card">
+                <div class="os-card-title">
+                    <span class="pulse-dot" id="server-dot"></span>
+                    <span id="server-status-label">Engine Online</span>
+                </div>
+                <div class="os-card-val">Workers: <b id="side-workers">4/16</b></div>
+                <div class="os-card-val">Queue: <b id="side-queue">0</b> requests</div>
+                <div style="font-size: 10px; color: #64748b; margin-top: 6px;">Autoscaling: Active</div>
+            </div>
+        </aside>
+
+        <!-- 2. MAIN WORKSPACE -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="welcome-text">
+                    <p>Operating Systems Course Project</p>
+                    <h2>Adaptive Healthcare Platform</h2>
+                </div>
+
+                <!-- Real-time Doctor Search -->
+                <div class="search-strip">
+                    <span>🔍</span>
+                    <input type="text" id="search-input" placeholder="Search doctor or speciality..." oninput="filterDoctors()">
+                </div>
+
+                <!-- Top OS Metrics Pill -->
+                <div class="top-os-pill">
+                    <span>Workers: <b id="top-workers">4/16</b></span>
+                    <span>|</span>
+                    <span>Busy: <b id="top-busy">0</b></span>
+                    <span>|</span>
+                    <span>Avg Latency: <b id="top-latency">0ms</b></span>
+                </div>
+            </div>
+
+            <!-- VIEW 1: HEALTHCARE PATIENT PORTAL -->
+            <div id="tab-portal" class="tab-view active">
+                <!-- Hero Banner with Outbreak Trigger -->
+                <div class="hero-banner">
+                    <div class="banner-text">
+                        <h3>Adaptive Emergency Healthcare Server<br>Dynamic Thread Pool Architecture</h3>
+                        <p>Real-time booking and triage with automatic worker scaling (4 ⇄ 16 Threads)</p>
+                        <button class="btn-surge" onclick="triggerOutbreakSurge()">
+                            ⚡ SIMULATE OUTBREAK SURGE (50 CONCURRENT PATIENTS)
+                        </button>
+                    </div>
+                    <div style="font-size: 64px;">🏥</div>
+                </div>
+
+                <div class="dashboard-body-grid">
+                    <div>
+                        <!-- Live Nearby Emergency Facilities (from SQLite /api/hospitals) -->
+                        <div class="section-header">
+                            <h4>Nearby Emergency Facilities & ICU Availability</h4>
+                            <span>SQLite Database</span>
+                        </div>
+                        <div class="nearby-grid" id="hospitals-container">
+                            <div style="font-size: 12px; color: #94a3b8;">Loading hospital facilities...</div>
+                        </div>
+
+                        <!-- Real-time Available Doctors List (from SQLite /api/doctors) -->
+                        <div class="section-header">
+                            <h4>Available Doctors for Consultation</h4>
+                            <span>Atomic Transaction Booking</span>
+                        </div>
+                        <div class="recommended-grid" id="doctors-container">
+                            <div style="font-size: 12px; color: #94a3b8;">Loading available doctors and slots...</div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Live Booked Appointments Feed -->
+                    <div class="right-panel">
+                        <div class="upcoming-header">
+                            <h4>Live Appointments Feed</h4>
+                            <span style="font-size: 11px; color: var(--primary); font-weight: 700;" id="feed-count">0 Booked</span>
+                        </div>
+                        <div class="appointment-list" id="appointments-feed">
+                            <!-- Booked appointments fetched from DB and rendered here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: DEDICATED OS ENGINE & THREAD POOL MONITOR -->
+            <div id="tab-os" class="tab-view">
+                <div class="os-view-container">
+                    <div class="os-header-row">
+                        <h3>⚡ Dynamic Thread Pool & Producer-Consumer Monitor</h3>
+                        <button class="btn-surge" onclick="triggerOutbreakSurge()">
+                            ⚡ Test 50 Requests Surge
+                        </button>
+                    </div>
+
+                    <!-- OS Metric Cards -->
+                    <div class="os-metric-cards-grid">
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">Alive Workers</div>
+                            <div class="os-mcard-val" id="os-total-workers">4 / 16</div>
+                            <div class="os-mcard-sub">Min: 4 | Max: 16</div>
+                        </div>
+
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">Active / Busy Workers</div>
+                            <div class="os-mcard-val" id="os-busy-workers">0</div>
+                            <div class="os-mcard-sub">Idle: <span id="os-idle-workers">4</span> workers</div>
+                        </div>
+
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">Producer-Consumer Queue</div>
+                            <div class="os-mcard-val" id="os-queue-depth">0</div>
+                            <div class="os-mcard-sub">Bounded Capacity: 64</div>
+                        </div>
+
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">Autoscaler Events</div>
+                            <div class="os-mcard-val">
+                                <span style="color: #38bdf8;" id="os-scaleup">0</span>↑ 
+                                <span style="color: #a855f7;" id="os-scaledown">0</span>↓
+                            </div>
+                            <div class="os-mcard-sub">Scale UP on load / DOWN on idle</div>
+                        </div>
+                    </div>
+
+                    <!-- Latency percentiles & Total Requests -->
+                    <div class="os-metric-cards-grid" style="margin-top: -6px;">
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">P50 Latency (Median)</div>
+                            <div class="os-mcard-val" id="os-p50" style="color: #38bdf8;">0.0 ms</div>
+                            <div class="os-mcard-sub">50% requests processed within</div>
+                        </div>
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">P95 Latency (Tail)</div>
+                            <div class="os-mcard-val" id="os-p95" style="color: #f59e0b;">0.0 ms</div>
+                            <div class="os-mcard-sub">95% requests processed within</div>
+                        </div>
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">Total Succeeded (2xx)</div>
+                            <div class="os-mcard-val" id="os-succeeded" style="color: #10b981;">0</div>
+                            <div class="os-mcard-sub">Database & API completions</div>
+                        </div>
+                        <div class="os-mcard">
+                            <div class="os-mcard-label">Total Overload Dropped (503)</div>
+                            <div class="os-mcard-val" id="os-failed" style="color: #ef4444;">0</div>
+                            <div class="os-mcard-sub">Bounded buffer overflow rejections</div>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">
+                        16-Worker Thread Pool Lifecycle (Green = Idle | Red = Executing Task | Gray = Pruned/Sleeping)
+                    </div>
+
+                    <!-- 16 Worker Thread Cards -->
+                    <div class="workers-big-grid" id="os-workers-grid">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin;
+        let allDoctors = [];
+        let doctorSlotsMap = {};
+
+        // Switch between Patient Portal and OS Monitor Tab
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-view').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+
+            if (tabId === 'portal') {
+                document.getElementById('tab-portal').classList.add('active');
+                if (window.event && window.event.target) window.event.target.closest('.nav-item').classList.add('active');
+            } else if (tabId === 'os') {
+                document.getElementById('tab-os').classList.add('active');
+                if (window.event && window.event.target) window.event.target.closest('.nav-item').classList.add('active');
+            }
+        }
+
+        // Show Toast Alert
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toast-msg');
+            t.innerText = msg;
+            t.style.borderLeftColor = isError ? '#ef4444' : '#10b981';
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 4000);
+        }
+
+        // Load Hospital Facilities in Real-time from SQLite via /api/hospitals
+        async function loadHospitals() {
+            try {
+                const res = await fetch(`${API_BASE}/api/hospitals`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const container = document.getElementById('hospitals-container');
+                if (data.hospitals && data.hospitals.length > 0) {
+                    container.innerHTML = data.hospitals.map(h => `
+                        <div class="nearby-card">
+                            <div class="nearby-name">${h.name}</div>
+                            <div class="nearby-details">
+                                <span>📍 ${h.distance}</span>
+                                <span class="icu-badge">ICU: ${h.icu_beds} Free</span>
+                            </div>
+                            <div style="font-size: 11px; color: #10b981; font-weight: 700;">Oxygen Supply: ${h.oxygen}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (err) {
+                console.error("Failed to load hospitals:", err);
+            }
+        }
+
+        // Load Doctors and their available slots dynamically from SQLite via /api/doctors
+        async function loadDoctorsAndSlots() {
+            try {
+                const docRes = await fetch(`${API_BASE}/api/doctors`);
+                if (!docRes.ok) return;
+                const docData = await docRes.json();
+                allDoctors = docData.doctors || [];
+
+                // Fetch slots for each doctor
+                for (const doc of allDoctors) {
+                    try {
+                        const slotRes = await fetch(`${API_BASE}/api/appointments/slots?doctor_id=${doc.id}`);
+                        if (slotRes.ok) {
+                            const slotData = await slotRes.json();
+                            doctorSlotsMap[doc.id] = slotData.slots || [];
+                        }
+                    } catch (e) {
+                        doctorSlotsMap[doc.id] = [];
+                    }
+                }
+
+                renderDoctors(allDoctors);
+            } catch (err) {
+                console.error("Failed to load doctors:", err);
+            }
+        }
+
+        // Render Doctor Cards with dynamic slot selection
+        function renderDoctors(list) {
+            const container = document.getElementById('doctors-container');
+            if (list.length === 0) {
+                container.innerHTML = '<div style="font-size: 12px; color: #94a3b8;">No matching doctors found.</div>';
+                return;
+            }
+
+            container.innerHTML = list.map(doc => {
+                const slots = doctorSlotsMap[doc.id] || [];
+                const availableSlots = slots.filter(s => !s.is_booked);
+
+                let slotOptions = '';
+                if (availableSlots.length > 0) {
+                    slotOptions = availableSlots.map(s => 
+                        `<option value="${s.id}">${s.slot || ((s.day || s.day_of_week || 'Tue') + ' ' + s.start_time + ' - ' + s.end_time)}</option>`
+                    ).join('');
+                } else {
+                    slotOptions = '<option value="">No available slots</option>';
+                }
+
+                return `
+                    <div class="doc-card">
+                        <div>
+                            <div class="doc-name">${doc.name}</div>
+                            <div class="doc-exp">${doc.experience} • Rating: ⭐ ${doc.rating.toFixed(1)}</div>
+                            <div><span class="doc-spec">${doc.speciality}</span></div>
+                            <label style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: block; margin-top: 6px;">Select Slot:</label>
+                            <select class="doc-slot-select" id="slot-select-${doc.id}">
+                                ${slotOptions}
+                            </select>
+                        </div>
+                        <button class="btn-book" onclick="bookAppointment(${doc.id}, '${doc.name}')" ${availableSlots.length === 0 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+                            Book Appointment (${doc.fee})
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Search/Filter Doctors dynamically
+        function filterDoctors() {
+            const q = document.getElementById('search-input').value.toLowerCase();
+            const filtered = allDoctors.filter(d => 
+                d.name.toLowerCase().includes(q) || d.speciality.toLowerCase().includes(q)
+            );
+            renderDoctors(filtered);
+        }
+
+        // Real-time Database-Backed Appointment Booking via POST /api/appointments
+        async function bookAppointment(doctorId, docName) {
+            const slotSelect = document.getElementById(`slot-select-${doctorId}`);
+            if (!slotSelect || !slotSelect.value) {
+                showToast("No available slot selected for this doctor.", true);
+                return;
+            }
+
+            const slotId = parseInt(slotSelect.value);
+            const patientName = `Demo Patient ${Math.floor(100 + Math.random() * 900)}`;
+            const phone = `+1-555-${Math.floor(1000 + Math.random() * 9000)}`;
+
+            showToast(`Submitting booking request for ${docName}...`);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/appointments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        doctor_id: doctorId,
+                        slot_id: slotId,
+                        patient_name: patientName,
+                        phone: phone,
+                        notes: "Online booking via Healthai"
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.status === 201) {
+                    showToast(`✓ Booking Confirmed! Code: ${data.booking_code} | Worker #${data.worker_id} (${data.turnaround_ms}ms)`);
+                    // Refresh slots and appointments feed
+                    await loadDoctorsAndSlots();
+                    await loadAppointmentsFeed();
+                } else if (res.status === 409) {
+                    showToast(`⚠️ Conflict 409: Selected slot is already booked! Please pick another slot.`, true);
+                    await loadDoctorsAndSlots();
+                } else if (res.status === 503) {
+                    showToast(`🚨 Overload 503: Server request queue is full! Please retry shortly.`, true);
+                } else {
+                    showToast(`Booking error: ${data.error || 'Server error'}`, true);
+                }
+            } catch (err) {
+                console.error("Booking error:", err);
+                showToast("Network error submitting appointment booking.", true);
+            }
+        }
+
+        // Load Persistent Appointments from SQLite via GET /api/appointments
+        async function loadAppointmentsFeed() {
+            try {
+                const res = await fetch(`${API_BASE}/api/appointments?limit=15`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const feed = document.getElementById('appointments-feed');
+                const appts = data.appointments || [];
+
+                document.getElementById('feed-count').innerText = `${appts.length} Booked`;
+
+                if (appts.length === 0) {
+                    feed.innerHTML = '<div style="font-size: 11px; color: #94a3b8;">No appointments booked yet.</div>';
+                    return;
+                }
+
+                feed.innerHTML = appts.map(a => `
+                    <div class="appt-card new-booked">
+                        <div class="appt-info">
+                            <h6>${a.doctor || a.doctor_name || 'Dr. Specialist'} • ${a.speciality || 'Medicine'}</h6>
+                            <span>${a.patient_name} • ${a.day || ''} ${a.time || ''}</span>
+                            <span style="font-size: 10px; color: #10b981; font-weight: 700;">Code: ${a.booking_code}</span>
+                        </div>
+                        <div class="appt-worker-badge">Worker #${a.worker_id !== undefined ? a.worker_id : (a.handled_by_worker !== undefined ? a.handled_by_worker : 0)}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                console.error("Appointments feed fetch error:", err);
+            }
+        }
+
+        // Outbreak Surge Simulation (80 Concurrent Requests Burst)
+        async function triggerOutbreakSurge() {
+            showToast("🚨 OUTBREAK SURGE: Firing 80 Concurrent Patient Requests...");
+
+            // Fast poll every 100ms during surge so UI captures the worker state transitions in real time
+            const fastPollInterval = setInterval(pollStats, 100);
+            setTimeout(() => { clearInterval(fastPollInterval); }, 7000);
+
+            // Fire in 4 rapid waves to build genuine queue backlog and trigger full autoscaler
+            const waves = 4;
+            const perWave = 20;
+
+            for (let w = 0; w < waves; w++) {
+                const promises = [];
+                for (let i = 0; i < perWave; i++) {
+                    const reqIdx = w * perWave + i;
+                    const types = ['EMERGENCY', 'TELEMEDICINE', 'VACCINE', 'APPOINTMENT'];
+                    const rType = types[reqIdx % types.length];
+                    promises.push(fetch(`${API_BASE}/api/request`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: `ACTION=${rType}&PATIENT_ID=${2000 + reqIdx}`
+                    }));
+                }
+                // Small 30ms gap between waves to maintain sustained queue backlog
+                if (w < waves - 1) {
+                    await new Promise(res => setTimeout(res, 30));
+                }
+            }
+
+            showToast("✓ 80 Requests Handled! Watch workers scale up then prune after idle timeout.");
+            setTimeout(loadAppointmentsFeed, 1000);
+        }
+
+        // Live Poll Server Stats from /api/stats
+        async function pollStats() {
+            try {
+                const res = await fetch(`${API_BASE}/api/stats`);
+                if (!res.ok) {
+                    setOfflineState();
+                    return;
+                }
+                const data = await res.json();
+                setOnlineState();
+
+                // Top & Sidebar Pills
+                document.getElementById('top-workers').innerText = `${data.current_threads}/16`;
+                document.getElementById('top-busy').innerText = data.busy_threads;
+                document.getElementById('top-latency').innerText = `${data.avg_time.toFixed(1)}ms`;
+                document.getElementById('side-workers').innerText = `${data.current_threads}/16`;
+                document.getElementById('side-queue').innerText = data.queue_depth;
+
+                // Dedicated OS View Cards
+                document.getElementById('os-total-workers').innerText = `${data.current_threads} / 16`;
+                document.getElementById('os-busy-workers').innerText = data.busy_threads;
+                document.getElementById('os-idle-workers').innerText = data.current_threads - data.busy_threads;
+                document.getElementById('os-queue-depth').innerText = data.queue_depth;
+                document.getElementById('os-scaleup').innerText = data.scale_up;
+                document.getElementById('os-scaledown').innerText = data.scale_down;
+
+                document.getElementById('os-p50').innerText = `${data.p50_latency_ms.toFixed(1)} ms`;
+                document.getElementById('os-p95').innerText = `${data.p95_latency_ms.toFixed(1)} ms`;
+                document.getElementById('os-succeeded').innerText = data.total_succeeded;
+                document.getElementById('os-failed').innerText = data.total_failed;
+
+                // Render 16 Worker Cards in OS View
+                const grid = document.getElementById('os-workers-grid');
+                grid.innerHTML = '';
+                for (let i = 0; i < 16; i++) {
+                    const w = data.workers[i] || { alive: false, busy: false, baseline: (i < 4) };
+                    const card = document.createElement('div');
+                    let cClass = 'w-card ';
+                    let statusTxt = 'PRUNED';
+                    let badgeClass = 'w-badge-dead';
+
+                    if (!w.alive) {
+                        cClass += 'dead';
+                    } else if (w.busy) {
+                        cClass += 'alive-busy';
+                        statusTxt = 'ACTIVE (BUSY)';
+                        badgeClass = 'w-badge-busy';
+                    } else {
+                        cClass += 'alive-idle';
+                        statusTxt = 'IDLE (READY)';
+                        badgeClass = 'w-badge-idle';
+                    }
+
+                    card.className = cClass;
+                    card.innerHTML = `
+                        <div class="w-card-top">
+                            <span>Thread #${i}</span>
+                            <span class="${badgeClass}">${statusTxt}</span>
+                        </div>
+                        <div style="font-size: 10px; color: #94a3b8;">
+                            ${w.baseline ? 'Baseline Worker' : 'Dynamic Worker'}
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            } catch (err) {
+                setOfflineState();
+            }
+        }
+
+        function setOfflineState() {
+            const dot = document.getElementById('server-dot');
+            const lbl = document.getElementById('server-status-label');
+            if (dot) dot.className = 'pulse-dot offline';
+            if (lbl) lbl.innerText = 'Engine Disconnected';
+        }
+
+        function setOnlineState() {
+            const dot = document.getElementById('server-dot');
+            const lbl = document.getElementById('server-status-label');
+            if (dot) dot.className = 'pulse-dot';
+            if (lbl) lbl.innerText = 'Engine Online';
+        }
+
+        // Initialize on load
+        loadHospitals();
+        loadDoctorsAndSlots();
+        loadAppointmentsFeed();
+        setInterval(pollStats, 500);
+        pollStats();
+    </script>
+</body>
+</html>

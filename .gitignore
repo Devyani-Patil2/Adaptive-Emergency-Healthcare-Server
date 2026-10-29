@@ -1,0 +1,16 @@
+# Binaries & build artifacts
+bin/
+obj/
+*.o
+healthcare_server
+client_simulator
+
+# SQLite databases & journals
+*.db
+*.db-shm
+*.db-wal
+
+# Temporary / OS files
+*.log
+.DS_Store
+Thumbs.db
