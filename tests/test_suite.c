@@ -23,42 +23,47 @@ static int g_tests_passed = 0;
 
 /* 1. Test Priority Queue Ordering */
 void test_priority_ordering(void) {
-    printf("\n=== Running Test: Priority Ordering (P0 > P1 > P2 > P3) ===\n");
+    printf("\n=== Running Test: Priority Ordering (P0 > P1 > P2 > P3 > P4) ===\n");
     PriorityTaskQueue q;
     queue_init(&q);
 
-    Task t_app, t_em, t_tele, t_vac;
+    Task t_app, t_em, t_tele, t_vac, t_acc;
     memset(&t_app, 0, sizeof(Task));
-    memset(&t_em, 0, sizeof(Task));
-    memset(&t_tele, 0, sizeof(Task));
     memset(&t_vac, 0, sizeof(Task));
+    memset(&t_tele, 0, sizeof(Task));
+    memset(&t_em, 0, sizeof(Task));
+    memset(&t_acc, 0, sizeof(Task));
 
-    t_app.type = REQ_APPOINTMENT;     // P3
-    t_vac.type = REQ_VACCINATION;     // P2
-    t_tele.type = REQ_TELEMEDICINE;   // P1
-    t_em.type = REQ_EMERGENCY_INFO;   // P0
+    t_app.type = REQ_APPOINTMENT;          // P4
+    t_vac.type = REQ_VACCINATION;          // P3
+    t_tele.type = REQ_TELEMEDICINE;        // P2
+    t_em.type = REQ_EMERGENCY_INFO;        // P1
+    t_acc.type = REQ_EMERGENCY_ACCIDENT;   // P0
 
     gettimeofday(&t_app.arrival_time, NULL);
     gettimeofday(&t_vac.arrival_time, NULL);
     gettimeofday(&t_tele.arrival_time, NULL);
     gettimeofday(&t_em.arrival_time, NULL);
+    gettimeofday(&t_acc.arrival_time, NULL);
 
-    // Push in reverse order: P3, then P2, then P1, then P0
+    // Push in reverse order: P4, then P3, then P2, then P1, then P0
     queue_push_try(&q, t_app);
     queue_push_try(&q, t_vac);
     queue_push_try(&q, t_tele);
     queue_push_try(&q, t_em);
+    queue_push_try(&q, t_acc);
 
-    TEST_ASSERT(queue_get_count(&q) == 4, "Queue count is 4 after 4 pushes");
+    TEST_ASSERT(queue_get_count(&q) == 5, "Queue count is 5 after 5 pushes");
 
-    // Pop should yield P0 first, then P1, then P2, then P3
+    // Pop should yield P0 first, then P1, then P2, then P3, then P4
     Task out;
-    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_EMERGENCY_INFO, "1st Pop yields Emergency Info (P0)");
-    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_TELEMEDICINE, "2nd Pop yields Telemedicine (P1)");
-    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_VACCINATION, "3rd Pop yields Vaccination (P2)");
-    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_APPOINTMENT, "4th Pop yields Appointment (P3)");
+    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_EMERGENCY_ACCIDENT, "1st Pop yields Accident/Trauma (P0)");
+    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_EMERGENCY_INFO, "2nd Pop yields Emergency Info (P1)");
+    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_TELEMEDICINE, "3rd Pop yields Telemedicine (P2)");
+    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_VACCINATION, "4th Pop yields Vaccination (P3)");
+    TEST_ASSERT(queue_pop_timed(&q, &out, 1) && out.type == REQ_APPOINTMENT, "5th Pop yields Routine Appointment (P4)");
 
-    TEST_ASSERT(queue_get_count(&q) == 0, "Queue is empty after 4 pops");
+    TEST_ASSERT(queue_get_count(&q) == 0, "Queue is empty after 5 pops");
     queue_destroy(&q);
 }
 
@@ -68,30 +73,30 @@ void test_aging_anti_starvation(void) {
     PriorityTaskQueue q;
     queue_init(&q);
 
-    // Create an old P3 appointment that arrived 5000 ms ago
+    // Create an old P4 routine task that arrived 5000 ms ago
     Task old_routine;
     memset(&old_routine, 0, sizeof(Task));
-    old_routine.type = REQ_APPOINTMENT; // P3
+    old_routine.type = REQ_APPOINTMENT; // P4
     gettimeofday(&old_routine.arrival_time, NULL);
     old_routine.arrival_time.tv_sec -= 5; // 5 seconds in the past
 
-    // Create a brand new P1 telemedicine task that just arrived
+    // Create a brand new P2 telemedicine task that just arrived
     Task new_tele;
     memset(&new_tele, 0, sizeof(Task));
-    new_tele.type = REQ_TELEMEDICINE; // P1
+    new_tele.type = REQ_TELEMEDICINE; // P2
     gettimeofday(&new_tele.arrival_time, NULL);
 
     queue_push_try(&q, new_tele);
     queue_push_try(&q, old_routine);
 
     // Because old_routine waited > 4000ms, aging boosts its effective priority
-    // from P3 to P1 or P0, with older arrival time tie-breaker!
+    // from P4 to P2 or P1, with older arrival time tie-breaker!
     Task out;
     queue_pop_timed(&q, &out, 1);
-    TEST_ASSERT(out.type == REQ_APPOINTMENT, "Aged routine task (P3) dequeued before new P1 task due to aging");
+    TEST_ASSERT(out.type == REQ_APPOINTMENT, "Aged routine task (P4) dequeued before new P2 task due to aging");
 
     queue_pop_timed(&q, &out, 1);
-    TEST_ASSERT(out.type == REQ_TELEMEDICINE, "Newer P1 task dequeued second");
+    TEST_ASSERT(out.type == REQ_TELEMEDICINE, "Newer P2 task dequeued second");
 
     queue_destroy(&q);
 }

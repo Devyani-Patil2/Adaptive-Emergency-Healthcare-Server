@@ -122,12 +122,25 @@ static bool parse_http_request(int client_sock, const char *raw_data, int data_l
     extract_param(payload, "phone", phone_str, sizeof(phone_str));
     snprintf(task->patient_phone, sizeof(task->patient_phone), "%s", strlen(phone_str) > 0 ? phone_str : "+91-98200-11000");
 
-    // Triage Priority Determination:
-    // P0: Emergency Info / ICU critical lookup
-    // P1: Telemedicine
-    // P2: Vaccination
-    // P3: Routine Appointments
-    if (strstr(raw_data, "EMERGENCY") || strstr(raw_data, "emergency") || strstr(task->path, "emergency")) {
+    // Triage Priority Determination (P0 to P4):
+    // P0: ACCIDENT / TRAUMA / ICU CRITICAL
+    // P1: EMERGENCY_INFO / Bed & Oxygen lookup
+    // P2: TELEMEDICINE / Urgent Video Consultation
+    // P3: VACCINATION / Outbreak Immunization
+    // P4: ROUTINE APPOINTMENT
+    char prio_str[16] = {0};
+    extract_param(payload, "priority", prio_str, sizeof(prio_str));
+    if (strlen(prio_str) > 0) {
+        int p = atoi(prio_str);
+        if (p >= 0 && p <= 4) {
+            task->type = (RequestType)p;
+            return true;
+        }
+    }
+
+    if (strstr(raw_data, "ACCIDENT") || strstr(raw_data, "accident") || strstr(raw_data, "TRAUMA") || strstr(raw_data, "trauma") || strstr(task->path, "accident")) {
+        task->type = REQ_EMERGENCY_ACCIDENT;
+    } else if (strstr(raw_data, "EMERGENCY") || strstr(raw_data, "emergency") || strstr(task->path, "emergency")) {
         task->type = REQ_EMERGENCY_INFO;
     } else if (strstr(raw_data, "TELEMEDICINE") || strstr(raw_data, "telemedicine") || strstr(task->path, "telemedicine")) {
         task->type = REQ_TELEMEDICINE;

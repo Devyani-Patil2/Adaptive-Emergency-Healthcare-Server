@@ -233,10 +233,11 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
             char resp_buf[1024];
             snprintf(resp_buf, sizeof(resp_buf),
                 "{\"status\":\"CONFIRMED\",\"booking_code\":\"%s\",\"patient_name\":\"%s\","
-                "\"doctor_id\":%d,\"slot_id\":%d,\"worker_id\":%d,\"queue_wait_ms\":%lld,"
-                "\"execution_ms\":%lld,\"turnaround_ms\":%d}",
+                "\"doctor_id\":%d,\"slot_id\":%d,\"worker_id\":%d,\"priority\":%d,\"priority_desc\":\"%s\","
+                "\"queue_wait_ms\":%lld,\"execution_ms\":%lld,\"turnaround_ms\":%d}",
                 booking_code, task->patient_name, task->doctor_id, task->slot_id,
-                worker_id, queue_wait, (proc_end - proc_start), turnaround_ms);
+                worker_id, (int)task->type, request_type_to_str(task->type),
+                queue_wait, (proc_end - proc_start), turnaround_ms);
 
             send_http_response(client_sock, 201, "Created", "application/json", resp_buf);
             request_success = true;
@@ -244,8 +245,8 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
             // Conflict: HTTP 409 Conflict (slot already booked)
             char resp_buf[512];
             snprintf(resp_buf, sizeof(resp_buf),
-                "{\"status\":\"CONFLICT\",\"error\":\"%s\",\"slot_id\":%d,\"worker_id\":%d}",
-                err_msg, task->slot_id, worker_id);
+                "{\"status\":\"CONFLICT\",\"error\":\"%s\",\"slot_id\":%d,\"worker_id\":%d,\"priority\":%d,\"priority_desc\":\"%s\"}",
+                err_msg, task->slot_id, worker_id, (int)task->type, request_type_to_str(task->type));
             send_http_response(client_sock, 409, "Conflict", "application/json", resp_buf);
             request_success = false;
         } else if (book_rc == -1) {
@@ -279,6 +280,10 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
         const char *action_desc = "General Request Processed";
 
         switch (task->type) {
+            case REQ_EMERGENCY_ACCIDENT:
+                sim_work_ms = 35;
+                action_desc = "ACCIDENT/TRAUMA: Red Triage, OR & Trauma Team Dispatched Immediately";
+                break;
             case REQ_EMERGENCY_INFO:
                 sim_work_ms = 45;
                 action_desc = "EMERGENCY: ICU Oxygen & Bed Allocated";
@@ -294,7 +299,7 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
             case REQ_APPOINTMENT:
             default:
                 sim_work_ms = 110;
-                action_desc = "APPOINTMENT: Routine OPD Query Handled";
+                action_desc = "ROUTINE OPD: Consultation Query Handled";
                 break;
         }
 

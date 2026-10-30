@@ -21,16 +21,18 @@
 
 /* 
  * Healthcare Service Types (Priority Levels for Scheduling)
- * Priority 0 (Highest) -> REQ_EMERGENCY_INFO
- * Priority 1           -> REQ_TELEMEDICINE
- * Priority 2           -> REQ_VACCINATION
- * Priority 3 (Lowest)  -> REQ_APPOINTMENT
+ * Priority 0 (Highest) -> REQ_EMERGENCY_ACCIDENT (Road Trauma, Cardiac Arrest, ICU)
+ * Priority 1           -> REQ_EMERGENCY_INFO     (Critical Beds, Oxygen Lookup)
+ * Priority 2           -> REQ_TELEMEDICINE       (Urgent Doctor Video Call)
+ * Priority 3           -> REQ_VACCINATION        (Outbreak Immunization)
+ * Priority 4 (Lowest)  -> REQ_APPOINTMENT        (Routine OPD Consultation)
  */
 typedef enum {
-    REQ_EMERGENCY_INFO = 0,
-    REQ_TELEMEDICINE   = 1,
-    REQ_VACCINATION    = 2,
-    REQ_APPOINTMENT    = 3
+    REQ_EMERGENCY_ACCIDENT = 0,
+    REQ_EMERGENCY_INFO     = 1,
+    REQ_TELEMEDICINE       = 2,
+    REQ_VACCINATION        = 3,
+    REQ_APPOINTMENT        = 4
 } RequestType;
 
 /* Structure representing a single client request processed by worker threads */
@@ -55,11 +57,12 @@ typedef struct {
 /* Convert request type to human-readable string */
 static inline const char* request_type_to_str(RequestType type) {
     switch (type) {
-        case REQ_EMERGENCY_INFO: return "EMERGENCY_INFO (P0 - Critical)";
-        case REQ_TELEMEDICINE:   return "TELEMEDICINE   (P1 - High)";
-        case REQ_VACCINATION:    return "VACCINATION    (P2 - Medium)";
-        case REQ_APPOINTMENT:    return "APPOINTMENT    (P3 - Normal)";
-        default:                 return "UNKNOWN";
+        case REQ_EMERGENCY_ACCIDENT: return "ACCIDENT/TRAUMA (P0 - Life Threatening)";
+        case REQ_EMERGENCY_INFO:     return "ICU/EMERGENCY   (P1 - Critical)";
+        case REQ_TELEMEDICINE:       return "TELEMEDICINE   (P2 - High)";
+        case REQ_VACCINATION:        return "VACCINATION    (P3 - Medium)";
+        case REQ_APPOINTMENT:        return "ROUTINE OPD    (P4 - Normal)";
+        default:                     return "UNKNOWN";
     }
 }
 
@@ -81,8 +84,8 @@ static inline int calculate_effective_priority(const Task *task, long long now_m
 
     int boost_levels = (int)(wait_ms / AGING_THRESHOLD_MS);
     int effective = (int)task->type - boost_levels;
-    if (effective < (int)REQ_EMERGENCY_INFO) {
-        effective = (int)REQ_EMERGENCY_INFO;
+    if (effective < (int)REQ_EMERGENCY_ACCIDENT) {
+        effective = (int)REQ_EMERGENCY_ACCIDENT;
     }
     return effective;
 }

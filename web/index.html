@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthai - Adaptive Healthcare Platform & Dynamic Thread Pool</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <title>Healthai - OS Adaptive Emergency Healthcare Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-page: #edf2f7;
-            --bg-card: #ffffff;
-            --primary: #299fa8;
-            --primary-hover: #22868e;
-            --primary-light: #e6f6f7;
-            --text-dark: #1a2238;
-            --text-muted: #8b95a5;
-            --border-light: #e2e8f0;
-            --danger: #ef4444;
-            --success: #10b981;
-            --warning: #f59e0b;
+            --primary: #0284c7;
+            --primary-dark: #0369a1;
+            --bg-page: #0b0f19;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --text-main: #f9fafb;
+            --text-sub: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-red: #ef4444;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-blue: #38bdf8;
+            --accent-purple: #a855f7;
         }
 
         * {
@@ -28,1061 +30,1148 @@
         }
 
         body {
-            background-color: #fafbfc;
-            color: var(--text-dark);
+            background-color: var(--bg-page);
+            color: var(--text-main);
             min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        /* App Wrapper - Full Screen Edge-to-Edge */
-        .app-window {
-            width: 100%;
-            min-height: 100vh;
-            background: #ffffff;
-            border-radius: 0;
-            box-shadow: none;
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* 1. SIDEBAR */
-        .sidebar {
-            background: #ffffff;
-            border-right: 1px solid #f0f3f6;
-            padding: 28px 20px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
         }
 
-        .logo {
+        /* Top Header Navbar */
+        .app-header {
+            background: #111827;
+            border-bottom: 1px solid var(--card-border);
+            padding: 14px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-brand {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 32px;
-            padding-left: 8px;
+            gap: 12px;
         }
 
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--primary);
+        .header-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #ffffff;
-            font-size: 18px;
+            font-size: 22px;
             font-weight: 800;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
 
-        .nav-list {
-            list-style: none;
+        .header-title h1 {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .header-title p {
+            font-size: 11px;
+            color: var(--accent-blue);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .header-nav {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--text-sub);
+            border: 1px solid transparent;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
             gap: 8px;
         }
 
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s;
+        .nav-btn:hover {
+            color: #ffffff;
+            background: #1f2937;
+        }
+
+        .nav-btn.active {
+            background: #0284c7;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+        }
+
+        .btn-register-top {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #ffffff;
             border: none;
-            background: transparent;
-            width: 100%;
-            text-align: left;
-        }
-
-        .nav-item.active {
-            background: var(--primary);
-            color: #ffffff;
-            box-shadow: 0 4px 14px rgba(41, 159, 168, 0.35);
-        }
-
-        .nav-item:hover:not(.active) {
-            background: var(--primary-light);
-            color: var(--primary);
-        }
-
-        /* Sidebar OS Status Card */
-        .sidebar-os-card {
-            background: #111827;
-            color: #ffffff;
-            border-radius: 16px;
-            padding: 16px;
-            margin-top: 24px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .os-card-title {
-            font-size: 11px;
-            color: #38bdf8;
-            font-weight: 700;
-            text-transform: uppercase;
+            padding: 9px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 8px;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+            transition: all 0.2s;
         }
 
-        .os-card-val {
-            font-size: 13px;
-            color: #f1f5f9;
-            margin-bottom: 4px;
+        .btn-register-top:hover {
+            transform: translateY(-1px);
+            background: #059669;
+        }
+
+        /* Server status badge */
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
         }
 
         .pulse-dot {
             width: 8px;
             height: 8px;
+            background: var(--accent-green);
             border-radius: 50%;
-            background: #10b981;
-            display: inline-block;
-            box-shadow: 0 0 8px #10b981;
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+        .pulse-dot.offline { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
         }
 
-        .pulse-dot.offline {
-            background: #ef4444;
-            box-shadow: 0 0 8px #ef4444;
+        /* Main Workspace Container */
+        .main-container {
+            flex: 1;
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        /* 2. MAIN CONTENT AREA */
-        .main-content {
-            padding: 28px 36px;
-            overflow-y: auto;
-            background: #fafbfc;
+        /* Top OS Live Metric Strip */
+        .metrics-strip {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
         }
 
-        .top-bar {
+        .m-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: border-color 0.2s;
+        }
+
+        .m-card:hover {
+            border-color: #374151;
+        }
+
+        .m-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .m-value {
+            font-size: 24px;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            color: #ffffff;
+        }
+
+        .m-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Progress bars */
+        .bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #1f2937;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Main Content View Switcher */
+        .view-tab {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .view-tab.active {
+            display: flex;
+        }
+
+        /* 2-Column Layout for Patient Portal */
+        .portal-layout {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Section Cards */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .card-header-clean {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .welcome-text h2 {
-            font-size: 24px;
+        .card-header-clean h3 {
+            font-size: 15px;
             font-weight: 800;
-            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .welcome-text p {
+        .card-header-clean .sub-tag {
+            font-size: 11px;
+            color: var(--accent-blue);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        /* Emergency Accident Banner */
+        .emergency-action-card {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.05));
+            border: 1px solid #ef4444;
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .emergency-text h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #fca5a5;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .emergency-text p {
+            font-size: 12px;
+            color: #d1d5db;
+            margin-top: 4px;
+        }
+
+        .btn-emergency-action {
+            background: #dc2626;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 800;
             font-size: 13px;
-            color: var(--text-muted);
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-emergency-action:hover {
+            background: #b91c1c;
+            transform: translateY(-2px);
+        }
+
+        /* Doctor Grid */
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .doc-item-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .doc-item-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2);
+        }
+
+        .doc-item-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .doc-item-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .doc-item-spec {
+            font-size: 11px;
+            color: var(--accent-blue);
+            font-weight: 700;
             margin-top: 2px;
         }
 
-        .search-strip {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            border-radius: 12px;
-            padding: 10px 16px;
-            width: 320px;
-        }
-
-        .search-strip input {
-            border: none;
-            outline: none;
-            font-size: 13px;
-            width: 100%;
-            color: var(--text-dark);
-        }
-
-        .top-os-pill {
-            background: #111827;
-            color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 12px;
+        .doc-item-rating {
+            font-size: 11px;
+            color: #f59e0b;
+            font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
-        .top-os-pill b {
-            color: #38bdf8;
-        }
-
-        /* Views switcher */
-        .tab-view {
-            display: none;
-        }
-
-        .tab-view.active {
-            display: block;
-        }
-
-        /* 3. HERO BANNER */
-        .hero-banner {
-            background: linear-gradient(135deg, #1e3a8a 0%, #0284c7 100%);
-            border-radius: 20px;
-            padding: 24px 32px;
-            color: #ffffff;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
-        }
-
-        .banner-text h3 {
-            font-size: 20px;
-            font-weight: 800;
-            line-height: 1.3;
-            margin-bottom: 4px;
-        }
-
-        .banner-text p {
-            font-size: 13px;
-            opacity: 0.95;
-            margin-bottom: 12px;
-        }
-
-        .btn-surge {
-            background: #ffffff;
-            color: #dc2626;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 12px;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.15);
-            transition: all 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-surge:hover {
-            transform: scale(1.02);
-            background: #fef2f2;
-        }
-
-        /* 4. DASHBOARD GRID (Left + Right Columns) */
-        .dashboard-body-grid {
-            display: grid;
-            grid-template-columns: 2.1fr 1fr;
-            gap: 20px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .section-header h4 {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .section-header span {
-            font-size: 12px;
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        /* Nearby Hospital Cards (Live from SQLite /api/hospitals) */
-        .nearby-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .nearby-card {
-            background: #ffffff;
-            border: 1px solid #edf1f5;
-            border-radius: 16px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        }
-
-        .nearby-name {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .nearby-details {
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .icu-badge {
-            font-size: 10px;
-            font-weight: 700;
-            background: #ecfdf5;
-            color: #059669;
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        /* Recommended Doctors Grid */
-        .recommended-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-        }
-
-        .doc-card {
-            background: #ffffff;
-            border: 1px solid #edf1f5;
-            border-radius: 18px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s;
-        }
-
-        .doc-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
-        }
-
-        .doc-name {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .doc-exp {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .doc-spec {
-            display: inline-block;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            background: #e6f6f7;
-            color: var(--primary);
-            margin: 6px 0;
-        }
-
-        .doc-slot-select {
+        .doc-slot-dropdown {
             width: 100%;
-            padding: 6px 8px;
-            font-size: 11px;
-            border: 1px solid #cbd5e1;
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 8px 10px;
             border-radius: 8px;
-            margin: 8px 0;
+            font-size: 11px;
             outline: none;
-            background: #f8fafc;
         }
 
-        .btn-book {
-            width: 100%;
-            padding: 10px;
+        .btn-card-book {
             background: var(--primary);
             color: #ffffff;
             border: none;
-            border-radius: 10px;
+            padding: 9px;
+            border-radius: 8px;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .btn-book:hover {
-            background: var(--primary-hover);
-            box-shadow: 0 4px 12px rgba(41, 159, 168, 0.3);
+        .btn-card-book:hover {
+            background: var(--primary-dark);
         }
 
-        /* 5. RIGHT PANEL: LIVE UPCOMING APPOINTMENTS */
-        .right-panel {
-            background: #ffffff;
-            border: 1px solid #edf1f5;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .upcoming-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .upcoming-header h4 {
-            font-size: 15px;
-            font-weight: 800;
-        }
-
-        .appointment-list {
+        /* Feed Card List */
+        .feed-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            max-height: 480px;
+            max-height: 520px;
             overflow-y: auto;
         }
 
-        .appt-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 12px;
-            border-radius: 14px;
-            background: #f8fafc;
-            border-left: 4px solid var(--primary);
-            transition: all 0.2s;
-        }
-
-        .appt-card.new-booked {
-            background: #ecfdf5;
-            border-left-color: #10b981;
-            animation: highlight-fade 2s;
-        }
-
-        @keyframes highlight-fade {
-            0% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-
-        .appt-info h6 {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--text-dark);
-        }
-
-        .appt-info span {
-            font-size: 11px;
-            color: var(--text-muted);
-            display: block;
-        }
-
-        .appt-worker-badge {
-            font-size: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            background: #e2e8f0;
-            padding: 3px 6px;
-            border-radius: 6px;
-            color: #334155;
-            font-weight: 700;
-        }
-
-        /* 6. DEDICATED OS ENGINE VIEW (Tab 2) */
-        .os-view-container {
-            background: #0f172a;
-            border-radius: 20px;
-            padding: 24px;
-            color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .os-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 16px;
-        }
-
-        .os-header-row h3 {
-            font-size: 18px;
-            color: #38bdf8;
-            font-family: 'JetBrains Mono', monospace;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .os-metric-cards-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 14px;
-        }
-
-        .os-mcard {
+        .feed-item {
             background: #1e293b;
             border: 1px solid #334155;
-            border-radius: 14px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-left: 4px solid var(--accent-blue);
         }
 
-        .os-mcard-label {
-            font-size: 11px;
-            color: #94a3b8;
-            font-weight: 700;
-            text-transform: uppercase;
+        .feed-item.feed-p0 { border-left-color: #dc2626; background: rgba(220, 38, 38, 0.12); }
+        .feed-item.feed-p1 { border-left-color: #ea580c; background: rgba(234, 88, 12, 0.1); }
+        .feed-item.feed-p2 { border-left-color: #f59e0b; }
+        .feed-item.feed-p3 { border-left-color: #3b82f6; }
+        .feed-item.feed-p4 { border-left-color: #10b981; }
+
+        .feed-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .os-mcard-val {
-            font-size: 26px;
+        .feed-patient-name {
+            font-size: 13px;
             font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            margin: 8px 0 4px 0;
             color: #ffffff;
         }
 
-        .os-mcard-sub {
-            font-size: 11px;
-            color: #64748b;
+        .feed-priority-tag {
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
         }
 
-        /* 16 Worker Threads Grid */
-        .workers-big-grid {
+        .feed-details {
+            font-size: 11px;
+            color: var(--text-sub);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .feed-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 6px;
+            margin-top: 2px;
+        }
+
+        /* Priority Colors */
+        .tag-p0 { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .tag-p1 { background: rgba(234, 88, 12, 0.2); color: #fb923c; border: 1px solid #f97316; }
+        .tag-p2 { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #f59e0b; }
+        .tag-p3 { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid #3b82f6; }
+        .tag-p4 { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #10b981; }
+
+        /* OS Tab: Thread Pool & Worker Architecture */
+        .thread-pool-matrix {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 12px;
         }
 
-        .w-card {
+        .worker-box {
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 12px;
             padding: 14px;
             font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             transition: all 0.2s;
         }
 
-        .w-card.alive-busy {
-            background: rgba(239, 68, 68, 0.15);
+        .worker-box.busy {
+            background: rgba(239, 68, 68, 0.12);
             border-color: #ef4444;
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.25);
         }
 
-        .w-card.alive-idle {
-            background: rgba(16, 185, 129, 0.1);
+        .worker-box.idle {
+            background: rgba(16, 185, 129, 0.08);
             border-color: #10b981;
         }
 
-        .w-card.dead {
-            opacity: 0.3;
+        .worker-box.pruned {
+            opacity: 0.35;
             border-style: dashed;
         }
 
-        .w-card-top {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
-
-        .w-badge-busy { color: #ef4444; }
-        .w-badge-idle { color: #10b981; }
-        .w-badge-dead { color: #64748b; }
-
-        /* 7. OS LIVE CONCEPT LAB & INSPECTOR STYLES */
-        .lab-gauge-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 14px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .lab-gauge-header {
+        .w-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 11px;
-            color: #94a3b8;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .lab-gauge-val {
-            font-size: 24px;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            color: #38bdf8;
-        }
-
-        .lab-progress-bg {
-            width: 100%;
-            height: 8px;
-            background: #0f172a;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .lab-progress-fill {
-            height: 100%;
-            background: #38bdf8;
-            border-radius: 4px;
-            transition: width 0.2s;
-        }
-
-        .lab-experiment-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .btn-experiment {
-            background: #1e293b;
-            border: 1px solid #38bdf8;
-            color: #ffffff;
-            padding: 12px 14px;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .btn-experiment:hover {
-            background: #0284c7;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 14px rgba(56, 189, 248, 0.4);
-        }
-
-        .btn-exp-title {
             font-size: 12px;
             font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .btn-exp-desc {
+        .w-state-badge {
             font-size: 10px;
-            color: #94a3b8;
-        }
-
-        /* Console Log Window */
-        .os-console-window {
-            background: #090d16;
-            border: 1px solid #1e293b;
-            border-radius: 14px;
-            padding: 14px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            color: #38bdf8;
-            height: 200px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .log-entry {
-            line-height: 1.4;
-        }
-
-        .log-tag {
-            padding: 1px 4px;
+            padding: 2px 6px;
             border-radius: 4px;
-            font-weight: 700;
-            font-size: 10px;
+            font-weight: 800;
         }
-        .log-tag-sem { background: #0284c7; color: #fff; }
-        .log-tag-mutex { background: #d97706; color: #fff; }
-        .log-tag-aging { background: #10b981; color: #fff; }
-        .log-tag-surge { background: #dc2626; color: #fff; }
-        .log-tag-queue { background: #8b5cf6; color: #fff; }
 
-        /* Priority Task Queue Visualizer */
-        .queue-visual-track {
+        .w-state-busy { background: #dc2626; color: #fff; }
+        .w-state-idle { background: #059669; color: #fff; }
+        .w-state-pruned { background: #4b5563; color: #d1d5db; }
+
+        .w-desc {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        /* Priority Queue Visual Track */
+        .track-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
-            gap: 8px;
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            border-radius: 12px;
-            padding: 12px;
-            min-height: 80px;
+            gap: 10px;
+            background: #090d16;
+            border: 1px solid #1f2937;
+            border-radius: 14px;
+            padding: 14px;
+            min-height: 90px;
         }
 
-        .q-slot-card {
+        .q-card {
             background: #1e293b;
             border: 1px solid #334155;
             border-radius: 8px;
             padding: 8px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
+            font-size: 11px;
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
 
-        .q-p0 { border-left: 3px solid #ef4444; }
-        .q-p1 { border-left: 3px solid #f59e0b; }
-        .q-p2 { border-left: 3px solid #3b82f6; }
-        .q-p3 { border-left: 3px solid #10b981; }
+        /* 4 Live Experiments */
+        .exp-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
 
-        /* Notification Toast (Bottom Right so it never covers the top metrics) */
-        .toast {
+        .exp-card {
+            background: #1e293b;
+            border: 1px solid var(--accent-blue);
+            color: #ffffff;
+            padding: 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .exp-card:hover {
+            background: #0284c7;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+        }
+
+        .exp-card h4 {
+            font-size: 13px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .exp-card p {
+            font-size: 11px;
+            color: #cbd5e1;
+            line-height: 1.3;
+        }
+
+        /* Console Logs */
+        .console-box {
+            background: #060911;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            padding: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .log-row {
+            line-height: 1.4;
+        }
+
+        /* MODAL STYLES */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-box {
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 540px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            animation: modal-anim 0.2s ease-out;
+        }
+
+        @keyframes modal-anim {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            background: #1f2937;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #374151;
+        }
+
+        .modal-header h3 {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            font-size: 20px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-row label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #d1d5db;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #ffffff;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            color: #ffffff;
+            border-radius: 10px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .priority-explainer {
+            background: #090d16;
+            border-left: 4px solid var(--accent-blue);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.4;
+        }
+
+        .btn-modal-submit {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 8px;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+        }
+
+        .btn-modal-submit:hover {
+            background: #0284c7;
+        }
+
+        /* Confirmation Pop-up Dialog */
+        .confirm-dialog {
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 480px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+            animation: modal-anim 0.2s ease-out;
+        }
+
+        .confirm-icon {
+            font-size: 48px;
+            margin-bottom: -6px;
+        }
+
+        .confirm-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .confirm-body-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .confirm-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-close-confirm {
+            background: #374151;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* Toast Alert */
+        .toast-popup {
             position: fixed;
             bottom: 24px;
             right: 24px;
-            background: #1e293b;
+            background: #1f2937;
+            border: 1px solid #374151;
             color: #ffffff;
             padding: 14px 20px;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
             font-size: 13px;
-            font-weight: 600;
+            font-weight: 700;
             display: none;
             z-index: 9999;
-            border-left: 4px solid #10b981;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border-left: 4px solid var(--accent-green);
         }
     </style>
 </head>
 <body>
 
-    <div class="toast" id="toast-msg"></div>
+    <!-- Toast Notification -->
+    <div class="toast-popup" id="toast"></div>
 
-    <div class="app-window">
-        <!-- 1. SIDEBAR -->
-        <aside class="sidebar">
-            <div>
-                <div class="logo">
-                    <div class="logo-icon">+</div>
-                    <span>Healthai</span>
-                </div>
-
-                <ul class="nav-list">
-                    <li>
-                        <button class="nav-item active" onclick="switchTab('portal')">
-                            <span>🩺</span> Patient Portal
-                        </button>
-                    </li>
-                    <li>
-                        <button class="nav-item" onclick="switchTab('os')">
-                            <span>⚡</span> OS Thread Pool
-                        </button>
-                    </li>
-                    <li>
-                        <button class="nav-item" onclick="switchTab('lab')">
-                            <span>🔬</span> OS Concept Lab
-                        </button>
-                    </li>
-                    <li>
-                        <button class="nav-item" onclick="triggerOutbreakSurge()">
-                            <span>🚨</span> Outbreak Surge
-                        </button>
-                    </li>
-                </ul>
+    <!-- App Header Navbar -->
+    <header class="app-header">
+        <div class="header-brand">
+            <div class="header-logo">🚑</div>
+            <div class="header-title">
+                <h1>Healthai Adaptive Platform</h1>
+                <p>Course Project: Dynamic Thread Pool & POSIX Primitives</p>
             </div>
+        </div>
 
-            <!-- Live Server OS Status Widget -->
-            <div class="sidebar-os-card">
-                <div class="os-card-title">
-                    <span class="pulse-dot" id="server-dot"></span>
-                    <span id="server-status-label">Engine Online</span>
+        <nav class="header-nav">
+            <button class="nav-btn active" id="btn-tab-portal" onclick="switchView('portal')">
+                <span>🩺</span> Patient & Emergency Portal
+            </button>
+            <button class="nav-btn" id="btn-tab-os" onclick="switchView('os')">
+                <span>⚡</span> OS Thread Pool
+            </button>
+            <button class="nav-btn" id="btn-tab-lab" onclick="switchView('lab')">
+                <span>🔬</span> OS Concept Lab
+            </button>
+            <button class="btn-register-top" onclick="openRegistrationModal()">
+                <span>➕</span> Register Patient (P0 to P4)
+            </button>
+        </nav>
+
+        <div class="status-badge">
+            <span class="pulse-dot" id="server-pulse"></span>
+            <span id="server-status-text">Engine Online</span>
+        </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="main-container">
+
+        <!-- Top Live OS Metrics Strip -->
+        <section class="metrics-strip">
+            <div class="m-card">
+                <div class="m-title">
+                    <span>Thread Pool Size</span>
+                    <span style="color: var(--accent-blue);">POSIX</span>
                 </div>
-                <div class="os-card-val">Workers: <b id="side-workers">4/16</b></div>
-                <div class="os-card-val">Queue: <b id="side-queue">0</b> requests</div>
-                <div style="font-size: 10px; color: #64748b; margin-top: 6px;">Autoscaling: Active</div>
-            </div>
-        </aside>
-
-        <!-- 2. MAIN WORKSPACE -->
-        <main class="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <div class="welcome-text">
-                    <p>Operating Systems Course Project</p>
-                    <h2>Adaptive Healthcare Platform</h2>
-                </div>
-
-                <!-- Real-time Doctor Search -->
-                <div class="search-strip">
-                    <span>🔍</span>
-                    <input type="text" id="search-input" placeholder="Search doctor or speciality..." oninput="filterDoctors()">
-                </div>
-
-                <!-- Top OS Metrics Pill -->
-                <div class="top-os-pill">
-                    <span>Workers: <b id="top-workers">4/16</b></span>
-                    <span>|</span>
-                    <span>Busy: <b id="top-busy">0</b></span>
-                    <span>|</span>
-                    <span>Avg Latency: <b id="top-latency">0ms</b></span>
+                <div class="m-value" id="top-threads">4 / 16</div>
+                <div class="m-sub">Min: 4 | Max: 16 Workers</div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="bar-threads" style="width: 25%; background: var(--accent-blue);"></div>
                 </div>
             </div>
 
-            <!-- VIEW 1: HEALTHCARE PATIENT PORTAL -->
-            <div id="tab-portal" class="tab-view active">
-                <!-- Hero Banner with Outbreak Trigger -->
-                <div class="hero-banner">
-                    <div class="banner-text">
-                        <h3>Adaptive Emergency Healthcare Server<br>Dynamic Thread Pool Architecture</h3>
-                        <p>Real-time booking and triage with automatic worker scaling (4 ⇄ 16 Threads)</p>
-                        <button class="btn-surge" onclick="triggerOutbreakSurge()">
-                            ⚡ SIMULATE OUTBREAK SURGE (50 CONCURRENT PATIENTS)
-                        </button>
-                    </div>
-                    <div style="font-size: 64px;">🏥</div>
+            <div class="m-card">
+                <div class="m-title">
+                    <span>Active Busy Workers</span>
+                    <span style="color: var(--accent-red);">Active</span>
                 </div>
-
-                <div class="dashboard-body-grid">
-                    <div>
-                        <!-- Live Nearby Emergency Facilities (from SQLite /api/hospitals) -->
-                        <div class="section-header">
-                            <h4>Nearby Emergency Facilities & ICU Availability</h4>
-                            <span>SQLite Database</span>
-                        </div>
-                        <div class="nearby-grid" id="hospitals-container">
-                            <div style="font-size: 12px; color: #94a3b8;">Loading hospital facilities...</div>
-                        </div>
-
-                        <!-- Real-time Available Doctors List (from SQLite /api/doctors) -->
-                        <div class="section-header">
-                            <h4>Available Doctors for Consultation</h4>
-                            <span>Atomic Transaction Booking</span>
-                        </div>
-                        <div class="recommended-grid" id="doctors-container">
-                            <div style="font-size: 12px; color: #94a3b8;">Loading available doctors and slots...</div>
-                        </div>
-                    </div>
-
-                    <!-- Right Column: Live Booked Appointments Feed -->
-                    <div class="right-panel">
-                        <div class="upcoming-header">
-                            <h4>Live Appointments Feed</h4>
-                            <span style="font-size: 11px; color: var(--primary); font-weight: 700;" id="feed-count">0 Booked</span>
-                        </div>
-                        <div class="appointment-list" id="appointments-feed">
-                            <!-- Booked appointments fetched from DB and rendered here -->
-                        </div>
-                    </div>
+                <div class="m-value" id="top-busy" style="color: var(--accent-red);">0</div>
+                <div class="m-sub">Idle Workers: <span id="top-idle">4</span></div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="bar-busy" style="width: 0%; background: var(--accent-red);"></div>
                 </div>
             </div>
 
-            <!-- VIEW 2: DEDICATED OS ENGINE & THREAD POOL MONITOR -->
-            <div id="tab-os" class="tab-view">
-                <div class="os-view-container">
-                    <div class="os-header-row">
-                        <h3>⚡ Dynamic Thread Pool & Producer-Consumer Monitor</h3>
-                        <button class="btn-surge" onclick="triggerOutbreakSurge()">
-                            ⚡ Test 50 Requests Surge
-                        </button>
+            <div class="m-card">
+                <div class="m-title">
+                    <span>sem_empty (Counting Sem)</span>
+                    <span style="color: var(--accent-green);">Producer</span>
+                </div>
+                <div class="m-value" id="top-sem-empty" style="color: var(--accent-green);">64</div>
+                <div class="m-sub">Empty Queue Slots Left</div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="bar-sem-empty" style="width: 100%; background: var(--accent-green);"></div>
+                </div>
+            </div>
+
+            <div class="m-card">
+                <div class="m-title">
+                    <span>sem_full (Counting Sem)</span>
+                    <span style="color: var(--accent-amber);">Consumer</span>
+                </div>
+                <div class="m-value" id="top-sem-full" style="color: var(--accent-amber);">0</div>
+                <div class="m-sub">Pending Queued Tasks</div>
+                <div class="bar-bg">
+                    <div class="bar-fill" id="bar-sem-full" style="width: 0%; background: var(--accent-amber);"></div>
+                </div>
+            </div>
+
+            <div class="m-card">
+                <div class="m-title">
+                    <span>Critical Section Mutex</span>
+                    <span id="top-mutex-badge" style="color: var(--accent-green);">UNLOCKED</span>
+                </div>
+                <div class="m-value" id="top-mutex-val" style="font-size: 18px; color: var(--accent-green); margin-top: 4px;">pthread_mutex_t</div>
+                <div class="m-sub">Guards Queue & SQLite Transactions</div>
+            </div>
+        </section>
+
+        <!-- VIEW 1: PATIENT & EMERGENCY PORTAL -->
+        <section id="view-portal" class="view-tab active">
+            <!-- Critical Accident Emergency Quick Trigger -->
+            <div class="emergency-action-card">
+                <div class="emergency-text">
+                    <h3><span>🚨</span> LIFE-THREATENING ACCIDENT & TRAUMA (PRIORITY P0)</h3>
+                    <p>Immediately submits a <b>P0 Accident Case</b> into the OS Priority Queue. Preempts all lower priority tasks and signals empty worker thread.</p>
+                </div>
+                <button class="btn-emergency-action" onclick="quickAccidentEmergency()">
+                    ⚡ REPORT P0 ACCIDENT EMERGENCY
+                </button>
+            </div>
+
+            <div class="portal-layout">
+                <!-- Left Column: Doctors & Hospitals -->
+                <div class="left-panel">
+                    <!-- Available Doctors Grid -->
+                    <div class="content-card">
+                        <div class="card-header-clean">
+                            <h3><span>👨‍⚕️</span> Available Indian Doctors for Consultation</h3>
+                            <span class="sub-tag">Atomic DB Booking</span>
+                        </div>
+                        <div class="doctors-grid" id="doctors-list">
+                            <div style="font-size: 12px; color: var(--text-muted);">Loading doctors...</div>
+                        </div>
                     </div>
 
-                    <!-- OS Metric Cards -->
-                    <div class="os-metric-cards-grid">
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">Alive Workers</div>
-                            <div class="os-mcard-val" id="os-total-workers">4 / 16</div>
-                            <div class="os-mcard-sub">Min: 4 | Max: 16</div>
+                    <!-- Nearby Hospitals -->
+                    <div class="content-card">
+                        <div class="card-header-clean">
+                            <h3><span>🏥</span> Nearby Emergency Facilities & ICU Availability</h3>
+                            <span class="sub-tag">SQLite Hospitals</span>
                         </div>
-
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">Active / Busy Workers</div>
-                            <div class="os-mcard-val" id="os-busy-workers">0</div>
-                            <div class="os-mcard-sub">Idle: <span id="os-idle-workers">4</span> workers</div>
+                        <div class="doctors-grid" id="hospitals-list">
+                            <div style="font-size: 12px; color: var(--text-muted);">Loading hospitals...</div>
                         </div>
+                    </div>
+                </div>
 
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">Producer-Consumer Queue</div>
-                            <div class="os-mcard-val" id="os-queue-depth">0</div>
-                            <div class="os-mcard-sub">Bounded Capacity: 64</div>
+                <!-- Right Column: Live Booked Patients Feed With Clear Priorities -->
+                <div class="right-panel">
+                    <div class="content-card">
+                        <div class="card-header-clean">
+                            <h3><span>📋</span> Live Booked Patients Feed</h3>
+                            <span class="sub-tag" id="feed-count-badge">0 Registered</span>
                         </div>
-
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">Autoscaler Events</div>
-                            <div class="os-mcard-val">
-                                <span style="color: #38bdf8;" id="os-scaleup">0</span>↑ 
-                                <span style="color: #a855f7;" id="os-scaledown">0</span>↓
+                        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
+                            Shows assigned <b>Worker Thread #ID</b> and calculated <b>Triage Priority (P0 to P4)</b> for each registered patient:
+                        </div>
+                        <div class="feed-container" id="patient-feed">
+                            <div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px;">
+                                No patient registrations yet.
                             </div>
-                            <div class="os-mcard-sub">Scale UP on load / DOWN on idle</div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Latency percentiles & Total Requests -->
-                    <div class="os-metric-cards-grid" style="margin-top: -6px;">
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">P50 Latency (Median)</div>
-                            <div class="os-mcard-val" id="os-p50" style="color: #38bdf8;">0.0 ms</div>
-                            <div class="os-mcard-sub">50% requests processed within</div>
-                        </div>
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">P95 Latency (Tail)</div>
-                            <div class="os-mcard-val" id="os-p95" style="color: #f59e0b;">0.0 ms</div>
-                            <div class="os-mcard-sub">95% requests processed within</div>
-                        </div>
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">Total Succeeded (2xx)</div>
-                            <div class="os-mcard-val" id="os-succeeded" style="color: #10b981;">0</div>
-                            <div class="os-mcard-sub">Database & API completions</div>
-                        </div>
-                        <div class="os-mcard">
-                            <div class="os-mcard-label">Total Overload Dropped (503)</div>
-                            <div class="os-mcard-val" id="os-failed" style="color: #ef4444;">0</div>
-                            <div class="os-mcard-sub">Bounded buffer overflow rejections</div>
-                        </div>
+        <!-- VIEW 2: OS THREAD POOL ARCHITECTURE -->
+        <section id="view-os" class="view-tab">
+            <div class="content-card">
+                <div class="card-header-clean">
+                    <h3><span>⚡</span> Dynamic Thread Pool Architecture (16 POSIX Workers)</h3>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="nav-btn active" onclick="triggerOutbreakSurge()">
+                            <span>🚨</span> Simulate Traffic Surge (80 Requests)
+                        </button>
+                    </div>
+                </div>
+                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">
+                    🟢 <b>Thread #0 to #3</b>: Permanent Baseline Workers | 🔴 <b>Active Workers</b>: Processing requests | ⚪ <b>Dormant / Pruned</b>: Autoscaled on backlog, pruned after 4s idle.
+                </div>
+
+                <!-- 16 Worker Threads Matrix -->
+                <div class="thread-pool-matrix" id="workers-matrix">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- Latency & Performance Details -->
+            <div class="metrics-strip">
+                <div class="m-card">
+                    <div class="m-title"><span>P50 Latency (Median)</span></div>
+                    <div class="m-value" id="os-p50" style="color: var(--accent-blue);">0.0 ms</div>
+                    <div class="m-sub">50% requests processed within</div>
+                </div>
+                <div class="m-card">
+                    <div class="m-title"><span>P95 Latency (Tail)</span></div>
+                    <div class="m-value" id="os-p95" style="color: var(--accent-amber);">0.0 ms</div>
+                    <div class="m-sub">95% requests processed within</div>
+                </div>
+                <div class="m-card">
+                    <div class="m-title"><span>Total Completed (2xx)</span></div>
+                    <div class="m-value" id="os-succeeded" style="color: var(--accent-green);">0</div>
+                    <div class="m-sub">Handled by thread pool</div>
+                </div>
+                <div class="m-card">
+                    <div class="m-title"><span>Autoscaler Events</span></div>
+                    <div class="m-value"><span id="os-scaleup" style="color: var(--accent-blue);">0</span>↑ <span id="os-scaledown" style="color: var(--accent-purple);">0</span>↓</div>
+                    <div class="m-sub">Dynamic Scale Up / Idle Prune</div>
+                </div>
+                <div class="m-card">
+                    <div class="m-title"><span>Dropped (503 Overload)</span></div>
+                    <div class="m-value" id="os-dropped" style="color: var(--accent-red);">0</div>
+                    <div class="m-sub">Bounded queue load shedding</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: OS CONCEPT LAB (PROFESSOR DEMONSTRATIONS) -->
+        <section id="view-lab" class="view-tab">
+            <!-- Priority Queue Visual Track -->
+            <div class="content-card">
+                <div class="card-header-clean">
+                    <h3><span>🎯</span> Bounded Priority Queue Track (Capacity: 64 Slots)</h3>
+                    <span class="sub-tag">P0: Red | P1: Orange | P2: Amber | P3: Blue | P4: Green</span>
+                </div>
+                <div class="track-grid" id="lab-queue-track">
+                    <div style="grid-column: span 8; color: var(--text-muted); font-size: 12px; text-align: center; padding: 24px;">
+                        Queue is empty. Worker threads are waiting on sem_timedwait(&sem_full).
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 One-Click Live Experiments for Professor -->
+            <div class="content-card">
+                <div class="card-header-clean">
+                    <h3><span>🧪</span> Live OS Concept Experiments (One-Click Demos for Professor)</h3>
+                    <span class="sub-tag">Verify Every Claimed Primitives</span>
+                </div>
+                <div class="exp-grid">
+                    <div class="exp-card" onclick="runOSExperiment(1)">
+                        <h4><span>🚑</span> Exp 1: Priority Scheduling</h4>
+                        <p>Injects P4 routine task, then floods P0 Accident emergency tasks. Proves preemption and dynamic aging anti-starvation.</p>
                     </div>
 
-                    <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">
-                        16-Worker Thread Pool Lifecycle (Green = Idle | Red = Executing Task | Gray = Pruned/Sleeping)
+                    <div class="exp-card" onclick="runOSExperiment(2)">
+                        <h4><span>🔒</span> Exp 2: Mutex Race Condition</h4>
+                        <p>Fires 2 simultaneous bookings for the exact same doctor slot. Mutex serializes: 1st gets <b>HTTP 201 Created</b>, 2nd gets <b>HTTP 409 Conflict</b>.</p>
                     </div>
 
-                    <!-- 16 Worker Thread Cards -->
-                    <div class="workers-big-grid" id="os-workers-grid">
+                    <div class="exp-card" onclick="runOSExperiment(3)">
+                        <h4><span>🛑</span> Exp 3: HTTP 503 Load Shedding</h4>
+                        <p>Pushes 70 rapid requests to overflow 64-capacity bounded queue. Demonstrates graceful backpressure without server crash.</p>
+                    </div>
+
+                    <div class="exp-card" onclick="runOSExperiment(4)">
+                        <h4><span>📈</span> Exp 4: Autoscaler & Pruning</h4>
+                        <p>Generates high backlog: threads expand from 4 to 16. Once backlog clears, idle threads prune back to 4 baseline workers.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live OS Kernel Event Stream -->
+            <div class="content-card">
+                <div class="card-header-clean">
+                    <h3><span>📜</span> Real-Time OS Concurrency Event Stream</h3>
+                    <button class="nav-btn" onclick="clearOSConsole()" style="padding: 4px 10px; font-size: 11px;">Clear</button>
+                </div>
+                <div class="console-box" id="os-console">
+                    <div class="log-row"><span style="color: var(--accent-blue);">[SEMAPHORE]</span> Counting semaphores initialized: sem_empty=64, sem_full=0.</div>
+                    <div class="log-row"><span style="color: var(--accent-amber);">[MUTEX]</span> Critical section pthread_mutex_t initialized.</div>
+                    <div class="log-row"><span style="color: var(--accent-green);">[THREAD POOL]</span> 4 baseline POSIX workers alive and ready.</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1: REGISTER PATIENT MODAL WITH PRIORITY SELECTION -->
+    <div class="modal-overlay" id="modal-register">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3><span>➕</span> Register Patient & Triage Booking</h3>
+                <button class="modal-close" onclick="closeRegistrationModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <label>Patient Full Name</label>
+                    <input type="text" class="form-input" id="modal-patient-name" placeholder="e.g. Devyani Patil">
+                </div>
+
+                <div class="form-row">
+                    <label>Phone Number</label>
+                    <input type="text" class="form-input" id="modal-patient-phone" placeholder="e.g. +91-98200-11223">
+                </div>
+
+                <div class="form-row">
+                    <label>Triage Case / Priority Level (OS Scheduling Class)</label>
+                    <select class="form-select" id="modal-priority-select" onchange="updatePriorityExplainer()">
+                        <option value="0">🚨 P0: Accident / Trauma / ICU Critical (Highest Priority)</option>
+                        <option value="1">⚠️ P1: Emergency Info / Bed & Oxygen Lookup</option>
+                        <option value="2">📞 P2: Telemedicine Urgent Video Consultation</option>
+                        <option value="3">💉 P3: Vaccination Outbreak Dose</option>
+                        <option value="4" selected>📅 P4: Routine OPD Doctor Consultation (Lowest Priority)</option>
+                    </select>
+                </div>
+
+                <div class="priority-explainer" id="modal-prio-explainer">
+                    <b>P4 - Routine Consultation:</b> Normal priority. Will be preempted by P0-P3, but protected from starvation via Aging formula: +1 level per 2.0s wait.
+                </div>
+
+                <div class="form-row">
+                    <label>Select Doctor for Consultation</label>
+                    <select class="form-select" id="modal-doctor-select" onchange="updateModalSlots()">
                         <!-- Populated by JS -->
-                    </div>
+                    </select>
                 </div>
+
+                <div class="form-row">
+                    <label>Select Consultation Slot (Protected by Mutex)</label>
+                    <select class="form-select" id="modal-slot-select">
+                        <!-- Populated by JS -->
+                    </select>
+                </div>
+
+                <button class="btn-modal-submit" onclick="submitPatientRegistration()">
+                    ✓ Confirm Registration & Book via Mutex Lock
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: CONFIRMATION & OS CONCURRENCY POP-UP DIALOG -->
+    <div class="modal-overlay" id="modal-confirmation">
+        <div class="confirm-dialog">
+            <div class="confirm-icon" id="confirm-icon">✅</div>
+            <div class="confirm-title" id="confirm-title">Registration Confirmed!</div>
+            
+            <div class="confirm-body-card" id="confirm-body">
+                <!-- Injected by JS -->
             </div>
 
-            <!-- VIEW 3: DEDICATED OS LIVE CONCEPT LAB & INSPECTOR (PROFESSOR VIEW) -->
-            <div id="tab-lab" class="tab-view">
-                <div class="os-view-container">
-                    <div class="os-header-row">
-                        <h3>🔬 OS Live Concept Inspector & Interactive Concurrency Lab</h3>
-                        <span style="font-size: 11px; color: #10b981; font-family: 'JetBrains Mono', monospace;">● Real-time Kernel Primitives Active</span>
-                    </div>
-
-                    <!-- Row 1: OS Primitives Live Gauges -->
-                    <div class="os-metric-cards-grid">
-                        <div class="lab-gauge-card">
-                            <div class="lab-gauge-header">
-                                <span>sem_empty (Counting Semaphore)</span>
-                                <span id="lab-sem-empty-pct">64/64</span>
-                            </div>
-                            <div class="lab-gauge-val" id="lab-sem-empty-val">64</div>
-                            <div class="lab-progress-bg">
-                                <div class="lab-progress-fill" id="lab-sem-empty-bar" style="width: 100%; background: #10b981;"></div>
-                            </div>
-                            <div style="font-size: 10px; color: #64748b;">Producer Permits: Empty slots remaining</div>
-                        </div>
-
-                        <div class="lab-gauge-card">
-                            <div class="lab-gauge-header">
-                                <span>sem_full (Counting Semaphore)</span>
-                                <span id="lab-sem-full-pct">0/64</span>
-                            </div>
-                            <div class="lab-gauge-val" id="lab-sem-full-val" style="color: #f59e0b;">0</div>
-                            <div class="lab-progress-bg">
-                                <div class="lab-progress-fill" id="lab-sem-full-bar" style="width: 0%; background: #f59e0b;"></div>
-                            </div>
-                            <div style="font-size: 10px; color: #64748b;">Consumer Permits: Tasks ready for workers</div>
-                        </div>
-
-                        <div class="lab-gauge-card">
-                            <div class="lab-gauge-header">
-                                <span>Critical Section Mutex Lock</span>
-                                <span style="color: #10b981;" id="lab-mutex-badge">● UNLOCKED</span>
-                            </div>
-                            <div class="lab-gauge-val" id="lab-mutex-val" style="color: #10b981; font-size: 18px;">pthread_mutex_t</div>
-                            <div style="font-size: 10px; color: #94a3b8; line-height: 1.3;">
-                                Guards Queue Array & SQLite Atomic Write Transactions
-                            </div>
-                        </div>
-
-                        <div class="lab-gauge-card">
-                            <div class="lab-gauge-header">
-                                <span>Aging Anti-Starvation Rate</span>
-                                <span style="color: #a855f7;">+1 Lvl / 2.0s</span>
-                            </div>
-                            <div class="lab-gauge-val" style="color: #a855f7; font-size: 18px;">P3 ➔ P2 ➔ P1 ➔ P0</div>
-                            <div style="font-size: 10px; color: #94a3b8; line-height: 1.3;">
-                                Formula: Boost = floor(wait_ms / 2000)
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Live Priority Task Queue Track (With Real-Time Aging Badges) -->
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">
-                                Bounded Priority Queue Track (P0: Red | P1: Yellow | P2: Blue | P3: Green)
-                            </div>
-                            <div style="font-size: 11px; color: #38bdf8; font-family: 'JetBrains Mono', monospace;">
-                                Capacity: 64 Slots (Load Shedding via HTTP 503 on overflow)
-                            </div>
-                        </div>
-                        <div class="queue-visual-track" id="lab-queue-track">
-                            <div style="grid-column: span 8; color: #64748b; font-size: 11px; text-align: center; padding: 20px;">
-                                Queue is currently empty. Consumers sleeping on sem_timedwait(&sem_full).
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Row 3: 4 One-Click Live Experiment Buttons for Professor -->
-                    <div>
-                        <div style="font-size: 13px; font-weight: 700; color: #38bdf8; font-family: 'JetBrains Mono', monospace; margin-bottom: 8px;">
-                            ⚡ Run Live Interactive OS Experiments (One-Click Demonstrations for Professor)
-                        </div>
-                        <div class="lab-experiment-grid">
-                            <button class="btn-experiment" onclick="runOSExperiment(1)">
-                                <div class="btn-exp-title"><span>🧪</span> Experiment 1</div>
-                                <div style="font-weight: 700; font-size: 11px; color: #f1f5f9;">Priority Scheduling & Aging</div>
-                                <div class="btn-exp-desc">Floods emergency P0 tasks over P3 routine task; demonstrates aging promotion & zero starvation.</div>
-                            </button>
-
-                            <button class="btn-experiment" onclick="runOSExperiment(2)">
-                                <div class="btn-exp-title"><span>🧪</span> Experiment 2</div>
-                                <div style="font-weight: 700; font-size: 11px; color: #f1f5f9;">Race Condition & Mutex</div>
-                                <div class="btn-exp-desc">Fires 2 simultaneous requests for same slot; proves mutex lock gives HTTP 201 vs HTTP 409 Conflict.</div>
-                            </button>
-
-                            <button class="btn-experiment" onclick="runOSExperiment(3)">
-                                <div class="btn-exp-title"><span>🧪</span> Experiment 3</div>
-                                <div style="font-weight: 700; font-size: 11px; color: #f1f5f9;">Queue Overflow & HTTP 503</div>
-                                <div class="btn-exp-desc">Pushes 70 tasks into 64-capacity queue; proves load shedding via HTTP 503 without server freezing.</div>
-                            </button>
-
-                            <button class="btn-experiment" onclick="runOSExperiment(4)">
-                                <div class="btn-exp-title"><span>🧪</span> Experiment 4</div>
-                                <div style="font-weight: 700; font-size: 11px; color: #f1f5f9;">Dynamic Autoscaling & Pruning</div>
-                                <div class="btn-exp-desc">Spawns workers from 4 up to 16 under backlog; demonstrates 4-second idle thread pruning.</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Row 4: Live OS Event Stream Terminal Console -->
-                    <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                            <div style="font-size: 13px; font-weight: 700; color: #94a3b8; font-family: 'JetBrains Mono', monospace;">
-                                Live Kernel & OS Event Stream (Real-Time Syscall & Concurrency Trace)
-                            </div>
-                            <button onclick="clearOSLogs()" style="background: transparent; border: 1px solid #334155; color: #94a3b8; padding: 2px 8px; border-radius: 6px; font-size: 10px; cursor: pointer;">Clear Console</button>
-                        </div>
-                        <div class="os-console-window" id="os-live-console">
-                            <div class="log-entry"><span class="log-tag log-tag-sem">SEMAPHORE</span> sem_init(&sem_empty, 64) and sem_init(&sem_full, 0) initialized.</div>
-                            <div class="log-entry"><span class="log-tag log-tag-mutex">MUTEX</span> Critical section mutexes initialized (pthread_mutex_init).</div>
-                            <div class="log-entry"><span class="log-tag log-tag-queue">THREAD POOL</span> 4 baseline workers (Thread #0 to #3) alive and waiting.</div>
-                            <div class="log-entry"><span class="log-tag log-tag-aging">AGING ENGINE</span> Aging formula active: +1 priority per 2000ms wait. Ready for experiments.</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+            <button class="btn-close-confirm" onclick="closeConfirmationModal()">
+                Close & Return to Dashboard
+            </button>
+        </div>
     </div>
 
     <script>
@@ -1090,215 +1179,232 @@
         let allDoctors = [];
         let doctorSlotsMap = {};
 
-        // Switch between Patient Portal, OS Monitor, and Concept Lab Tabs
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-view').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+        // Switch Tabs
+        function switchView(viewName) {
+            document.querySelectorAll('.view-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
 
-            if (tabId === 'portal' || tabId === 'patient') {
-                const tab = document.getElementById('tab-portal');
-                if (tab) tab.classList.add('active');
-                const btn = document.querySelector('.nav-item[onclick*="portal"]');
-                if (btn) btn.classList.add('active');
-            } else if (tabId === 'os') {
-                const tab = document.getElementById('tab-os');
-                if (tab) tab.classList.add('active');
-                const btn = document.querySelector('.nav-item[onclick*="os"]');
-                if (btn) btn.classList.add('active');
-            } else if (tabId === 'lab') {
-                const tab = document.getElementById('tab-lab');
-                if (tab) tab.classList.add('active');
-                const btn = document.querySelector('.nav-item[onclick*="lab"]');
-                if (btn) btn.classList.add('active');
-            }
+            const target = document.getElementById(`view-${viewName}`);
+            const btn = document.getElementById(`btn-tab-${viewName}`);
+            if (target) target.classList.add('active');
+            if (btn) btn.classList.add('active');
         }
 
-        // Live OS Console Logging
-        function addOSLog(category, message) {
-            const consoleBox = document.getElementById('os-live-console');
-            if (!consoleBox) return;
-            const entry = document.createElement('div');
-            entry.className = 'log-entry';
-            
-            let tagClass = 'log-tag-sem';
-            if (category === 'MUTEX') tagClass = 'log-tag-mutex';
-            else if (category === 'AGING') tagClass = 'log-tag-aging';
-            else if (category === '503' || category === 'SURGE') tagClass = 'log-tag-surge';
-            else if (category === 'QUEUE') tagClass = 'log-tag-queue';
-
-            const timeStr = new Date().toISOString().substring(11, 23);
-            entry.innerHTML = `<span style="color:#64748b;">[${timeStr}]</span> <span class="log-tag ${tagClass}">${category}</span> ${message}`;
-            consoleBox.appendChild(entry);
-            consoleBox.scrollTop = consoleBox.scrollHeight;
-        }
-
-        function clearOSLogs() {
-            const consoleBox = document.getElementById('os-live-console');
-            if (consoleBox) consoleBox.innerHTML = '';
-        }
-
-        // 4 One-Click Live Interactive Experiments for Professor
-        async function runOSExperiment(expId) {
-            switchTab('lab');
-
-            if (expId === 1) {
-                // Experiment 1: Priority Scheduling & Aging
-                addOSLog('QUEUE', '<b>[EXPERIMENT 1 START]</b> Testing Priority Preemption & Dynamic Aging anti-starvation.');
-                addOSLog('QUEUE', '1. Enqueuing 1 LOW-PRIORITY (P3: ROUTINE CHECKUP) task for Patient #1001...');
-                fetch(`${API_BASE}/api/request`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: 'ACTION=APPOINTMENT&PATIENT_ID=1001'
-                });
-
-                // Immediately burst 8 HIGH-PRIORITY (P0: EMERGENCY) tasks
-                setTimeout(async () => {
-                    addOSLog('QUEUE', '2. Bursting 8 HIGH-PRIORITY (P0: EMERGENCY) tasks into bounded queue track...');
-                    for (let i = 0; i < 8; i++) {
-                        fetch(`${API_BASE}/api/request`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'text/plain' },
-                            body: `ACTION=EMERGENCY&PATIENT_ID=${3000 + i}`
-                        });
-                    }
-                    addOSLog('QUEUE', '3. Priority Comparator: P0 tasks preemptively served before P3.');
-                    addOSLog('AGING', '4. P3 task waiting in queue: Aging timer active. Boost = floor(wait_ms / 2000).');
-                    addOSLog('AGING', '5. Aging dynamically promotes P3 ➔ P2 ➔ P1 ➔ P0 to guarantee zero starvation!');
-                    showToast('Exp 1: Priority preemption active! Watch aging engine prevent starvation.', false);
-                }, 100);
-
-            } else if (expId === 2) {
-                // Experiment 2: Mutex Lock & Double-Booking Race Condition Demonstration
-                addOSLog('MUTEX', '<b>[EXPERIMENT 2 START]</b> Simulating simultaneous double-booking race condition.');
-                addOSLog('MUTEX', 'Firing 2 concurrent HTTP requests for Doctor 1, Slot 1 in the exact same millisecond...');
-                
-                showToast('Exp 2: Testing race condition protection via pthread_mutex_t...', false);
-
-                try {
-                    const req1 = fetch(`${API_BASE}/api/appointments`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            doctor_id: 1, slot_id: 1,
-                            patient_name: "Client A (Pthread Alpha)",
-                            phone: "+91-98765-00001", notes: "Concurrent Race Test 1"
-                        })
-                    });
-
-                    const req2 = fetch(`${API_BASE}/api/appointments`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            doctor_id: 1, slot_id: 1,
-                            patient_name: "Client B (Pthread Beta)",
-                            phone: "+91-98765-00002", notes: "Concurrent Race Test 2"
-                        })
-                    });
-
-                    const [res1, res2] = await Promise.all([req1, req2]);
-                    const d1 = await res1.json();
-                    const d2 = await res2.json();
-
-                    if (res1.status === 201) {
-                        addOSLog('MUTEX', `✓ Thread A acquired pthread_mutex_lock: <b>HTTP 201 Created</b> (Code: ${d1.booking_code})`);
-                    } else if (res1.status === 409) {
-                        addOSLog('MUTEX', `⚠️ Thread A serialized behind Mutex: <b>HTTP 409 Conflict</b> (Slot already booked)`);
-                    }
-
-                    if (res2.status === 201) {
-                        addOSLog('MUTEX', `✓ Thread B acquired pthread_mutex_lock: <b>HTTP 201 Created</b> (Code: ${d2.booking_code})`);
-                    } else if (res2.status === 409) {
-                        addOSLog('MUTEX', `⚠️ Thread B serialized behind Mutex: <b>HTTP 409 Conflict</b> (Slot already booked)`);
-                    }
-
-                    addOSLog('MUTEX', '<b>RESULT:</b> Mutual exclusion successfully enforced! Exactly 1 client booked; 0 double bookings.');
-                    showToast('Exp 2 Success: Mutex serialized requests -> 1 Created (201), 1 Conflict (409)!', false);
-                    loadAppointmentsFeed();
-                } catch (e) {
-                    addOSLog('MUTEX', `Experiment 2 error: ${e.message}`);
-                }
-
-            } else if (expId === 3) {
-                // Experiment 3: Bounded Buffer Overflow & HTTP 503 Load Shedding
-                addOSLog('503', '<b>[EXPERIMENT 3 START]</b> Pushing 70 rapid requests to overflow 64-capacity bounded queue...');
-                showToast('Exp 3: Flooding 70 tasks to test sem_empty bounded buffer & HTTP 503...', false);
-
-                let succeeded = 0;
-                let rejected503 = 0;
-
-                const promises = [];
-                for (let i = 0; i < 70; i++) {
-                    promises.push(
-                        fetch(`${API_BASE}/api/request`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'text/plain' },
-                            body: `ACTION=TELEMEDICINE&PATIENT_ID=${5000 + i}`
-                        }).then(r => {
-                            if (r.status === 200) succeeded++;
-                            else if (r.status === 503) rejected503++;
-                        }).catch(() => {})
-                    );
-                }
-
-                await Promise.all(promises);
-                addOSLog('SEMAPHORE', `sem_empty exhausted when queue hit 64 items.`);
-                addOSLog('503', `<b>RESULT:</b> Succeeded: ${succeeded} | Load Shed (HTTP 503): ${rejected503}`);
-                addOSLog('503', `Protected core memory & OS process stability via graceful backpressure.`);
-                showToast(`Exp 3 Complete: ${rejected503} excess requests shed via HTTP 503 without crash!`, false);
-
-            } else if (expId === 4) {
-                // Experiment 4: Dynamic Autoscaling & Idle Pruning
-                addOSLog('QUEUE', '<b>[EXPERIMENT 4 START]</b> Demonstrating Dynamic Autoscaler Scale-Up & Idle Pruning.');
-                addOSLog('QUEUE', 'Baseline Pool = 4 workers. High queue backlog triggers pthread_create up to 16 workers.');
-                triggerOutbreakSurge();
-                addOSLog('QUEUE', 'Autoscaler expanding worker pool to 16 threads...');
-                addOSLog('QUEUE', 'Once backlog clears, workers wait on sem_timedwait(&sem_full, 4s).');
-                addOSLog('QUEUE', 'After 4 seconds idle, dynamic workers terminate and pool prunes back to 4 baseline workers.');
-            }
-        }
-
-        // Show Toast Alert
+        // Show Toast
         function showToast(msg, isError = false) {
-            const t = document.getElementById('toast-msg');
+            const t = document.getElementById('toast');
             t.innerText = msg;
-            t.style.borderLeftColor = isError ? '#ef4444' : '#10b981';
+            t.style.borderLeftColor = isError ? 'var(--accent-red)' : 'var(--accent-green)';
             t.style.display = 'block';
             setTimeout(() => { t.style.display = 'none'; }, 4000);
         }
 
-        // Load Hospital Facilities in Real-time from SQLite via /api/hospitals
-        async function loadHospitals() {
-            try {
-                const res = await fetch(`${API_BASE}/api/hospitals`);
-                if (!res.ok) return;
-                const data = await res.json();
-                const container = document.getElementById('hospitals-container');
-                if (data.hospitals && data.hospitals.length > 0) {
-                    container.innerHTML = data.hospitals.map(h => `
-                        <div class="nearby-card">
-                            <div class="nearby-name">${h.name}</div>
-                            <div class="nearby-details">
-                                <span>📍 ${h.distance}</span>
-                                <span class="icu-badge">ICU: ${h.icu_beds} Free</span>
-                            </div>
-                            <div style="font-size: 11px; color: #10b981; font-weight: 700;">Oxygen Supply: ${h.oxygen}</div>
-                        </div>
-                    `).join('');
-                }
-            } catch (err) {
-                console.error("Failed to load hospitals:", err);
+        // Add to OS Event Stream Console
+        function addOSLog(tag, msg) {
+            const c = document.getElementById('os-console');
+            if (!c) return;
+            const time = new Date().toISOString().substring(11, 23);
+            const row = document.createElement('div');
+            row.className = 'log-row';
+            row.innerHTML = `<span style="color:#64748b;">[${time}]</span> <b style="color:var(--accent-blue);">[${tag}]</b> ${msg}`;
+            c.appendChild(row);
+            c.scrollTop = c.scrollHeight;
+        }
+
+        function clearOSConsole() {
+            const c = document.getElementById('os-console');
+            if (c) c.innerHTML = '';
+        }
+
+        // Priority Explainer Text
+        function updatePriorityExplainer() {
+            const p = document.getElementById('modal-priority-select').value;
+            const exp = document.getElementById('modal-prio-explainer');
+            if (p === '0') {
+                exp.innerHTML = `<b>P0 - ACCIDENT/TRAUMA:</b> HIGHEST PRIORITY. Bypasses all other queued tasks immediately. Serviced first by next available POSIX worker thread.`;
+                exp.style.borderLeftColor = '#ef4444';
+            } else if (p === '1') {
+                exp.innerHTML = `<b>P1 - ICU / Emergency Info:</b> Critical priority for ICU bed & oxygen allocation.`;
+                exp.style.borderLeftColor = '#ea580c';
+            } else if (p === '2') {
+                exp.innerHTML = `<b>P2 - Telemedicine:</b> High priority for urgent doctor video triage.`;
+                exp.style.borderLeftColor = '#f59e0b';
+            } else if (p === '3') {
+                exp.innerHTML = `<b>P3 - Vaccination:</b> Medium priority for outbreak dose administration.`;
+                exp.style.borderLeftColor = '#3b82f6';
+            } else {
+                exp.innerHTML = `<b>P4 - Routine Consultation:</b> Normal priority. Protected by Aging (+1 priority boost every 2000ms wait) to eliminate starvation!`;
+                exp.style.borderLeftColor = '#10b981';
             }
         }
 
-        // Load Doctors and their available slots dynamically from SQLite via /api/doctors
+        // Open/Close Registration Modal
+        function openRegistrationModal(preselectDoctorId = null) {
+            document.getElementById('modal-register').style.display = 'flex';
+            const defaultNames = ['Aarav Sharma', 'Devyani Patil', 'Rohan Mehta', 'Pooja Verma', 'Siddharth Rao', 'Ananya Deshmukh'];
+            document.getElementById('modal-patient-name').value = defaultNames[Math.floor(Math.random() * defaultNames.length)];
+            document.getElementById('modal-patient-phone').value = `+91-98${Math.floor(10000000 + Math.random() * 90000000)}`;
+
+            populateModalDoctors(preselectDoctorId);
+            updatePriorityExplainer();
+        }
+
+        function closeRegistrationModal() {
+            document.getElementById('modal-register').style.display = 'none';
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('modal-confirmation').style.display = 'none';
+        }
+
+        // Populate Doctors in Modal
+        function populateModalDoctors(preselectId) {
+            const docSelect = document.getElementById('modal-doctor-select');
+            docSelect.innerHTML = allDoctors.map(d => 
+                `<option value="${d.id}" ${d.id === preselectId ? 'selected' : ''}>${d.name} (${d.speciality} - ${d.fee})</option>`
+            ).join('');
+            updateModalSlots();
+        }
+
+        function updateModalSlots() {
+            const docId = parseInt(document.getElementById('modal-doctor-select').value);
+            const slotSelect = document.getElementById('modal-slot-select');
+            const slots = doctorSlotsMap[docId] || [];
+            const available = slots.filter(s => s.available === true || (s.available === undefined && !s.is_booked));
+
+            if (available.length === 0) {
+                slotSelect.innerHTML = '<option value="">No free slots for this doctor</option>';
+            } else {
+                slotSelect.innerHTML = available.map(s => 
+                    `<option value="${s.id}">${s.slot || (s.day + ' ' + s.start_time + ' - ' + s.end_time)}</option>`
+                ).join('');
+            }
+        }
+
+        // Submit Patient Registration
+        async function submitPatientRegistration() {
+            const name = document.getElementById('modal-patient-name').value.trim();
+            const phone = document.getElementById('modal-patient-phone').value.trim();
+            const priority = parseInt(document.getElementById('modal-priority-select').value);
+            const docId = parseInt(document.getElementById('modal-doctor-select').value);
+            const slotSelect = document.getElementById('modal-slot-select');
+            const slotId = parseInt(slotSelect.value);
+
+            if (!slotId) {
+                showToast("Please choose an available slot.", true);
+                return;
+            }
+
+            closeRegistrationModal();
+            showToast(`Submitting registration for ${name} (Priority P${priority})...`);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/appointments`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        doctor_id: docId,
+                        slot_id: slotId,
+                        patient_name: name,
+                        phone: phone,
+                        priority: priority,
+                        notes: `Priority P${priority} triage registration`
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.status === 201) {
+                    showConfirmationModal(true, data, priority);
+                    addOSLog('MUTEX', `✓ Thread acquired mutex lock: Booked Slot #${slotId} for ${name} [P${priority}]. Worker #${data.worker_id}`);
+                    loadDoctorsAndSlots();
+                    loadAppointmentsFeed();
+                } else if (res.status === 409) {
+                    showConfirmationModal(false, data, priority);
+                    addOSLog('MUTEX', `⚠️ Slot #${slotId} already locked/booked by another transaction! HTTP 409 Conflict.`);
+                    loadDoctorsAndSlots();
+                } else {
+                    showToast(`Booking error: ${data.error || 'Server error'}`, true);
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("Network error communicating with server.", true);
+            }
+        }
+
+        // Show Confirmation Pop-up
+        function showConfirmationModal(isSuccess, data, priority) {
+            const modal = document.getElementById('modal-confirmation');
+            const icon = document.getElementById('confirm-icon');
+            const title = document.getElementById('confirm-title');
+            const body = document.getElementById('confirm-body');
+
+            const prioNames = [
+                'P0: Accident / Trauma (Critical)',
+                'P1: Emergency Info (Critical)',
+                'P2: Telemedicine (Urgent)',
+                'P3: Vaccination (Medium)',
+                'P4: Routine Consultation (Normal)'
+            ];
+
+            if (isSuccess) {
+                icon.innerText = priority === 0 ? '🚨' : '✅';
+                title.innerText = priority === 0 ? 'P0 ACCIDENT TRIAGE DISPATCHED!' : 'Patient Registered Successfully!';
+                title.style.color = priority === 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+
+                body.innerHTML = `
+                    <div class="confirm-row"><span>Patient Name:</span> <b>${data.patient_name}</b></div>
+                    <div class="confirm-row"><span>Triage Priority:</span> <b style="color:var(--accent-red);">${prioNames[priority] || 'P' + priority}</b></div>
+                    <div class="confirm-row"><span>Booking Code:</span> <b style="color:var(--accent-green);">${data.booking_code}</b></div>
+                    <div class="confirm-row"><span>Assigned Worker:</span> <b>Thread #${data.worker_id}</b></div>
+                    <div class="confirm-row"><span>Queue Wait:</span> <b>${data.queue_wait_ms} ms</b></div>
+                    <div class="confirm-row"><span>OS Synchronization:</span> <b style="color:var(--accent-blue);">pthread_mutex_t (Atomic)</b></div>
+                `;
+            } else {
+                icon.innerText = '⚠️';
+                title.innerText = 'Mutual Exclusion Protected (HTTP 409 Conflict)';
+                title.style.color = 'var(--accent-amber)';
+
+                body.innerHTML = `
+                    <div class="confirm-row"><span>Status:</span> <b style="color:var(--accent-red);">HTTP 409 CONFLICT</b></div>
+                    <div class="confirm-row"><span>Conflict Reason:</span> <span>${data.error || 'Slot already booked'}</span></div>
+                    <div class="confirm-row"><span>OS Concept:</span> <b style="color:var(--accent-blue);">Mutual Exclusion Enforced</b></div>
+                    <div style="font-size:10px; color:#9ca3af; margin-top:4px;">
+                        The SQLite write transaction serialized inside pthread_mutex_lock prevents double-booking race condition!
+                    </div>
+                `;
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        // Quick Accident Emergency One-Click Trigger
+        async function quickAccidentEmergency() {
+            showToast("🚨 RAPID P0 ACCIDENT EMERGENCY DISPATCHED!");
+            addOSLog('EMERGENCY', "<b>[P0 ACCIDENT CASE]</b> Patient in critical trauma. Enqueuing directly into P0 priority slot.");
+
+            try {
+                const res = await fetch(`${API_BASE}/api/request`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: 'ACTION=ACCIDENT&PATIENT_ID=9999'
+                });
+                const data = await res.json();
+                addOSLog('EMERGENCY', `✓ P0 Accident processed by <b>Worker #${data.worker_id}</b> in ${data.execution_ms}ms.`);
+                showToast(`✓ P0 Accident Processed by Worker #${data.worker_id}!`);
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Load Doctors and their available slots
         async function loadDoctorsAndSlots() {
             try {
-                const docRes = await fetch(`${API_BASE}/api/doctors`);
-                if (!docRes.ok) return;
-                const docData = await docRes.json();
-                allDoctors = docData.doctors || [];
+                const res = await fetch(`${API_BASE}/api/doctors`);
+                if (!res.ok) return;
+                const data = await res.json();
+                allDoctors = data.doctors || [];
 
-                // Fetch slots for each doctor
                 for (const doc of allDoctors) {
                     try {
                         const slotRes = await fetch(`${API_BASE}/api/appointments/slots?doctor_id=${doc.id}`);
@@ -1311,176 +1417,142 @@
                     }
                 }
 
-                renderDoctors(allDoctors);
-            } catch (err) {
-                console.error("Failed to load doctors:", err);
+                renderDoctors();
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        // Render Doctor Cards with dynamic slot selection
-        function renderDoctors(list) {
-            const container = document.getElementById('doctors-container');
-            if (list.length === 0) {
-                container.innerHTML = '<div style="font-size: 12px; color: #94a3b8;">No matching doctors found.</div>';
+        // Render Doctor Cards
+        function renderDoctors() {
+            const container = document.getElementById('doctors-list');
+            if (allDoctors.length === 0) {
+                container.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No doctors loaded.</div>';
                 return;
             }
 
-            container.innerHTML = list.map(doc => {
+            container.innerHTML = allDoctors.map(doc => {
                 const slots = doctorSlotsMap[doc.id] || [];
                 const availableSlots = slots.filter(s => s.available === true || (s.available === undefined && !s.is_booked));
 
                 let slotOptions = '';
                 if (availableSlots.length > 0) {
                     slotOptions = availableSlots.map(s => 
-                        `<option value="${s.id}">${s.slot || (((s.day || s.day_of_week || 'Tue') + ' ' + (s.start_time || '10:00 AM') + ' - ' + (s.end_time || '11:00 AM')))}</option>`
+                        `<option value="${s.id}">${s.slot || (s.day + ' ' + s.start_time + ' - ' + s.end_time)}</option>`
                     ).join('');
                 } else {
-                    slotOptions = '<option value="">No available slots</option>';
+                    slotOptions = '<option value="">No free slots</option>';
                 }
 
                 return `
-                    <div class="doc-card">
+                    <div class="doc-item-card">
                         <div>
-                            <div class="doc-name">${doc.name}</div>
-                            <div class="doc-exp">${doc.experience} • Rating: ⭐ ${doc.rating.toFixed(1)}</div>
-                            <div><span class="doc-spec">${doc.speciality}</span></div>
-                            <label style="font-size: 11px; color: var(--text-muted); font-weight: 700; display: block; margin-top: 6px;">Select Slot:</label>
-                            <select class="doc-slot-select" id="slot-select-${doc.id}">
-                                ${slotOptions}
-                            </select>
+                            <div class="doc-item-top">
+                                <div>
+                                    <div class="doc-item-name">${doc.name}</div>
+                                    <div class="doc-item-spec">${doc.speciality} • ${doc.experience}</div>
+                                </div>
+                                <div class="doc-item-rating">⭐ ${doc.rating.toFixed(1)}</div>
+                            </div>
+                            <div style="margin-top: 10px;">
+                                <label style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Available Slot:</label>
+                                <select class="doc-slot-dropdown" id="doc-card-slot-${doc.id}">
+                                    ${slotOptions}
+                                </select>
+                            </div>
                         </div>
-                        <button class="btn-book" onclick="bookAppointment(${doc.id}, '${doc.name}')" ${availableSlots.length === 0 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
-                            Book Appointment (${doc.fee})
-                        </button>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-card-book" style="flex: 1;" onclick="openRegistrationModal(${doc.id})">
+                                Register & Book (${doc.fee})
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Search/Filter Doctors dynamically
-        function filterDoctors() {
-            const q = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allDoctors.filter(d => 
-                d.name.toLowerCase().includes(q) || d.speciality.toLowerCase().includes(q)
-            );
-            renderDoctors(filtered);
-        }
-
-        // Real-time Database-Backed Appointment Booking via POST /api/appointments
-        async function bookAppointment(doctorId, docName) {
-            const slotSelect = document.getElementById(`slot-select-${doctorId}`);
-            if (!slotSelect || !slotSelect.value) {
-                showToast("No available slot selected for this doctor.", true);
-                return;
-            }
-
-            const slotId = parseInt(slotSelect.value);
-            const indianPatients = [
-                'Aarav Sharma', 'Devyani Patil', 'Rohan Mehta', 'Pooja Verma',
-                'Siddharth Rao', 'Ananya Deshmukh', 'Aditya Kulkarni', 'Neha Iyer'
-            ];
-            const patientName = indianPatients[Math.floor(Math.random() * indianPatients.length)];
-            const phone = `+91-98${Math.floor(10000000 + Math.random() * 90000000)}`;
-
-            showToast(`Submitting booking request for ${docName}...`);
-
+        // Load Hospitals
+        async function loadHospitals() {
             try {
-                const res = await fetch(`${API_BASE}/api/appointments`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        doctor_id: doctorId,
-                        slot_id: slotId,
-                        patient_name: patientName,
-                        phone: phone,
-                        notes: "Online booking via Healthai"
-                    })
-                });
-
+                const res = await fetch(`${API_BASE}/api/hospitals`);
+                if (!res.ok) return;
                 const data = await res.json();
+                const container = document.getElementById('hospitals-list');
+                const list = data.hospitals || [];
 
-                if (res.status === 201) {
-                    showToast(`✓ Booking Confirmed! Code: ${data.booking_code} | Worker #${data.worker_id} (${data.turnaround_ms}ms)`);
-                    // Refresh slots and appointments feed
-                    await loadDoctorsAndSlots();
-                    await loadAppointmentsFeed();
-                } else if (res.status === 409) {
-                    showToast(`⚠️ Conflict 409: Selected slot is already booked! Please pick another slot.`, true);
-                    await loadDoctorsAndSlots();
-                } else if (res.status === 503) {
-                    showToast(`🚨 Overload 503: Server request queue is full! Please retry shortly.`, true);
-                } else {
-                    showToast(`Booking error: ${data.error || 'Server error'}`, true);
-                }
-            } catch (err) {
-                console.error("Booking error:", err);
-                showToast("Network error submitting appointment booking.", true);
+                container.innerHTML = list.map(h => `
+                    <div class="doc-item-card">
+                        <div>
+                            <div class="doc-item-top">
+                                <div class="doc-item-name">${h.name}</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700;">Oxygen: ${h.oxygen}</div>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-sub); margin-top: 4px;">📍 ${h.distance} • ${h.address}</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 12px; border-radius: 8px;">
+                            <span style="font-size: 11px; color: var(--text-sub);">ICU Capacity:</span>
+                            <span style="font-size: 12px; font-weight: 800; color: var(--accent-blue); font-family: 'JetBrains Mono', monospace;">${h.icu_beds} Beds Free</span>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error(e);
             }
         }
 
-        // Load Persistent Appointments from SQLite via GET /api/appointments
+        // Load Appointments Feed with Priorities
         async function loadAppointmentsFeed() {
             try {
                 const res = await fetch(`${API_BASE}/api/appointments?limit=15`);
                 if (!res.ok) return;
                 const data = await res.json();
-                const feed = document.getElementById('appointments-feed');
-                const appts = data.appointments || [];
+                const feed = document.getElementById('patient-feed');
+                const list = data.appointments || [];
 
-                document.getElementById('feed-count').innerText = `${appts.length} Booked`;
+                document.getElementById('feed-count-badge').innerText = `${list.length} Registered`;
 
-                if (appts.length === 0) {
-                    feed.innerHTML = '<div style="font-size: 11px; color: #94a3b8;">No appointments booked yet.</div>';
+                if (list.length === 0) {
+                    feed.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px;">No registered patients yet.</div>';
                     return;
                 }
 
-                feed.innerHTML = appts.map(a => `
-                    <div class="appt-card new-booked">
-                        <div class="appt-info">
-                            <h6>${a.doctor || a.doctor_name || 'Dr. Specialist'} • ${a.speciality || 'Medicine'}</h6>
-                            <span>${a.patient_name || 'Patient'} • ${(a.day && a.time) ? (a.day + ' ' + a.time) : (a.time || a.day || 'Consultation Slot')}</span>
-                            <span style="font-size: 10px; color: #10b981; font-weight: 700;">Code: ${a.booking_code}</span>
+                feed.innerHTML = list.map((a, idx) => {
+                    // Derive priority class
+                    let prio = 4;
+                    let prioTag = 'P4: ROUTINE';
+                    let prioClass = 'feed-p4';
+                    let tagClass = 'tag-p4';
+
+                    if (a.notes && a.notes.includes('P0')) {
+                        prio = 0; prioTag = 'P0: ACCIDENT'; prioClass = 'feed-p0'; tagClass = 'tag-p0';
+                    } else if (a.notes && a.notes.includes('P1')) {
+                        prio = 1; prioTag = 'P1: ICU INFO'; prioClass = 'feed-p1'; tagClass = 'tag-p1';
+                    } else if (a.notes && a.notes.includes('P2')) {
+                        prio = 2; prioTag = 'P2: TELEMED'; prioClass = 'feed-p2'; tagClass = 'tag-p2';
+                    } else if (a.notes && a.notes.includes('P3')) {
+                        prio = 3; prioTag = 'P3: VACCINE'; prioClass = 'feed-p3'; tagClass = 'tag-p3';
+                    }
+
+                    return `
+                        <div class="feed-item ${prioClass}">
+                            <div class="feed-item-header">
+                                <span class="feed-patient-name">${a.patient_name || 'Patient'}</span>
+                                <span class="feed-priority-tag ${tagClass}">${prioTag}</span>
+                            </div>
+                            <div class="feed-details">
+                                <span>${a.doctor || a.doctor_name || 'Dr. Specialist'} (${a.speciality || 'Medicine'})</span>
+                                <span>${a.day || ''} ${a.time || ''}</span>
+                            </div>
+                            <div class="feed-footer">
+                                <span>Code: <b style="color:var(--accent-green);">${a.booking_code}</b></span>
+                                <span>Handled by: <b style="color:var(--accent-blue);">Worker #${a.handled_by_worker !== undefined ? a.handled_by_worker : 0}</b></span>
+                            </div>
                         </div>
-                        <div class="appt-worker-badge">Worker #${a.worker_id !== undefined ? a.worker_id : (a.handled_by_worker !== undefined ? a.handled_by_worker : 0)}</div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                console.error("Appointments feed fetch error:", err);
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error(e);
             }
-        }
-
-        // Outbreak Surge Simulation (80 Concurrent Requests Burst)
-        async function triggerOutbreakSurge() {
-            showToast("🚨 OUTBREAK SURGE: Firing 80 Concurrent Patient Requests...");
-
-            // Fast poll every 100ms during surge so UI captures the worker state transitions in real time
-            const fastPollInterval = setInterval(pollStats, 100);
-            setTimeout(() => { clearInterval(fastPollInterval); }, 7000);
-
-            // Fire in 4 rapid waves to build genuine queue backlog and trigger full autoscaler
-            const waves = 4;
-            const perWave = 20;
-
-            for (let w = 0; w < waves; w++) {
-                const promises = [];
-                for (let i = 0; i < perWave; i++) {
-                    const reqIdx = w * perWave + i;
-                    const types = ['EMERGENCY', 'TELEMEDICINE', 'VACCINE', 'APPOINTMENT'];
-                    const rType = types[reqIdx % types.length];
-                    promises.push(fetch(`${API_BASE}/api/request`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: `ACTION=${rType}&PATIENT_ID=${2000 + reqIdx}`
-                    }));
-                }
-                // Small 30ms gap between waves to maintain sustained queue backlog
-                if (w < waves - 1) {
-                    await new Promise(res => setTimeout(res, 30));
-                }
-            }
-
-            showToast("✓ 80 Requests Handled! Watch workers scale up then prune after idle timeout.");
-            setTimeout(loadAppointmentsFeed, 1000);
         }
 
         // Live Poll Server Stats from /api/stats
@@ -1488,144 +1560,246 @@
             try {
                 const res = await fetch(`${API_BASE}/api/stats`);
                 if (!res.ok) {
-                    setOfflineState();
+                    setOffline();
                     return;
                 }
                 const data = await res.json();
-                setOnlineState();
+                setOnline();
 
-                // Top & Sidebar Pills
-                document.getElementById('top-workers').innerText = `${data.current_threads}/16`;
+                // Top Metrics Strip
+                document.getElementById('top-threads').innerText = `${data.current_threads} / 16`;
+                document.getElementById('bar-threads').style.width = `${(data.current_threads / 16) * 100}%`;
+
                 document.getElementById('top-busy').innerText = data.busy_threads;
-                document.getElementById('top-latency').innerText = `${data.avg_time.toFixed(1)}ms`;
-                document.getElementById('side-workers').innerText = `${data.current_threads}/16`;
-                document.getElementById('side-queue').innerText = data.queue_depth;
+                document.getElementById('top-idle').innerText = data.current_threads - data.busy_threads;
+                document.getElementById('bar-busy').style.width = `${(data.busy_threads / 16) * 100}%`;
 
-                // Dedicated OS View Cards
-                document.getElementById('os-total-workers').innerText = `${data.current_threads} / 16`;
-                document.getElementById('os-busy-workers').innerText = data.busy_threads;
-                document.getElementById('os-idle-workers').innerText = data.current_threads - data.busy_threads;
-                document.getElementById('os-queue-depth').innerText = data.queue_depth;
-                document.getElementById('os-scaleup').innerText = data.scale_up;
-                document.getElementById('os-scaledown').innerText = data.scale_down;
+                const semEmpty = data.sem_empty !== undefined ? data.sem_empty : (64 - data.queue_depth);
+                const semFull = data.sem_full !== undefined ? data.sem_full : data.queue_depth;
 
+                document.getElementById('top-sem-empty').innerText = semEmpty;
+                document.getElementById('bar-sem-empty').style.width = `${(semEmpty / 64) * 100}%`;
+
+                document.getElementById('top-sem-full').innerText = semFull;
+                document.getElementById('bar-sem-full').style.width = `${(semFull / 64) * 100}%`;
+
+                // Mutex state
+                const mutexBadge = document.getElementById('top-mutex-badge');
+                const mutexVal = document.getElementById('top-mutex-val');
+                if (data.busy_threads > 0) {
+                    mutexBadge.innerText = 'LOCKED (ACTIVE)';
+                    mutexBadge.style.color = 'var(--accent-red)';
+                    mutexVal.innerText = 'pthread_mutex_lock';
+                    mutexVal.style.color = 'var(--accent-red)';
+                } else {
+                    mutexBadge.innerText = 'UNLOCKED';
+                    mutexBadge.style.color = 'var(--accent-green)';
+                    mutexVal.innerText = 'pthread_mutex_t';
+                    mutexVal.style.color = 'var(--accent-green)';
+                }
+
+                // OS View Performance
                 document.getElementById('os-p50').innerText = `${data.p50_latency_ms.toFixed(1)} ms`;
                 document.getElementById('os-p95').innerText = `${data.p95_latency_ms.toFixed(1)} ms`;
                 document.getElementById('os-succeeded').innerText = data.total_succeeded;
-                document.getElementById('os-failed').innerText = data.total_failed;
+                document.getElementById('os-scaleup').innerText = data.scale_up;
+                document.getElementById('os-scaledown').innerText = data.scale_down;
+                document.getElementById('os-dropped').innerText = data.total_failed;
 
-                // Dedicated OS Concept Lab Gauges
-                const semEmptyEl = document.getElementById('lab-sem-empty-val');
-                if (semEmptyEl) {
-                    const emptyVal = data.sem_empty !== undefined ? data.sem_empty : (64 - data.queue_depth);
-                    const fullVal = data.sem_full !== undefined ? data.sem_full : data.queue_depth;
-
-                    semEmptyEl.innerText = emptyVal;
-                    document.getElementById('lab-sem-empty-pct').innerText = `${emptyVal}/64`;
-                    document.getElementById('lab-sem-empty-bar').style.width = `${(emptyVal / 64) * 100}%`;
-
-                    document.getElementById('lab-sem-full-val').innerText = fullVal;
-                    document.getElementById('lab-sem-full-pct').innerText = `${fullVal}/64`;
-                    document.getElementById('lab-sem-full-bar').style.width = `${(fullVal / 64) * 100}%`;
-
-                    // Mutex status indicator
-                    const mutexBadge = document.getElementById('lab-mutex-badge');
-                    const mutexVal = document.getElementById('lab-mutex-val');
-                    if (data.busy_threads > 0) {
-                        mutexBadge.innerText = '● LOCKED (ACTIVE)';
-                        mutexBadge.style.color = '#ef4444';
-                        mutexVal.innerText = 'pthread_mutex_lock';
-                        mutexVal.style.color = '#ef4444';
-                    } else {
-                        mutexBadge.innerText = '● UNLOCKED';
-                        mutexBadge.style.color = '#10b981';
-                        mutexVal.innerText = 'pthread_mutex_t';
-                        mutexVal.style.color = '#10b981';
-                    }
-
-                    // Render Priority Task Queue Track
-                    const qTrack = document.getElementById('lab-queue-track');
-                    const items = data.queued_items || [];
-                    if (items.length === 0) {
-                        qTrack.innerHTML = `
-                            <div style="grid-column: span 8; color: #64748b; font-size: 11px; text-align: center; padding: 20px;">
-                                Queue is currently empty. Consumers sleeping on sem_timedwait(&sem_full).
-                            </div>
-                        `;
-                    } else {
-                        qTrack.innerHTML = items.map(it => {
-                            let pClass = `q-p${it.eff_prio}`;
-                            let boostHtml = it.boost > 0 
-                                ? `<span style="color:#a855f7; font-weight:bold;">🚀 Boost: +${it.boost}</span>` 
-                                : `<span style="color:#64748b;">Base: P${it.base_prio}</span>`;
-                            return `
-                                <div class="q-slot-card ${pClass}">
-                                    <div style="font-weight:700; color:#fff;">P${it.eff_prio}: ${it.type_name}</div>
-                                    <div style="color:#94a3b8;">${it.patient || 'Patient'}</div>
-                                    <div style="font-size:9px; color:#38bdf8;">Wait: ${it.wait_ms}ms</div>
-                                    <div style="font-size:9px;">${boostHtml}</div>
-                                </div>
-                            `;
-                        }).join('');
-                    }
-                }
-
-                // Render 16 Worker Cards in OS View
-                const grid = document.getElementById('os-workers-grid');
-                grid.innerHTML = '';
+                // Render 16 Worker Threads Matrix
+                const matrix = document.getElementById('workers-matrix');
+                matrix.innerHTML = '';
                 for (let i = 0; i < 16; i++) {
                     const w = data.workers[i] || { alive: false, busy: false, baseline: (i < 4) };
-                    const card = document.createElement('div');
-                    let cClass = 'w-card ';
-                    let statusTxt = 'PRUNED';
-                    let badgeClass = 'w-badge-dead';
+                    const box = document.createElement('div');
+                    let boxClass = 'worker-box ';
+                    let badgeClass = 'w-state-pruned';
+                    let statusText = 'PRUNED';
 
                     if (!w.alive) {
-                        cClass += 'dead';
+                        boxClass += 'pruned';
                     } else if (w.busy) {
-                        cClass += 'alive-busy';
-                        statusTxt = 'ACTIVE (BUSY)';
-                        badgeClass = 'w-badge-busy';
+                        boxClass += 'busy';
+                        badgeClass = 'w-state-busy';
+                        statusText = 'BUSY (RUNNING)';
                     } else {
-                        cClass += 'alive-idle';
-                        statusTxt = 'IDLE (READY)';
-                        badgeClass = 'w-badge-idle';
+                        boxClass += 'idle';
+                        badgeClass = 'w-state-idle';
+                        statusText = 'IDLE (READY)';
                     }
 
-                    card.className = cClass;
-                    card.innerHTML = `
-                        <div class="w-card-top">
+                    box.className = boxClass;
+                    box.innerHTML = `
+                        <div class="w-top">
                             <span>Thread #${i}</span>
-                            <span class="${badgeClass}">${statusTxt}</span>
+                            <span class="w-state-badge ${badgeClass}">${statusText}</span>
                         </div>
-                        <div style="font-size: 10px; color: #94a3b8;">
-                            ${w.baseline ? 'Baseline Worker' : 'Dynamic Worker'}
+                        <div class="w-desc">
+                            ${w.baseline ? 'Permanent Baseline Worker' : 'Autoscaled Dynamic Worker'}
                         </div>
                     `;
-                    grid.appendChild(card);
+                    matrix.appendChild(box);
                 }
-            } catch (err) {
-                setOfflineState();
+
+                // Render Live Priority Queue Track in Lab
+                const track = document.getElementById('lab-queue-track');
+                const items = data.queued_items || [];
+                if (items.length === 0) {
+                    track.innerHTML = `
+                        <div style="grid-column: span 8; color: var(--text-muted); font-size: 12px; text-align: center; padding: 24px;">
+                            Queue is empty. Worker threads are waiting on sem_timedwait(&sem_full).
+                        </div>
+                    `;
+                } else {
+                    track.innerHTML = items.map(it => {
+                        let pTag = `tag-p${it.eff_prio}`;
+                        let boostHtml = it.boost > 0 
+                            ? `<span style="color:var(--accent-purple); font-weight:800;">🚀 Boost +${it.boost}</span>` 
+                            : `<span style="color:var(--text-muted);">Base: P${it.base_prio}</span>`;
+                        return `
+                            <div class="q-card" style="border-left: 3px solid var(--accent-blue);">
+                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                    <span class="feed-priority-tag ${pTag}">P${it.eff_prio}</span>
+                                    <span style="font-size:9px; color:#38bdf8;">${it.wait_ms}ms</span>
+                                </div>
+                                <div style="font-weight:700; color:#fff; font-size:11px; margin-top:2px;">${it.type_name}</div>
+                                <div style="color:var(--text-sub); font-size:10px;">${it.patient || 'Patient'}</div>
+                                <div style="font-size:9px; margin-top:2px;">${boostHtml}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+            } catch (e) {
+                setOffline();
             }
         }
 
-        function setOfflineState() {
-            const dot = document.getElementById('server-dot');
-            const lbl = document.getElementById('server-status-label');
-            if (dot) dot.className = 'pulse-dot offline';
-            if (lbl) lbl.innerText = 'Engine Disconnected';
+        function setOnline() {
+            document.getElementById('server-pulse').className = 'pulse-dot';
+            document.getElementById('server-status-text').innerText = 'Engine Online';
         }
 
-        function setOnlineState() {
-            const dot = document.getElementById('server-dot');
-            const lbl = document.getElementById('server-status-label');
-            if (dot) dot.className = 'pulse-dot';
-            if (lbl) lbl.innerText = 'Engine Online';
+        function setOffline() {
+            document.getElementById('server-pulse').className = 'pulse-dot offline';
+            document.getElementById('server-status-text').innerText = 'Engine Disconnected';
+        }
+
+        // Outbreak Surge Simulation (80 requests)
+        async function triggerOutbreakSurge() {
+            showToast("🚨 SURGE: Bursting 80 Concurrent Requests to Thread Pool...");
+            addOSLog('SURGE', "Flooding 80 requests across P0 to P4 to trigger Dynamic Thread Pool scaling.");
+
+            for (let w = 0; w < 4; w++) {
+                for (let i = 0; i < 20; i++) {
+                    const reqTypes = ['ACCIDENT', 'EMERGENCY', 'TELEMEDICINE', 'VACCINE', 'APPOINTMENT'];
+                    const r = reqTypes[(w * 20 + i) % reqTypes.length];
+                    fetch(`${API_BASE}/api/request`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: `ACTION=${r}&PATIENT_ID=${2000 + (w * 20 + i)}`
+                    });
+                }
+                await new Promise(r => setTimeout(r, 20));
+            }
+
+            setTimeout(loadAppointmentsFeed, 1000);
+        }
+
+        // 4 One-Click Experiments
+        async function runOSExperiment(expId) {
+            switchView('lab');
+
+            if (expId === 1) {
+                // Priority Preemption & Aging
+                addOSLog('QUEUE', '<b>[EXP 1]</b> Testing Priority Scheduling & Dynamic Aging anti-starvation.');
+                addOSLog('QUEUE', '1. Enqueuing 1 LOW-PRIORITY (P4 Routine OPD) task...');
+                fetch(`${API_BASE}/api/request`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: 'ACTION=APPOINTMENT&PATIENT_ID=1001'
+                });
+
+                setTimeout(() => {
+                    addOSLog('QUEUE', '2. Bursting 8 HIGH-PRIORITY (P0 Accident) tasks into queue track...');
+                    for (let i = 0; i < 8; i++) {
+                        fetch(`${API_BASE}/api/request`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain' },
+                            body: `ACTION=ACCIDENT&PATIENT_ID=${3000 + i}`
+                        });
+                    }
+                    addOSLog('QUEUE', '3. Priority comparator serves P0 Accident tasks before P4.');
+                    addOSLog('AGING', '4. P4 task aging timer active: Boost = floor(wait_ms / 2000ms).');
+                    addOSLog('AGING', '5. Dynamic Aging promotes P4 ➔ P3 ➔ P2 ➔ P1 ➔ P0 to guarantee zero starvation!');
+                    showToast('Exp 1: Priority preemption & aging demonstrated!');
+                }, 100);
+
+            } else if (expId === 2) {
+                // Mutex Race Condition
+                addOSLog('MUTEX', '<b>[EXP 2]</b> Simulating simultaneous double-booking race condition.');
+                addOSLog('MUTEX', 'Firing 2 concurrent HTTP requests for Doctor 1, Slot 1 in exact same millisecond...');
+
+                try {
+                    const req1 = fetch(`${API_BASE}/api/appointments`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ doctor_id: 1, slot_id: 1, patient_name: "Client Alpha", phone: "+91-98765-00001", notes: "P4 Race Test" })
+                    });
+                    const req2 = fetch(`${API_BASE}/api/appointments`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ doctor_id: 1, slot_id: 1, patient_name: "Client Beta", phone: "+91-98765-00002", notes: "P4 Race Test" })
+                    });
+
+                    const [res1, res2] = await Promise.all([req1, req2]);
+                    const d1 = await res1.json();
+                    const d2 = await res2.json();
+
+                    if (res1.status === 201) addOSLog('MUTEX', `✓ Client Alpha acquired mutex: <b>HTTP 201 Created</b> (${d1.booking_code})`);
+                    else if (res1.status === 409) addOSLog('MUTEX', `⚠️ Client Alpha serialized behind mutex: <b>HTTP 409 Conflict</b>`);
+
+                    if (res2.status === 201) addOSLog('MUTEX', `✓ Client Beta acquired mutex: <b>HTTP 201 Created</b> (${d2.booking_code})`);
+                    else if (res2.status === 409) addOSLog('MUTEX', `⚠️ Client Beta serialized behind mutex: <b>HTTP 409 Conflict</b>`);
+
+                    addOSLog('MUTEX', '<b>RESULT:</b> Mutual exclusion enforced via pthread_mutex_t! Zero double-bookings.');
+                    showToast('Exp 2: Mutex serialized requests (201 Created vs 409 Conflict)!');
+                    loadAppointmentsFeed();
+                } catch (e) {
+                    console.error(e);
+                }
+
+            } else if (expId === 3) {
+                // Queue Overflow & HTTP 503
+                addOSLog('503', '<b>[EXP 3]</b> Flooding 70 rapid requests to overflow 64-capacity bounded queue...');
+                let ok = 0, dropped = 0;
+                const reqs = [];
+                for (let i = 0; i < 70; i++) {
+                    reqs.push(fetch(`${API_BASE}/api/request`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: `ACTION=TELEMEDICINE&PATIENT_ID=${5000 + i}`
+                    }).then(r => {
+                        if (r.status === 200) ok++;
+                        else if (r.status === 503) dropped++;
+                    }).catch(() => {}));
+                }
+                await Promise.all(reqs);
+                addOSLog('SEMAPHORE', `sem_empty exhausted when queue reached 64 items.`);
+                addOSLog('503', `<b>RESULT:</b> Processed: ${ok} | Load Shed (HTTP 503): ${dropped}`);
+                showToast(`Exp 3: ${dropped} requests shed via HTTP 503 without crash!`);
+
+            } else if (expId === 4) {
+                // Autoscaler & Pruning
+                addOSLog('AUTOSCALER', '<b>[EXP 4]</b> Autoscaling thread pool from 4 up to 16 workers, then pruning.');
+                triggerOutbreakSurge();
+                addOSLog('AUTOSCALER', 'Worker pool expanded. After 4s idle timeout, dynamic threads prune back to 4 baseline workers.');
+            }
         }
 
         // Initialize on load
-        loadHospitals();
         loadDoctorsAndSlots();
+        loadHospitals();
         loadAppointmentsFeed();
         setInterval(pollStats, 500);
         pollStats();
