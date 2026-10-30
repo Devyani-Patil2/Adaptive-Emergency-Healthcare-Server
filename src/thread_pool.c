@@ -319,6 +319,11 @@ int thread_pool_get_stats_json(DynamicThreadPool *pool, char *buffer, int max_le
         p95 = temp[p95_idx];
     }
 
+    int sem_emp = queue_get_sem_empty_val(&pool->queue);
+    int sem_ful = queue_get_sem_full_val(&pool->queue);
+    char items_buf[2048];
+    queue_get_items_json(&pool->queue, items_buf, sizeof(items_buf));
+
     int offset = snprintf(buffer, max_len,
         "{\n"
         "  \"current_threads\": %d,\n"
@@ -328,6 +333,8 @@ int thread_pool_get_stats_json(DynamicThreadPool *pool, char *buffer, int max_le
         "  \"max_threads\": %d,\n"
         "  \"queue_depth\": %d,\n"
         "  \"queue_capacity\": %d,\n"
+        "  \"sem_empty\": %d,\n"
+        "  \"sem_full\": %d,\n"
         "  \"total_requests\": %ld,\n"
         "  \"total_succeeded\": %ld,\n"
         "  \"total_failed\": %ld,\n"
@@ -336,9 +343,11 @@ int thread_pool_get_stats_json(DynamicThreadPool *pool, char *buffer, int max_le
         "  \"avg_time\": %.2f,\n"
         "  \"p50_latency_ms\": %.1f,\n"
         "  \"p95_latency_ms\": %.1f,\n"
+        "  \"queued_items\": %s,\n"
         "  \"workers\": [\n",
         current, active, (current - active), pool->min_threads, pool->max_threads,
-        queued, QUEUE_CAPACITY, (reqs + failed), reqs, failed, scale_ups, scale_downs, avg_resp, p50, p95);
+        queued, QUEUE_CAPACITY, sem_emp, sem_ful,
+        (reqs + failed), reqs, failed, scale_ups, scale_downs, avg_resp, p50, p95, items_buf);
 
     for (int i = 0; i < pool->max_threads && offset < max_len - 150; i++) {
         offset += snprintf(buffer + offset, max_len - offset,

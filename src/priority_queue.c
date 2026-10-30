@@ -185,3 +185,38 @@ int queue_get_count(PriorityTaskQueue *q) {
     pthread_mutex_unlock(&q->mutex);
     return count;
 }
+
+int queue_get_sem_empty_val(PriorityTaskQueue *q) {
+    int val = 0;
+    sem_getvalue(&q->sem_empty, &val);
+    if (val < 0) val = 0;
+    return val;
+}
+
+int queue_get_sem_full_val(PriorityTaskQueue *q) {
+    int val = 0;
+    sem_getvalue(&q->sem_full, &val);
+    if (val < 0) val = 0;
+    return val;
+}
+
+int queue_get_items_json(PriorityTaskQueue *q, char *buf, size_t max_len) {
+    pthread_mutex_lock(&q->mutex);
+    long long now_ms = current_timestamp_ms();
+    size_t offset = snprintf(buf, max_len, "[");
+    for (int i = 0; i < q->count && i < 16 && offset < max_len - 150; i++) {
+        long long arr_ms = (long long)q->tasks[i].arrival_time.tv_sec * 1000 + (q->tasks[i].arrival_time.tv_usec / 1000);
+        long long wait_ms = now_ms - arr_ms;
+        if (wait_ms < 0) wait_ms = 0;
+        int eff = calculate_effective_priority(&q->tasks[i], now_ms);
+        int boost = (int)q->tasks[i].type - eff;
+        offset += snprintf(buf + offset, max_len - offset,
+            "{\"idx\":%d,\"type\":%d,\"type_name\":\"%s\",\"base_prio\":%d,\"eff_prio\":%d,\"wait_ms\":%lld,\"boost\":%d,\"patient\":\"%s\"}%s",
+            i, q->tasks[i].type, request_type_to_str(q->tasks[i].type),
+            q->tasks[i].type, eff, wait_ms, boost, q->tasks[i].patient_name,
+            (i < q->count - 1 && i < 15) ? "," : "");
+    }
+    offset += snprintf(buf + offset, max_len - offset, "]");
+    pthread_mutex_unlock(&q->mutex);
+    return (int)offset;
+}

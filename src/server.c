@@ -110,13 +110,17 @@ static bool parse_http_request(int client_sock, const char *raw_data, int data_l
         extract_param(payload, "patient", patient_str, sizeof(patient_str));
     }
     if (strlen(patient_str) == 0) {
-        snprintf(task->patient_name, sizeof(task->patient_name), "Demo Patient #%d", (rand() % 9000 + 1000));
+        static const char *patient_list[] = {
+            "Aarav Sharma", "Devyani Patil", "Rohan Mehta", "Pooja Verma",
+            "Siddharth Rao", "Ananya Deshmukh", "Aditya Kulkarni", "Neha Iyer"
+        };
+        snprintf(task->patient_name, sizeof(task->patient_name), "%s", patient_list[rand() % 8]);
     } else {
         snprintf(task->patient_name, sizeof(task->patient_name), "%s", patient_str);
     }
 
     extract_param(payload, "phone", phone_str, sizeof(phone_str));
-    snprintf(task->patient_phone, sizeof(task->patient_phone), "%s", strlen(phone_str) > 0 ? phone_str : "+1-555-0199");
+    snprintf(task->patient_phone, sizeof(task->patient_phone), "%s", strlen(phone_str) > 0 ? phone_str : "+91-98200-11000");
 
     // Triage Priority Determination:
     // P0: Emergency Info / ICU critical lookup

@@ -48,4 +48,11 @@ bool queue_pop_timed(PriorityTaskQueue *q, Task *out_task, int timeout_seconds);
 /* Query queue count in a thread-safe manner */
 int queue_get_count(PriorityTaskQueue *q);
 
+/* Semaphore values inspection */
+int queue_get_sem_empty_val(PriorityTaskQueue *q);
+int queue_get_sem_full_val(PriorityTaskQueue *q);
+
+/* Serialize currently queued tasks to JSON for live inspector */
+int queue_get_items_json(PriorityTaskQueue *q, char *buf, size_t max_len);
+
 #endif // PRIORITY_QUEUE_H
