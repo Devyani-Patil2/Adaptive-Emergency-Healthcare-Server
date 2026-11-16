@@ -43,8 +43,8 @@ static void send_http_response(int sock, int status_code, const char *status_tex
     }
 }
 
-/* Serve dashboard static HTML with basic path traversal protection */
-static void serve_html_file(int sock, const char *filepath) {
+/* Serve static file with basic path traversal protection */
+static void serve_static_file(int sock, const char *filepath, const char *content_type) {
     if (sock < 0) return;
     if (strstr(filepath, "..")) {
         send_http_response(sock, 403, "Forbidden", "text/plain", "403 Forbidden");
@@ -53,7 +53,9 @@ static void serve_html_file(int sock, const char *filepath) {
 
     FILE *f = fopen(filepath, "rb");
     if (!f) {
-        f = fopen("../web/index.html", "rb");
+        char alt[256];
+        snprintf(alt, sizeof(alt), "../%s", filepath);
+        f = fopen(alt, "rb");
     }
     if (!f) {
         send_http_response(sock, 404, "Not Found", "text/plain", "404 Not Found");
@@ -64,30 +66,33 @@ static void serve_html_file(int sock, const char *filepath) {
     long fsize = ftell(f);
     fseek(f, 0, SEEK_SET);
 
-    char *html_buf = malloc(fsize + 1);
-    if (!html_buf) {
+    char *buf = malloc(fsize + 1);
+    if (!buf) {
         fclose(f);
         send_http_response(sock, 500, "Internal Server Error", "text/plain", "500 Server Error");
         return;
     }
 
-    size_t n = fread(html_buf, 1, fsize, f);
+    size_t n = fread(buf, 1, fsize, f);
     fclose(f);
-    html_buf[n] = '\0';
+    buf[n] = '\0';
 
     char header[512];
     int hlen = snprintf(header, sizeof(header),
         "HTTP/1.1 200 OK\r\n"
-        "Content-Type: text/html; charset=utf-8\r\n"
+        "Content-Type: %s\r\n"
         "Cache-Control: no-cache, no-store, must-revalidate\r\n"
-        "Pragma: no-cache\r\n"
-        "Expires: 0\r\n"
+        "Access-Control-Allow-Origin: *\r\n"
         "Content-Length: %zu\r\n"
-        "Connection: close\r\n\r\n", n);
+        "Connection: close\r\n\r\n", content_type, n);
 
     send_all(sock, header, hlen);
-    send_all(sock, html_buf, n);
-    free(html_buf);
+    send_all(sock, buf, n);
+    free(buf);
+}
+
+static void serve_html_file(int sock, const char *filepath) {
+    serve_static_file(sock, filepath, "text/html; charset=utf-8");
 }
 
 static void extract_json_str(const char *src, const char *key, char *dest, size_t dest_len) {
@@ -123,10 +128,32 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
         return;
     }
 
-    // Route: GET / and GET /index.html
+    // Route: GET / and GET /index.html (Prefers compiled React SPA from web/dist/index.html)
     if (strcmp(task->http_method, "GET") == 0 &&
         (strcmp(task->path, "/") == 0 || strcmp(task->path, "/index.html") == 0)) {
-        serve_html_file(client_sock, "web/index.html");
+        FILE *dist_check = fopen("web/dist/index.html", "rb");
+        if (!dist_check) dist_check = fopen("../web/dist/index.html", "rb");
+        if (dist_check) {
+            fclose(dist_check);
+            serve_html_file(client_sock, "web/dist/index.html");
+        } else {
+            serve_html_file(client_sock, "web/index.html");
+        }
+        if (client_sock >= 0) close(client_sock);
+        long long end_ms = current_timestamp_ms();
+        thread_pool_record_completion(pool, (int)(end_ms - start_ms + queue_wait), true);
+        return;
+    }
+
+    // Route: GET /assets/* (Serves compiled React assets JS/CSS)
+    if (strcmp(task->http_method, "GET") == 0 && strncmp(task->path, "/assets/", 8) == 0) {
+        char asset_path[256];
+        snprintf(asset_path, sizeof(asset_path), "web/dist%s", task->path);
+        const char *c_type = "text/plain";
+        if (strstr(task->path, ".js")) c_type = "application/javascript";
+        else if (strstr(task->path, ".css")) c_type = "text/css";
+        else if (strstr(task->path, ".svg")) c_type = "image/svg+xml";
+        serve_static_file(client_sock, asset_path, c_type);
         if (client_sock >= 0) close(client_sock);
         long long end_ms = current_timestamp_ms();
         thread_pool_record_completion(pool, (int)(end_ms - start_ms + queue_wait), true);
@@ -313,7 +340,7 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
             if (strlen(alloc_code) > 0 || strlen(res_type) > 0) {
                 db_release_resource(alloc_code, res_type, r_err, sizeof(r_err));
             }
-            db_update_request_status(req_id, "DISCHARGED", worker_id, 0);
+            db_update_request_status(req_id, "DISCHARGED", -1, 0);
             char log_msg[256];
             snprintf(log_msg, sizeof(log_msg), "Doctor discharged patient %s. Resources freed back to hospital inventory.", req_id);
             db_log_event("PATIENT_DISCHARGED", "SUCCESS", log_msg, req_id);
@@ -321,12 +348,12 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
             char alt_code[64] = {0};
             char alt_err[256] = {0};
             db_allocate_resource("oxygen_cylinders", req_id, "Triage Patient", alt_code, sizeof(alt_code), alt_err, sizeof(alt_err));
-            db_update_request_status(req_id, "O2_VENT_DEPLOYED", worker_id, 0);
+            db_update_request_status(req_id, "O2_VENT_DEPLOYED", -1, 0);
             char log_msg[256];
             snprintf(log_msg, sizeof(log_msg), "Clinical Override for %s: High-Flow O2 & Ventilator deployed (%s).", req_id, alt_code);
             db_log_event("EMERGENCY_OVERRIDE", "SUCCESS", log_msg, req_id);
         } else if (strstr(action, "transfer") || strstr(action, "TRANSFER")) {
-            db_update_request_status(req_id, "INTER_HOSPITAL_TRANSFER", worker_id, 0);
+            db_update_request_status(req_id, "INTER_HOSPITAL_TRANSFER", -1, 0);
             char log_msg[256];
             snprintf(log_msg, sizeof(log_msg), "Priority Ambulance Transfer initiated for patient %s to Trauma Center Hub.", req_id);
             db_log_event("PATIENT_TRANSFER", "INFO", log_msg, req_id);
@@ -334,12 +361,12 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
             char bed_code[64] = {0};
             char bed_err[256] = {0};
             db_allocate_resource("general_beds", req_id, "Triage Patient", bed_code, sizeof(bed_code), bed_err, sizeof(bed_err));
-            db_update_request_status(req_id, "STEPDOWN_BED_CONVERTED", worker_id, 0);
+            db_update_request_status(req_id, "STEPDOWN_BED_CONVERTED", -1, 0);
             char log_msg[256];
             snprintf(log_msg, sizeof(log_msg), "Stepdown General Bed converted to monitored bed for patient %s (%s).", req_id, bed_code);
             db_log_event("BED_CONVERTED", "SUCCESS", log_msg, req_id);
         } else {
-            db_update_request_status(req_id, action, worker_id, 0);
+            db_update_request_status(req_id, action, -1, 0);
             char log_msg[256];
             snprintf(log_msg, sizeof(log_msg), "Doctor action recorded for %s: %s", req_id, action);
             db_log_event("DOCTOR_ACTION", "INFO", log_msg, req_id);
@@ -370,7 +397,27 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
         return;
     }
 
-    // Route: POST /api/appointments (Atomic SQLite appointment booking)
+        // Route: POST /api/appointments/action (Update appointment status e.g. COMPLETED or CANCELLED)
+    if (strcmp(task->http_method, "POST") == 0 && strcmp(task->path, "/api/appointments/action") == 0) {
+        char code[64] = {0};
+        char action[64] = {0};
+        extract_json_str(task->body, "booking_code", code, sizeof(code));
+        extract_json_str(task->body, "action", action, sizeof(action));
+        if (strlen(action) == 0) snprintf(action, sizeof(action), "COMPLETED");
+        db_update_appointment_status(code, action);
+        char log_msg[256];
+        snprintf(log_msg, sizeof(log_msg), "Appointment %s updated to status %s", code, action);
+        db_log_event("APPOINTMENT_UPDATE", "INFO", log_msg, code);
+        char resp[256];
+        snprintf(resp, sizeof(resp), "{\"status\":\"SUCCESS\",\"booking_code\":\"%s\",\"action\":\"%s\",\"message\":\"Appointment status updated.\"}", code, action);
+        send_http_response(client_sock, 200, "OK", "application/json", resp);
+        if (client_sock >= 0) close(client_sock);
+        long long end_ms = current_timestamp_ms();
+        thread_pool_record_completion(pool, (int)(end_ms - start_ms + queue_wait), true);
+        return;
+    }
+
+// Route: POST /api/appointments (Atomic SQLite appointment booking)
     if (strcmp(task->http_method, "POST") == 0 && strcmp(task->path, "/api/appointments") == 0) {
         long long proc_start = current_timestamp_ms();
         char booking_code[64] = {0};
@@ -835,8 +882,9 @@ void process_healthcare_task(Task *task, int worker_id, DynamicThreadPool *pool)
         // Simulate actual service processing time
         usleep(sim_work_ms * 1000);
 
-        // Update database records
-        db_update_request_status(task->request_id, "COMPLETED", worker_id, (int)queue_wait);
+        // Update database records - allocate least-loaded on-duty doctor core (Round-Robin SMP load balancing)
+        int assigned_doctor = db_get_least_loaded_doctor_id();
+        db_update_request_status(task->request_id, "QUEUED", assigned_doctor, (int)queue_wait);
 
         // If a required resource was requested, allocate it atomically
         char res_status[64] = "NOT_REQUESTED";

@@ -568,6 +568,60 @@
             flex-direction: column;
             gap: 14px;
         }
+
+        /* Modal Backdrop & Box */
+        .modal-backdrop {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-backdrop.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 520px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid var(--card-border);
+            animation: modalFadeIn 0.2s ease-out;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.96); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close-btn:hover {
+            background: #e2e8f0;
+            color: var(--text-main);
+        }
     </style>
 </head>
 <body>
@@ -582,10 +636,6 @@
             </div>
         </div>
         <div class="header-right">
-            <div class="status-badge">
-                <span class="pulse-dot" id="statusPulse"></span>
-                <span id="serverStatusText">ONLINE (Port 8080)</span>
-            </div>
             <div class="user-role-badge" id="userRoleBadge" style="display: none;">
                 <span id="userRoleIcon">👤</span>
                 <span id="userRoleName">Patient</span>
@@ -594,7 +644,7 @@
                 <span>🔄</span> Refresh Telemetry
             </button>
             <button class="btn-logout" id="btnLogout" onclick="logoutToRoleSelection()" style="display: none;">
-                <span>🚪</span> Switch Role
+                <span>🚪</span> Log Out
             </button>
         </div>
     </header>
@@ -652,16 +702,35 @@
     <!-- ================= VIEW 1: PATIENT PORTAL ================= -->
     <main id="view-patient" class="view-section">
         <!-- Top Banner -->
-        <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-left: 4px solid var(--primary); border-radius: 10px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-left: 4px solid var(--primary); border-radius: 10px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <div>
                 <h2 style="font-size: 17px; font-weight: 800; color: var(--primary-dark);">Patient Self-Service & Emergency Intake</h2>
                 <p style="font-size: 12px; color: var(--text-sub);">Connected as: <strong id="patientPortalActiveName">Rahul Sharma</strong></p>
             </div>
-            <span class="prio-badge prio-p2" style="font-size: 12px;">Active Session</span>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button type="button" class="btn-submit-main" onclick="openBookSpecialistModal()" style="width: auto; margin: 0; padding: 9px 18px; font-size: 13px; background: linear-gradient(135deg, #16a34a, #15803d); box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);">
+                    <span>📅</span> Book Specialist Doctor
+                </button>
+                <span class="prio-badge prio-p2" style="font-size: 12px;">Active Session</span>
+            </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; align-items: start;">
-            <!-- Emergency Case Registration -->
+        <!-- Non-Emergency Action Prompt -->
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px 22px;">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="background: #dcfce7; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">📅</div>
+                <div>
+                    <h4 style="font-size: 14px; font-weight: 700; color: #166534; margin: 0 0 2px 0;">Need a Routine or Specialist Consultation?</h4>
+                    <p style="font-size: 12px; color: #15803d; margin: 0;">Schedule a doctor appointment and reserve an OPD slot without waiting in line.</p>
+                </div>
+            </div>
+            <button type="button" class="btn-submit-main" onclick="openBookSpecialistModal()" style="width: auto; margin: 0; padding: 9px 18px; font-size: 13px; background: linear-gradient(135deg, #16a34a, #15803d); white-space: nowrap;">
+                Book Doctor Slot →
+            </button>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px;">
+            <!-- Emergency Case Registration (Only Form on Main Page) -->
             <div class="content-card">
                 <div class="card-header-clean">
                     <h3><span>🚨</span> Emergency & Triage Case Registration</h3>
@@ -696,24 +765,18 @@
 
                     <div class="form-row-2">
                         <div class="form-group">
-                            <label>Triage Acuity Priority</label>
-                            <select id="pRegPriority" class="form-control" style="font-weight: 700;">
-                                <option value="0" selected>P0 – Critical Emergency (Immediate Care)</option>
-                                <option value="1">P1 – High Priority (Urgent Care)</option>
-                                <option value="2">P2 – Moderate Priority (Stable Bed)</option>
-                                <option value="3">P3 – Routine Consultation (Non-Urgent)</option>
+                            <label>Patient Alertness & Consciousness</label>
+                            <select id="pRegConsciousness" class="form-control" style="font-weight: 700;">
+                                <option value="unresponsive" selected>🔴 Unconscious / Unresponsive (P0 Critical)</option>
+                                <option value="drowsy">🟡 Drowsy / Disoriented / Confused</option>
+                                <option value="alert">🟢 Conscious & Fully Alert</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Required Hospital Resource</label>
-                            <select id="pRegResource" class="form-control">
-                                <option value="icu_beds" selected>Critical Care ICU Bed</option>
-                                <option value="oxygen_cylinders">High-Flow Oxygen Cylinder</option>
-                                <option value="blood_units">Blood Bank Emergency Reserve (O-)</option>
-                                <option value="ventilators">Mechanical Ventilator</option>
-                                <option value="general_beds">General Ward Bed</option>
-                                <option value="none">None (Outpatient OPD)</option>
-                            </select>
+                            <label>Emergency Contact Phone</label>
+                            <input type="text" id="pRegPhone" class="form-control" value="+91-98200-11000" placeholder="+91-98200-11000">
+                            <input type="hidden" id="pRegResource" value="icu_beds">
+                            <input type="hidden" id="pRegPriority" value="0">
                         </div>
                     </div>
 
@@ -723,53 +786,59 @@
                 </form>
             </div>
 
-            <!-- Book Specialist Doctor Appointment -->
-            <div style="display: flex; flex-direction: column; gap: 20px;">
-                <div class="content-card">
-                    <div class="card-header-clean">
-                        <h3><span>📅</span> Book Specialist Doctor Appointment</h3>
-                        <span class="sub-tag">OPD Scheduling</span>
+            <!-- Digital Patient Pass / Result -->
+            <div class="content-card" id="patientResultCard" style="border: 2px solid var(--accent-green); display: block;">
+                <div class="card-header-clean">
+                    <h3><span>🎫</span> Patient Treatment Pass</h3>
+                    <span class="prio-badge prio-p0" id="pResPriorityBadge">P0 – Critical</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; font-size: 13px;">
+                    <div><strong>Patient:</strong> <span id="pResName">Rahul Sharma</span> (<span id="pResId" style="color: var(--primary);">PAT-1024</span>)</div>
+                    <div><strong>Request ID:</strong> <span id="pResReqId" style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">REQ-2041</span></div>
+                    <div><strong>Assigned Worker:</strong> <span id="pResWorker" style="font-weight: 700;">Worker W1</span></div>
+                    <div><strong>Resource Allocation:</strong> <span id="pResResource" style="color: var(--accent-green); font-weight: 700;">ALLOCATED (RES-31421)</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MODAL: BOOK SPECIALIST DOCTOR APPOINTMENT ================= -->
+        <div id="bookSpecialistModal" class="modal-backdrop" onclick="if(event.target === this) closeBookSpecialistModal()">
+            <div class="modal-box">
+                <button type="button" class="modal-close-btn" onclick="closeBookSpecialistModal()" title="Close">&times;</button>
+                <div class="card-header-clean" style="margin-bottom: 16px;">
+                    <h3><span>📅</span> Book Specialist Doctor Appointment</h3>
+                    <span class="sub-tag">OPD Scheduling</span>
+                </div>
+
+                <form id="appointmentBookForm" onsubmit="handleAppointmentBooking(event)">
+                    <div class="form-group">
+                        <label>Choose Specialist Doctor</label>
+                        <select id="bookDoctorSelect" class="form-control" onchange="loadDoctorSlots(this.value)">
+                            <!-- Loaded dynamically -->
+                        </select>
                     </div>
 
-                    <form id="appointmentBookForm" onsubmit="handleAppointmentBooking(event)">
-                        <div class="form-group">
-                            <label>Choose Specialist Doctor</label>
-                            <select id="bookDoctorSelect" class="form-control" onchange="loadDoctorSlots(this.value)">
-                                <!-- Loaded dynamically -->
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label>Select Available Time Slot</label>
+                        <select id="bookSlotSelect" class="form-control" style="font-family: 'JetBrains Mono', monospace;">
+                            <option value="">Select a doctor first</option>
+                        </select>
+                    </div>
 
-                        <div class="form-group">
-                            <label>Select Available Time Slot</label>
-                            <select id="bookSlotSelect" class="form-control" style="font-family: 'JetBrains Mono', monospace;">
-                                <option value="">Select a doctor first</option>
-                            </select>
-                        </div>
+                    <div class="form-group">
+                        <label>Contact Phone Number</label>
+                        <input type="text" id="bookPhone" class="form-control" value="+91-98200-11000">
+                    </div>
 
-                        <div class="form-group">
-                            <label>Contact Phone Number</label>
-                            <input type="text" id="bookPhone" class="form-control" value="+91-98200-11000">
-                        </div>
-
-                        <button type="submit" class="btn-submit-main" style="background: linear-gradient(135deg, #16a34a, #15803d);">
-                            Confirm Appointment Booking
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button type="button" class="btn-enter-role" onclick="closeBookSpecialistModal()" style="background: #f1f5f9; color: var(--text-main); width: 35%;">
+                            Cancel
                         </button>
-                    </form>
-                </div>
-
-                <!-- Digital Patient Pass / Result -->
-                <div class="content-card" id="patientResultCard" style="border: 2px solid var(--accent-green); display: block;">
-                    <div class="card-header-clean">
-                        <h3><span>🎫</span> Patient Treatment Pass</h3>
-                        <span class="prio-badge prio-p0" id="pResPriorityBadge">P0 – Critical</span>
+                        <button type="submit" class="btn-submit-main" style="margin: 0; width: 65%; background: linear-gradient(135deg, #16a34a, #15803d);">
+                            Confirm Booking
+                        </button>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
-                        <div><strong>Patient:</strong> <span id="pResName">Rahul Sharma</span> (<span id="pResId" style="color: var(--primary);">PAT-1024</span>)</div>
-                        <div><strong>Request ID:</strong> <span id="pResReqId" style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">REQ-2041</span></div>
-                        <div><strong>Assigned Worker:</strong> <span id="pResWorker" style="font-weight: 700;">Worker W1</span></div>
-                        <div><strong>Resource Allocation:</strong> <span id="pResResource" style="color: var(--accent-green); font-weight: 700;">ALLOCATED (RES-31421)</span></div>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
 
@@ -1201,6 +1270,25 @@
             } catch (err) {}
         }
 
+        // Modal Controls for Booking Specialist
+        function openBookSpecialistModal() {
+            const modal = document.getElementById('bookSpecialistModal');
+            if (modal) {
+                modal.classList.add('active');
+                const docSel = document.getElementById('bookDoctorSelect');
+                if (docSel && docSel.value) {
+                    loadDoctorSlots(docSel.value);
+                } else {
+                    loadDoctorsList();
+                }
+            }
+        }
+
+        function closeBookSpecialistModal() {
+            const modal = document.getElementById('bookSpecialistModal');
+            if (modal) modal.classList.remove('active');
+        }
+
         // Load Doctors List
         async function loadDoctorsList() {
             try {
@@ -1266,6 +1354,7 @@
                     alert(`✅ Appointment Confirmed!\nBooking Code: ${data.booking_code}\nSlot: ${data.slot}`);
                     fetchAppointments();
                     loadDoctorSlots(docId);
+                    closeBookSpecialistModal();
                 } else {
                     alert(`❌ Booking Conflict: ${data.error}`);
                 }

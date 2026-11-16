@@ -386,6 +386,26 @@ int db_reset_queue(void) {
     return 0;
 }
 
+int db_update_appointment_status(const char *booking_code, const char *status) {
+    pthread_mutex_lock(&g_db_lock);
+    if (!g_db) {
+        pthread_mutex_unlock(&g_db_lock);
+        return -1;
+    }
+    sqlite3_stmt *stmt;
+    const char *sql = "UPDATE appointments SET status = ? WHERE booking_code = ?;";
+    if (sqlite3_prepare_v2(g_db, sql, -1, &stmt, NULL) != SQLITE_OK) {
+        pthread_mutex_unlock(&g_db_lock);
+        return -1;
+    }
+    sqlite3_bind_text(stmt, 1, status, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, booking_code, -1, SQLITE_STATIC);
+    int rc = sqlite3_step(stmt);
+    sqlite3_finalize(stmt);
+    pthread_mutex_unlock(&g_db_lock);
+    return (rc == SQLITE_DONE) ? 0 : -1;
+}
+
 int db_book_appointment(int doctor_id, int slot_id, const char *patient_name,
                           const char *patient_phone, const char *notes,
                           int worker_id, int turnaround_ms,
@@ -727,6 +747,37 @@ int db_record_request(const char *req_id, const char *patient_id, const char *pa
     return (rc == SQLITE_DONE) ? 0 : -1;
 }
 
+int db_get_least_loaded_doctor_id(void) {
+    pthread_mutex_lock(&g_db_lock);
+    if (!g_db) {
+        pthread_mutex_unlock(&g_db_lock);
+        return 0;
+    }
+    int loads[4] = {0, 0, 0, 0};
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT worker_id, COUNT(*) FROM requests WHERE status != 'DISCHARGED' AND worker_id >= 0 AND worker_id < 4 GROUP BY worker_id;";
+    if (sqlite3_prepare_v2(g_db, sql, -1, &stmt, NULL) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            int wid = sqlite3_column_int(stmt, 0);
+            int cnt = sqlite3_column_int(stmt, 1);
+            if (wid >= 0 && wid < 4) {
+                loads[wid] = cnt;
+            }
+        }
+        sqlite3_finalize(stmt);
+    }
+    int min_load = loads[0];
+    int best_doc = 0;
+    for (int i = 1; i < 4; i++) {
+        if (loads[i] < min_load) {
+            min_load = loads[i];
+            best_doc = i;
+        }
+    }
+    pthread_mutex_unlock(&g_db_lock);
+    return best_doc;
+}
+
 int db_update_request_status(const char *req_id, const char *status, int worker_id, int queue_wait_ms) {
     pthread_mutex_lock(&g_db_lock);
     if (!g_db) {
@@ -735,16 +786,24 @@ int db_update_request_status(const char *req_id, const char *status, int worker_
     }
 
     sqlite3_stmt *stmt;
-    const char *sql = "UPDATE requests SET status = ?, worker_id = ?, queue_wait_ms = ? WHERE request_id = ?;";
+    const char *sql = (worker_id >= 0) ?
+        "UPDATE requests SET status = ?, worker_id = ?, queue_wait_ms = ? WHERE request_id = ?;" :
+        "UPDATE requests SET status = ? WHERE request_id = ?;";
+
     if (sqlite3_prepare_v2(g_db, sql, -1, &stmt, NULL) != SQLITE_OK) {
         pthread_mutex_unlock(&g_db_lock);
         return -1;
     }
 
-    sqlite3_bind_text(stmt, 1, status ? status : "COMPLETED", -1, SQLITE_STATIC);
-    sqlite3_bind_int(stmt, 2, worker_id);
-    sqlite3_bind_int(stmt, 3, queue_wait_ms);
-    sqlite3_bind_text(stmt, 4, req_id, -1, SQLITE_STATIC);
+    if (worker_id >= 0) {
+        sqlite3_bind_text(stmt, 1, status ? status : "COMPLETED", -1, SQLITE_STATIC);
+        sqlite3_bind_int(stmt, 2, worker_id);
+        sqlite3_bind_int(stmt, 3, queue_wait_ms);
+        sqlite3_bind_text(stmt, 4, req_id, -1, SQLITE_STATIC);
+    } else {
+        sqlite3_bind_text(stmt, 1, status ? status : "COMPLETED", -1, SQLITE_STATIC);
+        sqlite3_bind_text(stmt, 2, req_id, -1, SQLITE_STATIC);
+    }
 
     int rc = sqlite3_step(stmt);
     sqlite3_finalize(stmt);
@@ -769,7 +828,7 @@ int db_get_requests_json(int limit, char *buf, size_t max_len) {
         "       r.worker_id, r.queue_wait_ms, r.created_at, "
         "       (SELECT a.allocation_code FROM resource_allocations a WHERE a.patient_id = r.patient_id ORDER BY a.id DESC LIMIT 1) AS alloc_code "
         "FROM requests r "
-        "ORDER BY CASE WHEN r.status = 'DISCHARGED' THEN 1 ELSE 0 END, r.priority ASC, r.id DESC "
+        "ORDER BY CASE WHEN r.status = 'DISCHARGED' THEN 1 ELSE 0 END, r.priority ASC, r.id ASC "
         "LIMIT ?;";
 
     if (sqlite3_prepare_v2(g_db, sql, -1, &stmt, NULL) != SQLITE_OK) {
@@ -801,17 +860,25 @@ int db_get_requests_json(int limit, char *buf, size_t max_len) {
         int worker = sqlite3_column_int(stmt, 11);
         int wait_ms = sqlite3_column_int(stmt, 12);
         const char *created = (const char*)sqlite3_column_text(stmt, 13);
-        const char *alloc_code = (const char*)sqlite3_column_text(stmt, 14);
+                const char *alloc_code = (const char*)sqlite3_column_text(stmt, 14);
+
+        char attending_doc[128];
+        if (worker == 0) snprintf(attending_doc, sizeof(attending_doc), "Dr. Ananya Sharma (Trauma Core W1)");
+        else if (worker == 1) snprintf(attending_doc, sizeof(attending_doc), "Dr. Rajesh Kulkarni (Surgery & ICU Core W2)");
+        else if (worker == 2) snprintf(attending_doc, sizeof(attending_doc), "Dr. Priya Iyer (Emergency Medicine Core W3)");
+        else if (worker == 3) snprintf(attending_doc, sizeof(attending_doc), "Dr. Arvind Menon (Cardiology Core W4)");
+        else if (worker >= 4) snprintf(attending_doc, sizeof(attending_doc), "On-Call Rapid Response Core W%d", worker + 1);
+        else snprintf(attending_doc, sizeof(attending_doc), "Dr. Ananya Sharma (Trauma Core W1)");
 
         offset += snprintf(buf + offset, max_len - offset,
             "{\"id\":%d,\"request_id\":\"%s\",\"patient_id\":\"%s\",\"patient_name\":\"%s\","
             "\"priority\":%d,\"priority_label\":\"%s\",\"symptoms\":\"%s\",\"vitals\":\"%s\","
             "\"priority_reason\":\"%s\",\"required_resource\":\"%s\",\"status\":\"%s\","
-            "\"worker_id\":%d,\"worker_name\":\"Worker W%d\",\"queue_wait_ms\":%d,\"created_at\":\"%s\",\"allocation_code\":\"%s\"}",
+            "\"worker_id\":%d,\"worker_name\":\"Worker W%d\",\"attending_doctor\":\"%s\",\"queue_wait_ms\":%d,\"created_at\":\"%s\",\"allocation_code\":\"%s\"}",
             id, req_id ? req_id : "", pat_id ? pat_id : "", pname ? pname : "",
             prio, pname_desc ? pname_desc : "", symptoms ? symptoms : "", vitals ? vitals : "",
             reason ? reason : "", res ? res : "none", status ? status : "QUEUED",
-            worker, (worker >= 0 ? worker + 1 : 1), wait_ms, created ? created : "",
+            worker, (worker >= 0 ? worker + 1 : 1), attending_doc, wait_ms, created ? created : "",
             alloc_code ? alloc_code : "NONE");
     }
     sqlite3_finalize(stmt);

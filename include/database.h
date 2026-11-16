@@ -36,6 +36,8 @@ int db_book_appointment(int doctor_id, int slot_id, const char *patient_name,
 
 int db_reset_slot_for_demo(int slot_id);
 int db_reset_queue(void);
+int db_update_appointment_status(const char *booking_code, const char *status);
+int db_get_least_loaded_doctor_id(void);
 
 /* Patient & Triage Requests Persistence */
 int db_record_patient(const char *patient_id, const char *name, int age,

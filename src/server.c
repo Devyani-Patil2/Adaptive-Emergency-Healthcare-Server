@@ -144,7 +144,21 @@ static bool parse_http_request(int client_sock, const char *raw_data, int data_l
     snprintf(task->priority_reason, sizeof(task->priority_reason), "%s", strlen(reason_str) > 0 ? reason_str : "Triage assessment completed by authorized hospital staff");
 
     extract_param(payload, "required_resource", res_str, sizeof(res_str));
-    snprintf(task->required_resource, sizeof(task->required_resource), "%s", strlen(res_str) > 0 ? res_str : "none");
+    if (strlen(res_str) == 0 || strcmp(res_str, "none") == 0) {
+        if (strstr(payload, "accident") || strstr(payload, "unconscious") || strstr(payload, "trauma") || strstr(payload, "cardiac") || strstr(payload, "chest pain")) {
+            snprintf(task->required_resource, sizeof(task->required_resource), "icu_beds");
+        } else if (strstr(payload, "oxygen") || strstr(payload, "breath") || strstr(payload, "respiratory") || strstr(payload, "SpO2")) {
+            snprintf(task->required_resource, sizeof(task->required_resource), "oxygen_cylinders");
+        } else if (strstr(payload, "blood") || strstr(payload, "bleeding") || strstr(payload, "hemorrhage")) {
+            snprintf(task->required_resource, sizeof(task->required_resource), "blood_units");
+        } else if (strstr(payload, "fracture") || strstr(payload, "fever") || strstr(payload, "injury") || strstr(payload, "infection")) {
+            snprintf(task->required_resource, sizeof(task->required_resource), "general_beds");
+        } else {
+            snprintf(task->required_resource, sizeof(task->required_resource), "none");
+        }
+    } else {
+        snprintf(task->required_resource, sizeof(task->required_resource), "%s", res_str);
+    }
 
     extract_param(payload, "patient_id", pat_id_str, sizeof(pat_id_str));
     if (strlen(pat_id_str) > 0) {
