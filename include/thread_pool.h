@@ -23,6 +23,11 @@ typedef struct {
     bool is_busy;
     bool is_baseline;         // Baseline workers never retire on idle
     long long last_busy_time_ms;
+    long long spawn_time_ms;
+    long requests_processed;
+    char current_task_id[32];
+    char current_patient[64];
+    int current_priority;
     DynamicThreadPool *pool;
 } WorkerThread;
 
@@ -76,6 +81,7 @@ void thread_pool_destroy(DynamicThreadPool *pool);
 bool thread_pool_submit(DynamicThreadPool *pool, Task task);
 void thread_pool_print_stats(DynamicThreadPool *pool);
 int thread_pool_get_stats_json(DynamicThreadPool *pool, char *buffer, int max_len);
+int thread_pool_get_workers_json(DynamicThreadPool *pool, char *buffer, int max_len);
 
 /* Metric recording */
 void thread_pool_record_completion(DynamicThreadPool *pool, int turnaround_ms, bool success);

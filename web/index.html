@@ -3,30 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Healthai - OS Adaptive Emergency Healthcare Engine</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+    <title>HealthOS - Emergency Healthcare Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #0284c7;
             --primary-dark: #0369a1;
-            --bg-page: #0b0f19;
-            --card-bg: #111827;
-            --card-border: #1f2937;
-            --text-main: #f9fafb;
-            --text-sub: #9ca3af;
-            --text-muted: #6b7280;
-            --accent-red: #ef4444;
-            --accent-green: #10b981;
-            --accent-amber: #f59e0b;
-            --accent-blue: #38bdf8;
-            --accent-purple: #a855f7;
+            --primary-light: #e0f2fe;
+            --bg-page: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-sub: #334155;
+            --text-muted: #64748b;
+            --accent-red: #dc2626;
+            --accent-red-bg: #fef2f2;
+            --accent-red-border: #fecaca;
+            --accent-green: #16a34a;
+            --accent-green-bg: #f0fdf4;
+            --accent-green-border: #bbf7d0;
+            --accent-amber: #d97706;
+            --accent-amber-bg: #fffbeb;
+            --accent-amber-border: #fde68a;
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
@@ -37,29 +45,31 @@
             flex-direction: column;
         }
 
-        /* Top Header Navbar */
+        /* Top Header */
         .app-header {
-            background: #111827;
+            background: #ffffff;
             border-bottom: 1px solid var(--card-border);
-            padding: 14px 28px;
+            padding: 12px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
 
         .header-brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            cursor: pointer;
         }
 
         .header-logo {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0284c7, #0369a1);
             color: #ffffff;
             border-radius: 10px;
             display: flex;
@@ -67,86 +77,40 @@
             justify-content: center;
             font-size: 22px;
             font-weight: 800;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
         }
 
         .header-title h1 {
             font-size: 17px;
             font-weight: 800;
-            letter-spacing: -0.3px;
+            color: var(--text-main);
+            letter-spacing: -0.2px;
         }
 
         .header-title p {
             font-size: 11px;
-            color: var(--accent-blue);
-            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-muted);
             font-weight: 600;
         }
 
-        .header-nav {
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .nav-btn {
-            background: transparent;
-            color: var(--text-sub);
-            border: 1px solid transparent;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .nav-btn:hover {
-            color: #ffffff;
-            background: #1f2937;
-        }
-
-        .nav-btn.active {
-            background: #0284c7;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
-        }
-
-        .btn-register-top {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #ffffff;
-            border: none;
-            padding: 9px 18px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-            transition: all 0.2s;
-        }
-
-        .btn-register-top:hover {
-            transform: translateY(-1px);
-            background: #059669;
-        }
-
-        /* Server status badge */
         .status-badge {
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: #1f2937;
-            border: 1px solid #374151;
-            padding: 6px 12px;
+            gap: 8px;
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px 14px;
             border-radius: 20px;
             font-size: 11px;
             font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--text-sub);
         }
 
         .pulse-dot {
@@ -155,117 +119,175 @@
             background: var(--accent-green);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--accent-green);
-            animation: pulse 1.5s infinite;
+            animation: pulse 1.6s infinite;
         }
-        .pulse-dot.offline { background: var(--accent-red); box-shadow: 0 0 8px var(--accent-red); }
 
         @keyframes pulse {
             0% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.2); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 1; }
             100% { transform: scale(0.9); opacity: 0.8; }
         }
 
-        /* Main Workspace Container */
-        .main-container {
-            flex: 1;
-            max-width: 1440px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 24px;
+        .user-role-badge {
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Top OS Live Metric Strip */
-        .metrics-strip {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 14px;
-        }
-
-        .m-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            transition: border-color 0.2s;
-        }
-
-        .m-card:hover {
-            border-color: #374151;
-        }
-
-        .m-title {
-            font-size: 11px;
+            align-items: center;
+            gap: 8px;
+            background: var(--primary-light);
+            border: 1px solid #bae6fd;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 700;
-            color: var(--text-sub);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            color: var(--primary-dark);
+        }
+
+        .btn-logout {
+            background: #ffffff;
+            color: var(--accent-red);
+            border: 1px solid var(--accent-red-border);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-logout:hover {
+            background: var(--accent-red-bg);
         }
 
-        .m-value {
-            font-size: 24px;
-            font-weight: 800;
-            font-family: 'JetBrains Mono', monospace;
-            color: #ffffff;
+        .btn-refresh {
+            background: #f8fafc;
+            color: var(--primary-dark);
+            border: 1px solid #bae6fd;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-refresh:hover {
+            background: var(--primary-light);
         }
 
-        .m-sub {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        /* Progress bars */
-        .bar-bg {
-            width: 100%;
-            height: 6px;
-            background: #1f2937;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-        .bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* Main Content View Switcher */
-        .view-tab {
+        /* Views */
+        .view-section {
             display: none;
             flex-direction: column;
             gap: 20px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 28px;
         }
-        .view-tab.active {
+        .view-section.active {
             display: flex;
         }
 
-        /* 2-Column Layout for Patient Portal */
-        .portal-layout {
+        /* Login Screen */
+        .login-hero {
+            text-align: center;
+            margin: 30px auto 20px;
+            max-width: 650px;
+        }
+        .login-hero h2 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+        }
+        .login-hero p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .role-cards-grid-2 {
             display: grid;
-            grid-template-columns: 1fr 420px;
-            gap: 20px;
-            align-items: start;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            max-width: 900px;
+            margin: 10px auto 20px;
+            width: 100%;
         }
 
-        .left-panel, .right-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        /* Section Cards */
-        .content-card {
+        .role-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 16px;
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .role-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .role-icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+        }
+
+        .role-card h3 {
+            font-size: 19px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .role-card p {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .btn-enter-role {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+            transition: all 0.2s;
+            margin-top: auto;
+        }
+        .btn-enter-role:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        /* Generic Cards */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
             padding: 20px;
+            box-shadow: var(--shadow-sm);
         }
 
         .card-header-clean {
@@ -280,1529 +302,1504 @@
         .card-header-clean h3 {
             font-size: 15px;
             font-weight: 800;
+            color: var(--text-main);
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .card-header-clean .sub-tag {
+        .sub-tag {
             font-size: 11px;
-            color: var(--accent-blue);
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
+            color: var(--primary);
+            background: var(--primary-light);
+            border: 1px solid #bae6fd;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 700;
         }
 
-        /* Emergency Accident Banner */
-        .emergency-action-card {
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(185, 28, 28, 0.05));
-            border: 1px solid #ef4444;
-            border-radius: 16px;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .emergency-text h3 {
-            font-size: 16px;
-            font-weight: 800;
-            color: #fca5a5;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .emergency-text p {
-            font-size: 12px;
-            color: #d1d5db;
-            margin-top: 4px;
-        }
-
-        .btn-emergency-action {
-            background: #dc2626;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 13px;
-            cursor: pointer;
-            box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4);
-            transition: all 0.2s;
-            white-space: nowrap;
-        }
-
-        .btn-emergency-action:hover {
-            background: #b91c1c;
-            transform: translateY(-2px);
-        }
-
-        /* Doctor Grid */
-        .doctors-grid {
+        /* Top 4 KPI Metrics */
+        .metrics-strip {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 14px;
         }
 
-        .doc-item-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 14px;
+        .m-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
             padding: 16px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            gap: 12px;
-            transition: all 0.2s;
+            gap: 4px;
+            box-shadow: var(--shadow-sm);
         }
 
-        .doc-item-card:hover {
-            border-color: var(--primary);
-            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.2);
-        }
-
-        .doc-item-top {
+        .m-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
         }
 
-        .doc-item-name {
-            font-size: 14px;
+        .m-value {
+            font-size: 24px;
             font-weight: 800;
-            color: #ffffff;
-        }
-
-        .doc-item-spec {
-            font-size: 11px;
-            color: var(--accent-blue);
-            font-weight: 700;
-            margin-top: 2px;
-        }
-
-        .doc-item-rating {
-            font-size: 11px;
-            color: #f59e0b;
-            font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
+            color: var(--text-main);
         }
 
-        .doc-slot-dropdown {
-            width: 100%;
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: #e2e8f0;
-            padding: 8px 10px;
-            border-radius: 8px;
+        .m-sub {
             font-size: 11px;
-            outline: none;
+            color: var(--text-sub);
+            font-weight: 600;
         }
 
-        .btn-card-book {
-            background: var(--primary);
-            color: #ffffff;
-            border: none;
-            padding: 9px;
-            border-radius: 8px;
+        /* Form Controls */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        .form-group label {
             font-size: 12px;
-            font-weight: 800;
+            font-weight: 700;
+            color: var(--text-sub);
+        }
+        .form-control {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* Preset Chips */
+        .preset-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .chip-btn {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
         }
+        .chip-btn:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
 
-        .btn-card-book:hover {
+        .btn-submit-main {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #ffffff;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 6px;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+            transition: all 0.2s;
+        }
+        .btn-submit-main:hover {
+            transform: translateY(-1px);
             background: var(--primary-dark);
         }
 
-        /* Feed Card List */
-        .feed-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 520px;
-            overflow-y: auto;
-        }
-
-        .feed-item {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 12px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            border-left: 4px solid var(--accent-blue);
-        }
-
-        .feed-item.feed-p0 { border-left-color: #dc2626; background: rgba(220, 38, 38, 0.12); }
-        .feed-item.feed-p1 { border-left-color: #ea580c; background: rgba(234, 88, 12, 0.1); }
-        .feed-item.feed-p2 { border-left-color: #f59e0b; }
-        .feed-item.feed-p3 { border-left-color: #3b82f6; }
-        .feed-item.feed-p4 { border-left-color: #10b981; }
-
-        .feed-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .feed-patient-name {
-            font-size: 13px;
-            font-weight: 800;
-            color: #ffffff;
-        }
-
-        .feed-priority-tag {
-            font-size: 10px;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 800;
-        }
-
-        .feed-details {
+        /* Priority Badges */
+        .prio-badge {
             font-size: 11px;
-            color: var(--text-sub);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .feed-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 10px;
             font-family: 'JetBrains Mono', monospace;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .prio-p0 { background: var(--accent-red-bg); color: var(--accent-red); border: 1px solid var(--accent-red-border); }
+        .prio-p1 { background: var(--accent-amber-bg); color: var(--accent-amber); border: 1px solid var(--accent-amber-border); }
+        .prio-p2 { background: var(--accent-green-bg); color: var(--accent-green); border: 1px solid var(--accent-green-border); }
+        .prio-p3 { background: #f1f5f9; color: var(--text-sub); border: 1px solid #cbd5e1; }
+
+        /* Tables */
+        .queue-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        .queue-table th {
+            background: #f8fafc;
             color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            padding-top: 6px;
-            margin-top: 2px;
+            text-align: left;
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--card-border);
+            font-weight: 800;
+        }
+        .queue-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
         }
 
-        /* Priority Colors */
-        .tag-p0 { background: rgba(220, 38, 38, 0.2); color: #f87171; border: 1px solid #ef4444; }
-        .tag-p1 { background: rgba(234, 88, 12, 0.2); color: #fb923c; border: 1px solid #f97316; }
-        .tag-p2 { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid #f59e0b; }
-        .tag-p3 { background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid #3b82f6; }
-        .tag-p4 { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid #10b981; }
-
-        /* OS Tab: Thread Pool & Worker Architecture */
+        /* 16-Worker Visual Matrix */
         .thread-pool-matrix {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
         }
-
         .worker-box {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 14px;
-            font-family: 'JetBrains Mono', monospace;
+            background: #ffffff;
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 4px;
             transition: all 0.2s;
         }
-
         .worker-box.busy {
-            background: rgba(239, 68, 68, 0.12);
-            border-color: #ef4444;
-            box-shadow: 0 0 14px rgba(239, 68, 68, 0.25);
+            border-color: var(--accent-amber);
+            background: #fffbeb;
         }
-
         .worker-box.idle {
-            background: rgba(16, 185, 129, 0.08);
-            border-color: #10b981;
+            border-color: #bbf7d0;
+            background: #f0fdf4;
         }
-
         .worker-box.pruned {
-            opacity: 0.35;
+            opacity: 0.4;
+            background: #f8fafc;
             border-style: dashed;
         }
-
         .w-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 12px;
             font-weight: 800;
+            font-size: 12px;
         }
-
-        .w-state-badge {
-            font-size: 10px;
-            padding: 2px 6px;
+        .w-tag {
+            font-size: 9px;
+            padding: 1px 4px;
             border-radius: 4px;
             font-weight: 800;
         }
+        .w-tag-baseline { background: #e0f2fe; color: #0369a1; }
+        .w-tag-dynamic { background: #fef3c7; color: #b45309; }
 
-        .w-state-busy { background: #dc2626; color: #fff; }
-        .w-state-idle { background: #059669; color: #fff; }
-        .w-state-pruned { background: #4b5563; color: #d1d5db; }
-
-        .w-desc {
-            font-size: 11px;
-            color: var(--text-sub);
-        }
-
-        /* Priority Queue Visual Track */
-        .track-grid {
+        /* Resource Grid */
+        .res-grid {
             display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 10px;
-            background: #090d16;
-            border: 1px solid #1f2937;
-            border-radius: 14px;
-            padding: 14px;
-            min-height: 90px;
-        }
-
-        .q-card {
-            background: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        /* 4 Live Experiments */
-        .exp-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 12px;
         }
-
-        .exp-card {
-            background: #1e293b;
-            border: 1px solid var(--accent-blue);
-            color: #ffffff;
-            padding: 16px;
-            border-radius: 14px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .exp-card:hover {
-            background: #0284c7;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
-        }
-
-        .exp-card h4 {
-            font-size: 13px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .exp-card p {
-            font-size: 11px;
-            color: #cbd5e1;
-            line-height: 1.3;
-        }
-
-        /* Console Logs */
-        .console-box {
-            background: #060911;
-            border: 1px solid #1f2937;
-            border-radius: 12px;
-            padding: 14px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            height: 180px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .log-row {
-            line-height: 1.4;
-        }
-
-        /* MODAL STYLES */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
-        }
-
-        .modal-box {
-            background: #111827;
-            border: 1px solid #374151;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 540px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-            animation: modal-anim 0.2s ease-out;
-        }
-
-        @keyframes modal-anim {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-header {
-            background: #1f2937;
-            padding: 18px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #374151;
-        }
-
-        .modal-header h3 {
-            font-size: 16px;
-            font-weight: 800;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-close {
-            background: transparent;
-            border: none;
-            color: #9ca3af;
-            font-size: 20px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .modal-body {
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .form-row {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-row label {
-            font-size: 12px;
-            font-weight: 700;
-            color: #d1d5db;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 10px 12px;
-            background: #1f2937;
-            border: 1px solid #374151;
-            color: #ffffff;
+        .res-card {
+            background: #ffffff;
+            border: 1px solid var(--card-border);
             border-radius: 10px;
-            font-size: 13px;
-            outline: none;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .form-input:focus {
-            border-color: var(--primary);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 10px 12px;
-            background: #1f2937;
-            border: 1px solid #374151;
-            color: #ffffff;
-            border-radius: 10px;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .priority-explainer {
-            background: #090d16;
-            border-left: 4px solid var(--accent-blue);
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 11px;
-            color: #94a3b8;
-            font-family: 'JetBrains Mono', monospace;
-            line-height: 1.4;
-        }
-
-        .btn-modal-submit {
+        .btn-action-lg {
             background: linear-gradient(135deg, #0284c7, #0369a1);
             color: #ffffff;
             border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 800;
-            cursor: pointer;
-            margin-top: 8px;
-            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
-        }
-
-        .btn-modal-submit:hover {
-            background: #0284c7;
-        }
-
-        /* Confirmation Pop-up Dialog */
-        .confirm-dialog {
-            background: #111827;
-            border: 1px solid #374151;
-            border-radius: 20px;
-            width: 100%;
-            max-width: 480px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            text-align: center;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-            animation: modal-anim 0.2s ease-out;
-        }
-
-        .confirm-icon {
-            font-size: 48px;
-            margin-bottom: -6px;
-        }
-
-        .confirm-title {
-            font-size: 18px;
-            font-weight: 800;
-            color: #ffffff;
-        }
-
-        .confirm-body-card {
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 12px;
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            text-align: left;
+            padding: 10px 18px;
+            border-radius: 8px;
             font-size: 12px;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .confirm-row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .btn-close-confirm {
-            background: #374151;
-            color: #ffffff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 13px;
+            font-weight: 800;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-action-lg:hover {
+            transform: translateY(-1px);
         }
 
-        /* Toast Alert */
-        .toast-popup {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #1f2937;
-            border: 1px solid #374151;
-            color: #ffffff;
-            padding: 14px 20px;
-            border-radius: 12px;
-            font-size: 13px;
+        .btn-action-sm {
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 700;
-            display: none;
-            z-index: 9999;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            border-left: 4px solid var(--accent-green);
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        /* Incident Box */
+        .incident-card {
+            background: #ffffff;
+            border: 2px solid var(--accent-red);
+            border-radius: 14px;
+            padding: 18px 22px;
+            box-shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Toast Notification -->
-    <div class="toast-popup" id="toast"></div>
-
-    <!-- App Header Navbar -->
+    <!-- Top Universal Header -->
     <header class="app-header">
-        <div class="header-brand">
-            <div class="header-logo">🚑</div>
+        <div class="header-brand" onclick="logoutToRoleSelection()">
+            <div class="header-logo">+</div>
             <div class="header-title">
-                <h1>Healthai Adaptive Platform</h1>
-                <p>Course Project: Dynamic Thread Pool & POSIX Primitives</p>
+                <h1>HealthOS Emergency Server</h1>
+                <p id="headerSubtitle">Adaptive Dynamic Thread Pooling & Priority Healthcare Server</p>
             </div>
         </div>
-
-        <nav class="header-nav">
-            <button class="nav-btn active" id="btn-tab-portal" onclick="switchView('portal')">
-                <span>🩺</span> Patient & Emergency Portal
+        <div class="header-right">
+            <div class="status-badge">
+                <span class="pulse-dot" id="statusPulse"></span>
+                <span id="serverStatusText">ONLINE (Port 8080)</span>
+            </div>
+            <div class="user-role-badge" id="userRoleBadge" style="display: none;">
+                <span id="userRoleIcon">👤</span>
+                <span id="userRoleName">Patient</span>
+            </div>
+            <button class="btn-refresh" id="btnRefresh" onclick="refreshCurrentView()" style="display: none;">
+                <span>🔄</span> Refresh Telemetry
             </button>
-            <button class="nav-btn" id="btn-tab-os" onclick="switchView('os')">
-                <span>⚡</span> OS Thread Pool
+            <button class="btn-logout" id="btnLogout" onclick="logoutToRoleSelection()" style="display: none;">
+                <span>🚪</span> Switch Role
             </button>
-            <button class="nav-btn" id="btn-tab-lab" onclick="switchView('lab')">
-                <span>🔬</span> OS Concept Lab
-            </button>
-            <button class="btn-register-top" onclick="openRegistrationModal()">
-                <span>➕</span> Register Patient (P0 to P4)
-            </button>
-        </nav>
-
-        <div class="status-badge">
-            <span class="pulse-dot" id="server-pulse"></span>
-            <span id="server-status-text">Engine Online</span>
         </div>
     </header>
 
-    <!-- Main Workspace -->
-    <main class="main-container">
+    <!-- ================= VIEW 0: ROLE SELECTION / LOGIN ================= -->
+    <main id="view-login" class="view-section active">
+        <div class="login-hero">
+            <h2>Select Clinical Portal</h2>
+            <p>Access patient self-service care intake or the physician emergency command center.</p>
+        </div>
 
-        <!-- Top Live OS Metrics Strip -->
+        <div class="role-cards-grid-2">
+            <!-- 1. Patient Portal -->
+            <div class="role-card">
+                <div class="role-icon-box" style="background: #e0f2fe; color: #0369a1;">👤</div>
+                <h3>Patient Portal</h3>
+                <p>Register acute emergency cases, report symptoms, book doctor consultations, and receive treatment passes.</p>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Patient Name</label>
+                    <input type="text" id="loginPatientName" class="form-control" value="Rahul Sharma">
+                </div>
+                <button class="btn-enter-role" onclick="loginAsPatient()">
+                    <span>Enter Patient Portal</span> →
+                </button>
+            </div>
+
+            <!-- 2. Doctor Portal -->
+            <div class="role-card">
+                <div class="role-icon-box" style="background: #f0fdf4; color: #15803d;">🩺</div>
+                <h3>Doctor & Emergency Command Center</h3>
+                <p>Monitor prioritized triage queues (P0 Critical first), resolve simultaneous emergency arrivals with FIFO tie-breaking, and oversee worker threads and ICU stock.</p>
+                <div class="form-group" style="margin-top: 8px;">
+                    <label>Select Attending Doctor</label>
+                    <select id="loginDoctorSelect" class="form-control" style="font-weight: 700;">
+                        <option value="1" data-spec="Pediatric & Trauma">Dr. Ananya Sharma (Trauma Care Lead)</option>
+                        <option value="2" data-spec="General Surgery & ICU">Dr. Rajesh Kulkarni (General Surgery & ICU)</option>
+                        <option value="3" data-spec="Gastroenterology">Dr. Priya Iyer (Gastroenterology)</option>
+                        <option value="4" data-spec="Interventional Cardiology">Dr. Arvind Menon (Cardiology Lead)</option>
+                    </select>
+                </div>
+                <button class="btn-enter-role" style="background: linear-gradient(135deg, #16a34a, #15803d);" onclick="loginAsDoctor()">
+                    <span>Enter Doctor Command Center</span> →
+                </button>
+            </div>
+        </div>
+
+        <!-- Discreet Technical Link -->
+        <div style="text-align: center; margin-top: 10px;">
+            <a href="javascript:void(0)" onclick="loginAsAdmin()" style="font-size: 12px; color: var(--text-muted); text-decoration: underline;">
+                ⚙️ Open Advanced OS Concurrency Diagnostics Console
+            </a>
+        </div>
+    </main>
+
+    <!-- ================= VIEW 1: PATIENT PORTAL ================= -->
+    <main id="view-patient" class="view-section">
+        <!-- Top Banner -->
+        <div style="background: #e0f2fe; border: 1px solid #bae6fd; border-left: 4px solid var(--primary); border-radius: 10px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="font-size: 17px; font-weight: 800; color: var(--primary-dark);">Patient Self-Service & Emergency Intake</h2>
+                <p style="font-size: 12px; color: var(--text-sub);">Connected as: <strong id="patientPortalActiveName">Rahul Sharma</strong></p>
+            </div>
+            <span class="prio-badge prio-p2" style="font-size: 12px;">Active Session</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; align-items: start;">
+            <!-- Emergency Case Registration -->
+            <div class="content-card">
+                <div class="card-header-clean">
+                    <h3><span>🚨</span> Emergency & Triage Case Registration</h3>
+                    <span class="sub-tag">1-Click Acuity Presets</span>
+                </div>
+
+                <div class="preset-chips">
+                    <button type="button" class="chip-btn" style="border-left: 3px solid var(--accent-red);" onclick="applyPreset('accident')">🚨 Road Accident (P0)</button>
+                    <button type="button" class="chip-btn" style="border-left: 3px solid var(--accent-red);" onclick="applyPreset('oxygen')">🫁 Oxygen Need (P0)</button>
+                    <button type="button" class="chip-btn" style="border-left: 3px solid var(--accent-red);" onclick="applyPreset('blood')">🩸 Blood Need (P0)</button>
+                    <button type="button" class="chip-btn" style="border-left: 3px solid var(--accent-amber);" onclick="applyPreset('fracture')">🩹 Fracture (P1)</button>
+                    <button type="button" class="chip-btn" style="border-left: 3px solid var(--accent-green);" onclick="applyPreset('fever')">🤒 Fever (P2)</button>
+                    <button type="button" class="chip-btn" style="border-left: 3px solid var(--primary);" onclick="applyPreset('routine')">🩺 Weekly Checkup (P3)</button>
+                </div>
+
+                <form id="patientRegForm" onsubmit="handlePatientCaseSubmit(event)">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Patient Name</label>
+                            <input type="text" id="pRegName" class="form-control" required value="Rahul Sharma">
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" id="pRegAge" class="form-control" required value="34">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reported Medical Symptoms</label>
+                        <input type="text" id="pRegSymptoms" class="form-control" required value="Severe highway collision, head trauma, unconscious">
+                    </div>
+
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Triage Acuity Priority</label>
+                            <select id="pRegPriority" class="form-control" style="font-weight: 700;">
+                                <option value="0" selected>P0 – Critical Emergency (Immediate Care)</option>
+                                <option value="1">P1 – High Priority (Urgent Care)</option>
+                                <option value="2">P2 – Moderate Priority (Stable Bed)</option>
+                                <option value="3">P3 – Routine Consultation (Non-Urgent)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Required Hospital Resource</label>
+                            <select id="pRegResource" class="form-control">
+                                <option value="icu_beds" selected>Critical Care ICU Bed</option>
+                                <option value="oxygen_cylinders">High-Flow Oxygen Cylinder</option>
+                                <option value="blood_units">Blood Bank Emergency Reserve (O-)</option>
+                                <option value="ventilators">Mechanical Ventilator</option>
+                                <option value="general_beds">General Ward Bed</option>
+                                <option value="none">None (Outpatient OPD)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit-main">
+                        Submit Emergency Request & Reserve Resource
+                    </button>
+                </form>
+            </div>
+
+            <!-- Book Specialist Doctor Appointment -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="content-card">
+                    <div class="card-header-clean">
+                        <h3><span>📅</span> Book Specialist Doctor Appointment</h3>
+                        <span class="sub-tag">OPD Scheduling</span>
+                    </div>
+
+                    <form id="appointmentBookForm" onsubmit="handleAppointmentBooking(event)">
+                        <div class="form-group">
+                            <label>Choose Specialist Doctor</label>
+                            <select id="bookDoctorSelect" class="form-control" onchange="loadDoctorSlots(this.value)">
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Select Available Time Slot</label>
+                            <select id="bookSlotSelect" class="form-control" style="font-family: 'JetBrains Mono', monospace;">
+                                <option value="">Select a doctor first</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Contact Phone Number</label>
+                            <input type="text" id="bookPhone" class="form-control" value="+91-98200-11000">
+                        </div>
+
+                        <button type="submit" class="btn-submit-main" style="background: linear-gradient(135deg, #16a34a, #15803d);">
+                            Confirm Appointment Booking
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Digital Patient Pass / Result -->
+                <div class="content-card" id="patientResultCard" style="border: 2px solid var(--accent-green); display: block;">
+                    <div class="card-header-clean">
+                        <h3><span>🎫</span> Patient Treatment Pass</h3>
+                        <span class="prio-badge prio-p0" id="pResPriorityBadge">P0 – Critical</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px;">
+                        <div><strong>Patient:</strong> <span id="pResName">Rahul Sharma</span> (<span id="pResId" style="color: var(--primary);">PAT-1024</span>)</div>
+                        <div><strong>Request ID:</strong> <span id="pResReqId" style="color: var(--primary); font-family: 'JetBrains Mono', monospace;">REQ-2041</span></div>
+                        <div><strong>Assigned Worker:</strong> <span id="pResWorker" style="font-weight: 700;">Worker W1</span></div>
+                        <div><strong>Resource Allocation:</strong> <span id="pResResource" style="color: var(--accent-green); font-weight: 700;">ALLOCATED (RES-31421)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient's Appointments History -->
+        <div class="content-card">
+            <div class="card-header-clean">
+                <h3><span>📋</span> Confirmed Consultations</h3>
+                <span class="sub-tag">Database Records</span>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="queue-table">
+                    <thead>
+                        <tr>
+                            <th>Booking Code</th>
+                            <th>Patient Name</th>
+                            <th>Doctor</th>
+                            <th>Slot Time</th>
+                            <th>Assigned Worker</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientApptsTableBody">
+                        <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 16px;">Loading appointments...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= VIEW 2: DOCTOR & EMERGENCY COMMAND CENTER ================= -->
+    <main id="view-doctor" class="view-section">
+        <!-- Doctor Banner -->
+        <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid var(--accent-green); border-radius: 10px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2 style="font-size: 17px; font-weight: 800; color: #14532d;" id="doctorPortalTitle">Clinical Command: Dr. Ananya Sharma</h2>
+                <p style="font-size: 12px; color: var(--text-sub);" id="doctorPortalSpec">Department: Pediatric & Trauma Care Lead</p>
+            </div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <span class="prio-badge prio-p2" style="font-size: 12px;">Doctor On Duty</span>
+                <span class="prio-badge prio-p0" id="docCriticalP0Count">0 P0 Emergencies</span>
+            </div>
+        </div>
+
+        <!-- Integrated Live Emergency Scenario Dispatcher -->
+        <div class="content-card" style="border: 2px solid #bae6fd; background: #f0f9ff;">
+            <div class="card-header-clean" style="border-bottom-color: #bae6fd; margin-bottom: 12px;">
+                <div>
+                    <h3 style="color: #0369a1;"><span>⚡</span> Emergency Dispatcher & Concurrency Operations</h3>
+                    <p style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">Trigger clinical emergency scenarios to observe real-time FIFO tie-breaking, multithreaded worker dispatch, and mutex locks directly on this screen.</p>
+                </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <button class="btn-action-lg" style="background: #dc2626;" onclick="runSimultaneousP0InDoctorPortal()">
+                    <span>🚨</span> 1. Dispatch 2 Simultaneous P0 Critical Cases (Tie-Breaker Test)
+                </button>
+                <button class="btn-action-lg" style="background: #d97706;" onclick="runPreemptionInDoctorPortal()">
+                    <span>⚡</span> 2. Dispatch Priority Preemption (P0 jumps ahead of P3)
+                </button>
+                <button class="btn-action-lg" style="background: #0284c7;" onclick="runSurgeInDoctorPortal()">
+                    <span>🚀</span> 3. Dispatch Inbound Traffic Surge (12 Patients)
+                </button>
+                <button class="btn-action-lg" style="background: #4f46e5;" onclick="runConcurrentBookingInDoctorPortal()">
+                    <span>🔒</span> 4. Test Concurrent Slot Reservation (Mutex 0 Conflicts)
+                </button>
+            </div>
+        </div>
+
+        <!-- Simultaneous Arrival Resolution Incident Card (Opens on Doctor Screen) -->
+        <div id="simultaneousP0Card" class="incident-card" style="display: none;">
+            <!-- Populated dynamically by JS -->
+        </div>
+
+        <!-- Concurrent Booking Result Card on Doctor Screen -->
+        <div id="docRaceResultCard" class="content-card" style="display: none; border: 2px solid var(--primary);">
+            <!-- Populated dynamically by JS -->
+        </div>
+
+        <!-- Top Doctor Stock Overview -->
+        <section class="metrics-strip">
+            <div class="m-card">
+                <div class="m-title"><span>High-Flow Oxygen</span></div>
+                <div class="m-value" id="docO2Avail">-</div>
+                <div class="m-sub">Critical Manifold Cylinders</div>
+            </div>
+            <div class="m-card">
+                <div class="m-title"><span>Emergency Blood (O-)</span></div>
+                <div class="m-value" id="docBloodAvail">-</div>
+                <div class="m-sub">Universal Donor Units</div>
+            </div>
+            <div class="m-card">
+                <div class="m-title"><span>Critical Care ICU</span></div>
+                <div class="m-value" id="docIcuAvail">-</div>
+                <div class="m-sub">Emergency Resuscitation Beds</div>
+            </div>
+            <div class="m-card">
+                <div class="m-title"><span>Mechanical Vents</span></div>
+                <div class="m-value" id="docVentsAvail">-</div>
+                <div class="m-sub">Life-Support Ventilators</div>
+            </div>
+        </section>
+
+        <!-- Live Worker Thread Fleet Matrix (Visible directly on Doctor Portal) -->
+        <div class="content-card">
+            <div class="card-header-clean">
+                <div>
+                    <h3><span>🧵</span> Live POSIX Worker Thread Fleet (4 Baseline, Scalable up to 16)</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">W1–W4 are permanent baseline workers. W5–W16 dynamically spawn when patient queue backlog grows, and retire after 4s idle.</p>
+                </div>
+                <div style="font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; color: var(--primary);" id="docWorkerFleetSummary">
+                    4 Active Workers (0 Busy · 4 Idle)
+                </div>
+            </div>
+            <div class="thread-pool-matrix" id="docWorkerMatrix">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+
+        <!-- Live Prioritized Patient Triage Queue -->
+        <div class="content-card">
+            <div class="card-header-clean">
+                <div>
+                    <h3><span>⚡</span> Live Prioritized Triage Board (P0 Critical Precedence)</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Critical emergencies (P0) appear at the head of the queue. Simultaneous arrivals ordered by microsecond arrival timestamp.</p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-refresh" onclick="resetQueueAndResources()" style="color: #64748b;" title="Clear board & reset beds to available"><span>🗑️</span> Reset / Clear Queue</button>
+                    <button class="btn-refresh" onclick="fetchQueue()"><span>🔄</span> Refresh Board</button>
+                </div>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="queue-table">
+                    <thead>
+                        <tr>
+                            <th>Acuity Rank</th>
+                            <th>Priority</th>
+                            <th>Patient & Request ID</th>
+                            <th>Reported Symptoms & Vitals</th>
+                            <th>Handled By</th>
+                            <th>Resource Status</th>
+                            <th>Clinical Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="doctorQueueTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">No patients currently waiting in triage queue.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Doctor's Consultations & Resource Controls -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <!-- Doctor Schedule -->
+            <div class="content-card">
+                <div class="card-header-clean">
+                    <h3><span>📅</span> My Scheduled Consultations</h3>
+                    <span class="sub-tag">Today's Schedule</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="queue-table">
+                        <thead>
+                            <tr>
+                                <th>Booking Code</th>
+                                <th>Patient Name</th>
+                                <th>Time Slot</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="doctorScheduleTableBody">
+                            <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 16px;">Loading consultations...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Hospital Resource Inventory & Quick Controls -->
+            <div class="content-card">
+                <div class="card-header-clean">
+                    <h3><span>🏥</span> Hospital Resources Stock</h3>
+                    <span class="sub-tag">Atomic Stock Tracker</span>
+                </div>
+                <div class="res-grid" id="doctorResourceGrid">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ================= VIEW 3: SYSTEM ADMIN / OS DIAGNOSTICS ================= -->
+    <main id="view-admin" class="view-section">
+        <div class="admin-subnav">
+            <button class="btn-action-lg" onclick="showView('view-doctor')">← Return to Doctor Command Center</button>
+        </div>
+
+        <!-- Top 4 System Metrics -->
         <section class="metrics-strip">
             <div class="m-card">
                 <div class="m-title">
-                    <span>Thread Pool Size</span>
-                    <span style="color: var(--accent-blue);">POSIX</span>
+                    <span>Active Worker Threads</span>
+                    <span style="color: var(--primary);">4-16 Dynamic</span>
                 </div>
-                <div class="m-value" id="top-threads">4 / 16</div>
-                <div class="m-sub">Min: 4 | Max: 16 Workers</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="bar-threads" style="width: 25%; background: var(--accent-blue);"></div>
-                </div>
-            </div>
-
-            <div class="m-card">
-                <div class="m-title">
-                    <span>Active Busy Workers</span>
-                    <span style="color: var(--accent-red);">Active</span>
-                </div>
-                <div class="m-value" id="top-busy" style="color: var(--accent-red);">0</div>
-                <div class="m-sub">Idle Workers: <span id="top-idle">4</span></div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="bar-busy" style="width: 0%; background: var(--accent-red);"></div>
+                <div class="m-value" id="mTotalWorkers">4</div>
+                <div class="m-sub">
+                    <span id="mBusyWorkers">0 Busy</span> · <span id="mIdleWorkers">4 Idle Standby</span>
                 </div>
             </div>
 
             <div class="m-card">
                 <div class="m-title">
-                    <span>sem_empty (Counting Sem)</span>
-                    <span style="color: var(--accent-green);">Producer</span>
+                    <span>Priority Queue Depth</span>
+                    <span style="color: var(--text-muted);">Max 64 Slots</span>
                 </div>
-                <div class="m-value" id="top-sem-empty" style="color: var(--accent-green);">64</div>
-                <div class="m-sub">Empty Queue Slots Left</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="bar-sem-empty" style="width: 100%; background: var(--accent-green);"></div>
-                </div>
-            </div>
-
-            <div class="m-card">
-                <div class="m-title">
-                    <span>sem_full (Counting Sem)</span>
-                    <span style="color: var(--accent-amber);">Consumer</span>
-                </div>
-                <div class="m-value" id="top-sem-full" style="color: var(--accent-amber);">0</div>
-                <div class="m-sub">Pending Queued Tasks</div>
-                <div class="bar-bg">
-                    <div class="bar-fill" id="bar-sem-full" style="width: 0%; background: var(--accent-amber);"></div>
+                <div class="m-value" id="mQueueDepth">0</div>
+                <div class="m-sub">
+                    <span>Capacity: 64 slots</span> · <span id="mQueueStatus">0 Waiting</span>
                 </div>
             </div>
 
             <div class="m-card">
                 <div class="m-title">
-                    <span>Critical Section Mutex</span>
-                    <span id="top-mutex-badge" style="color: var(--accent-green);">UNLOCKED</span>
+                    <span>Requests Handled</span>
+                    <span style="color: var(--accent-green);">Completed</span>
                 </div>
-                <div class="m-value" id="top-mutex-val" style="font-size: 18px; color: var(--accent-green); margin-top: 4px;">pthread_mutex_t</div>
-                <div class="m-sub">Guards Queue & SQLite Transactions</div>
-            </div>
-        </section>
-
-        <!-- VIEW 1: PATIENT & EMERGENCY PORTAL -->
-        <section id="view-portal" class="view-tab active">
-            <!-- Critical Accident Emergency Quick Trigger -->
-            <div class="emergency-action-card">
-                <div class="emergency-text">
-                    <h3><span>🚨</span> LIFE-THREATENING ACCIDENT & TRAUMA (PRIORITY P0)</h3>
-                    <p>Immediately submits a <b>P0 Accident Case</b> into the OS Priority Queue. Preempts all lower priority tasks and signals empty worker thread.</p>
+                <div class="m-value" id="mTotalProcessed">0</div>
+                <div class="m-sub">
+                    <span id="mSuccessCount">0 Succeeded</span> · <span id="mOverloadCount">0 Overload (503)</span>
                 </div>
-                <button class="btn-emergency-action" onclick="quickAccidentEmergency()">
-                    ⚡ REPORT P0 ACCIDENT EMERGENCY
-                </button>
             </div>
 
-            <div class="portal-layout">
-                <!-- Left Column: Doctors & Hospitals -->
-                <div class="left-panel">
-                    <!-- Available Doctors Grid -->
-                    <div class="content-card">
-                        <div class="card-header-clean">
-                            <h3><span>👨‍⚕️</span> Available Indian Doctors for Consultation</h3>
-                            <span class="sub-tag">Atomic DB Booking</span>
-                        </div>
-                        <div class="doctors-grid" id="doctors-list">
-                            <div style="font-size: 12px; color: var(--text-muted);">Loading doctors...</div>
-                        </div>
-                    </div>
-
-                    <!-- Nearby Hospitals -->
-                    <div class="content-card">
-                        <div class="card-header-clean">
-                            <h3><span>🏥</span> Nearby Emergency Facilities & ICU Availability</h3>
-                            <span class="sub-tag">SQLite Hospitals</span>
-                        </div>
-                        <div class="doctors-grid" id="hospitals-list">
-                            <div style="font-size: 12px; color: var(--text-muted);">Loading hospitals...</div>
-                        </div>
-                    </div>
+            <div class="m-card">
+                <div class="m-title">
+                    <span>Critical Hospital Stock</span>
+                    <span style="color: var(--accent-red);">Critical Stock</span>
                 </div>
-
-                <!-- Right Column: Live Booked Patients Feed With Clear Priorities -->
-                <div class="right-panel">
-                    <div class="content-card">
-                        <div class="card-header-clean">
-                            <h3><span>📋</span> Live Booked Patients Feed</h3>
-                            <span class="sub-tag" id="feed-count-badge">0 Registered</span>
-                        </div>
-                        <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">
-                            Shows assigned <b>Worker Thread #ID</b> and calculated <b>Triage Priority (P0 to P4)</b> for each registered patient:
-                        </div>
-                        <div class="feed-container" id="patient-feed">
-                            <div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px;">
-                                No patient registrations yet.
-                            </div>
-                        </div>
-                    </div>
+                <div class="m-value" id="mCriticalAvail" style="font-size: 18px; line-height: 1.3;">-</div>
+                <div class="m-sub">
+                    <span id="mVentsAvail">- Vents</span> · <span id="mGenBedsAvail">- Ward Beds</span>
                 </div>
             </div>
         </section>
 
-        <!-- VIEW 2: OS THREAD POOL ARCHITECTURE -->
-        <section id="view-os" class="view-tab">
-            <div class="content-card">
-                <div class="card-header-clean">
-                    <h3><span>⚡</span> Dynamic Thread Pool Architecture (16 POSIX Workers)</h3>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="nav-btn active" onclick="triggerOutbreakSurge()">
-                            <span>🚨</span> Simulate Traffic Surge (80 Requests)
-                        </button>
-                    </div>
-                </div>
-                <div style="font-size: 12px; color: var(--text-sub); margin-bottom: 16px;">
-                    🟢 <b>Thread #0 to #3</b>: Permanent Baseline Workers | 🔴 <b>Active Workers</b>: Processing requests | ⚪ <b>Dormant / Pruned</b>: Autoscaled on backlog, pruned after 4s idle.
-                </div>
-
-                <!-- 16 Worker Threads Matrix -->
-                <div class="thread-pool-matrix" id="workers-matrix">
-                    <!-- Populated dynamically via JS -->
-                </div>
+        <!-- Autoscaler Activity Log -->
+        <div class="content-card">
+            <div class="card-header-clean">
+                <h3><span>📋</span> Autoscaler Lifecycle Activity Log</h3>
+                <span class="sub-tag">Real-Time Thread Activity</span>
             </div>
-
-            <!-- Latency & Performance Details -->
-            <div class="metrics-strip">
-                <div class="m-card">
-                    <div class="m-title"><span>P50 Latency (Median)</span></div>
-                    <div class="m-value" id="os-p50" style="color: var(--accent-blue);">0.0 ms</div>
-                    <div class="m-sub">50% requests processed within</div>
-                </div>
-                <div class="m-card">
-                    <div class="m-title"><span>P95 Latency (Tail)</span></div>
-                    <div class="m-value" id="os-p95" style="color: var(--accent-amber);">0.0 ms</div>
-                    <div class="m-sub">95% requests processed within</div>
-                </div>
-                <div class="m-card">
-                    <div class="m-title"><span>Total Completed (2xx)</span></div>
-                    <div class="m-value" id="os-succeeded" style="color: var(--accent-green);">0</div>
-                    <div class="m-sub">Handled by thread pool</div>
-                </div>
-                <div class="m-card">
-                    <div class="m-title"><span>Autoscaler Events</span></div>
-                    <div class="m-value"><span id="os-scaleup" style="color: var(--accent-blue);">0</span>↑ <span id="os-scaledown" style="color: var(--accent-purple);">0</span>↓</div>
-                    <div class="m-sub">Dynamic Scale Up / Idle Prune</div>
-                </div>
-                <div class="m-card">
-                    <div class="m-title"><span>Dropped (503 Overload)</span></div>
-                    <div class="m-value" id="os-dropped" style="color: var(--accent-red);">0</div>
-                    <div class="m-sub">Bounded queue load shedding</div>
-                </div>
+            <div id="autoscalerLogBox" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; font-family: 'JetBrains Mono', monospace; font-size: 12px; max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;">
+                <div>[00:00:00] Server initialized with 4 baseline worker threads (W1–W4). Ready for requests.</div>
             </div>
-        </section>
-
-        <!-- VIEW 3: OS CONCEPT LAB (PROFESSOR DEMONSTRATIONS) -->
-        <section id="view-lab" class="view-tab">
-            <!-- Priority Queue Visual Track -->
-            <div class="content-card">
-                <div class="card-header-clean">
-                    <h3><span>🎯</span> Bounded Priority Queue Track (Capacity: 64 Slots)</h3>
-                    <span class="sub-tag">P0: Red | P1: Orange | P2: Amber | P3: Blue | P4: Green</span>
-                </div>
-                <div class="track-grid" id="lab-queue-track">
-                    <div style="grid-column: span 8; color: var(--text-muted); font-size: 12px; text-align: center; padding: 24px;">
-                        Queue is empty. Worker threads are waiting on sem_timedwait(&sem_full).
-                    </div>
-                </div>
-            </div>
-
-            <!-- 4 One-Click Live Experiments for Professor -->
-            <div class="content-card">
-                <div class="card-header-clean">
-                    <h3><span>🧪</span> Live OS Concept Experiments (One-Click Demos for Professor)</h3>
-                    <span class="sub-tag">Verify Every Claimed Primitives</span>
-                </div>
-                <div class="exp-grid">
-                    <div class="exp-card" onclick="runOSExperiment(1)">
-                        <h4><span>🚑</span> Exp 1: Priority Scheduling</h4>
-                        <p>Injects P4 routine task, then floods P0 Accident emergency tasks. Proves preemption and dynamic aging anti-starvation.</p>
-                    </div>
-
-                    <div class="exp-card" onclick="runOSExperiment(2)">
-                        <h4><span>🔒</span> Exp 2: Mutex Race Condition</h4>
-                        <p>Fires 2 simultaneous bookings for the exact same doctor slot. Mutex serializes: 1st gets <b>HTTP 201 Created</b>, 2nd gets <b>HTTP 409 Conflict</b>.</p>
-                    </div>
-
-                    <div class="exp-card" onclick="runOSExperiment(3)">
-                        <h4><span>🛑</span> Exp 3: HTTP 503 Load Shedding</h4>
-                        <p>Pushes 70 rapid requests to overflow 64-capacity bounded queue. Demonstrates graceful backpressure without server crash.</p>
-                    </div>
-
-                    <div class="exp-card" onclick="runOSExperiment(4)">
-                        <h4><span>📈</span> Exp 4: Autoscaler & Pruning</h4>
-                        <p>Generates high backlog: threads expand from 4 to 16. Once backlog clears, idle threads prune back to 4 baseline workers.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Live OS Kernel Event Stream -->
-            <div class="content-card">
-                <div class="card-header-clean">
-                    <h3><span>📜</span> Real-Time OS Concurrency Event Stream</h3>
-                    <button class="nav-btn" onclick="clearOSConsole()" style="padding: 4px 10px; font-size: 11px;">Clear</button>
-                </div>
-                <div class="console-box" id="os-console">
-                    <div class="log-row"><span style="color: var(--accent-blue);">[SEMAPHORE]</span> Counting semaphores initialized: sem_empty=64, sem_full=0.</div>
-                    <div class="log-row"><span style="color: var(--accent-amber);">[MUTEX]</span> Critical section pthread_mutex_t initialized.</div>
-                    <div class="log-row"><span style="color: var(--accent-green);">[THREAD POOL]</span> 4 baseline POSIX workers alive and ready.</div>
-                </div>
-            </div>
-        </section>
-
+        </div>
     </main>
 
-    <!-- MODAL 1: REGISTER PATIENT MODAL WITH PRIORITY SELECTION -->
-    <div class="modal-overlay" id="modal-register">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3><span>➕</span> Register Patient & Triage Booking</h3>
-                <button class="modal-close" onclick="closeRegistrationModal()">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-row">
-                    <label>Patient Full Name</label>
-                    <input type="text" class="form-input" id="modal-patient-name" placeholder="e.g. Devyani Patil">
-                </div>
-
-                <div class="form-row">
-                    <label>Phone Number</label>
-                    <input type="text" class="form-input" id="modal-patient-phone" placeholder="e.g. +91-98200-11223">
-                </div>
-
-                <div class="form-row">
-                    <label>Triage Case / Priority Level (OS Scheduling Class)</label>
-                    <select class="form-select" id="modal-priority-select" onchange="updatePriorityExplainer()">
-                        <option value="0">🚨 P0: Accident / Trauma / ICU Critical (Highest Priority)</option>
-                        <option value="1">⚠️ P1: Emergency Info / Bed & Oxygen Lookup</option>
-                        <option value="2">📞 P2: Telemedicine Urgent Video Consultation</option>
-                        <option value="3">💉 P3: Vaccination Outbreak Dose</option>
-                        <option value="4" selected>📅 P4: Routine OPD Doctor Consultation (Lowest Priority)</option>
-                    </select>
-                </div>
-
-                <div class="priority-explainer" id="modal-prio-explainer">
-                    <b>P4 - Routine Consultation:</b> Normal priority. Will be preempted by P0-P3, but protected from starvation via Aging formula: +1 level per 2.0s wait.
-                </div>
-
-                <div class="form-row">
-                    <label>Select Doctor for Consultation</label>
-                    <select class="form-select" id="modal-doctor-select" onchange="updateModalSlots()">
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-
-                <div class="form-row">
-                    <label>Select Consultation Slot (Protected by Mutex)</label>
-                    <select class="form-select" id="modal-slot-select">
-                        <!-- Populated by JS -->
-                    </select>
-                </div>
-
-                <button class="btn-modal-submit" onclick="submitPatientRegistration()">
-                    ✓ Confirm Registration & Book via Mutex Lock
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL 2: CONFIRMATION & OS CONCURRENCY POP-UP DIALOG -->
-    <div class="modal-overlay" id="modal-confirmation">
-        <div class="confirm-dialog">
-            <div class="confirm-icon" id="confirm-icon">✅</div>
-            <div class="confirm-title" id="confirm-title">Registration Confirmed!</div>
-            
-            <div class="confirm-body-card" id="confirm-body">
-                <!-- Injected by JS -->
-            </div>
-
-            <button class="btn-close-confirm" onclick="closeConfirmationModal()">
-                Close & Return to Dashboard
-            </button>
-        </div>
-    </div>
-
     <script>
-        const API_BASE = window.location.origin;
-        let allDoctors = [];
-        let doctorSlotsMap = {};
+        // Global State
+        let currentRole = null; // 'patient' | 'doctor' | 'admin'
+        let currentDoctorId = 1;
+        let currentDoctorName = "Dr. Ananya Sharma";
+        let currentPatientName = "Rahul Sharma";
 
-        // Switch Tabs
-        function switchView(viewName) {
-            document.querySelectorAll('.view-tab').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-            const target = document.getElementById(`view-${viewName}`);
-            const btn = document.getElementById(`btn-tab-${viewName}`);
+        // Navigation & Role Selection
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(viewId);
             if (target) target.classList.add('active');
-            if (btn) btn.classList.add('active');
         }
 
-        // Show Toast
-        function showToast(msg, isError = false) {
-            const t = document.getElementById('toast');
-            t.innerText = msg;
-            t.style.borderLeftColor = isError ? 'var(--accent-red)' : 'var(--accent-green)';
-            t.style.display = 'block';
-            setTimeout(() => { t.style.display = 'none'; }, 4000);
+        function loginAsPatient() {
+            const nameInput = document.getElementById('loginPatientName').value.trim();
+            currentPatientName = nameInput || "Rahul Sharma";
+            currentRole = 'patient';
+
+            document.getElementById('patientPortalActiveName').innerText = currentPatientName;
+            document.getElementById('pRegName').value = currentPatientName;
+
+            document.getElementById('userRoleIcon').innerText = '👤';
+            document.getElementById('userRoleName').innerText = `${currentPatientName} (Patient)`;
+            document.getElementById('userRoleBadge').style.display = 'flex';
+            document.getElementById('btnLogout').style.display = 'flex';
+            document.getElementById('btnRefresh').style.display = 'flex';
+            document.getElementById('headerSubtitle').innerText = "Patient Portal · Emergency Triage & Appointment Booking";
+
+            showView('view-patient');
+            loadDoctorsList();
+            fetchAppointments();
         }
 
-        // Add to OS Event Stream Console
-        function addOSLog(tag, msg) {
-            const c = document.getElementById('os-console');
-            if (!c) return;
-            const time = new Date().toISOString().substring(11, 23);
-            const row = document.createElement('div');
-            row.className = 'log-row';
-            row.innerHTML = `<span style="color:#64748b;">[${time}]</span> <b style="color:var(--accent-blue);">[${tag}]</b> ${msg}`;
-            c.appendChild(row);
-            c.scrollTop = c.scrollHeight;
+        function loginAsDoctor() {
+            const select = document.getElementById('loginDoctorSelect');
+            currentDoctorId = parseInt(select.value);
+            const opt = select.options[select.selectedIndex];
+            currentDoctorName = opt.text.split('(')[0].trim();
+            const spec = opt.getAttribute('data-spec') || "Specialist";
+            currentRole = 'doctor';
+
+            document.getElementById('doctorPortalTitle').innerText = `Clinical Command: ${currentDoctorName}`;
+            document.getElementById('doctorPortalSpec').innerText = `Department: ${spec}`;
+
+            document.getElementById('userRoleIcon').innerText = '🩺';
+            document.getElementById('userRoleName').innerText = `${currentDoctorName} (Doctor)`;
+            document.getElementById('userRoleBadge').style.display = 'flex';
+            document.getElementById('btnLogout').style.display = 'flex';
+            document.getElementById('btnRefresh').style.display = 'flex';
+            document.getElementById('headerSubtitle').innerText = "Doctor Command Center · Triage Queue & Resource Allocation";
+
+            showView('view-doctor');
+            fetchQueue();
+            fetchDoctorSchedule();
+            fetchResources();
+            fetchThreads();
+            fetchStats();
         }
 
-        function clearOSConsole() {
-            const c = document.getElementById('os-console');
-            if (c) c.innerHTML = '';
+        function loginAsAdmin() {
+            currentRole = 'admin';
+            document.getElementById('userRoleIcon').innerText = '⚙️';
+            document.getElementById('userRoleName').innerText = 'System Diagnostics';
+            document.getElementById('userRoleBadge').style.display = 'flex';
+            document.getElementById('btnLogout').style.display = 'flex';
+            document.getElementById('btnRefresh').style.display = 'flex';
+            document.getElementById('headerSubtitle').innerText = "Operating System Engine · Concurrency Telemetry";
+
+            showView('view-admin');
+            fetchStats();
+            fetchThreads();
         }
 
-        // Priority Explainer Text
-        function updatePriorityExplainer() {
-            const p = document.getElementById('modal-priority-select').value;
-            const exp = document.getElementById('modal-prio-explainer');
-            if (p === '0') {
-                exp.innerHTML = `<b>P0 - ACCIDENT/TRAUMA:</b> HIGHEST PRIORITY. Bypasses all other queued tasks immediately. Serviced first by next available POSIX worker thread.`;
-                exp.style.borderLeftColor = '#ef4444';
-            } else if (p === '1') {
-                exp.innerHTML = `<b>P1 - ICU / Emergency Info:</b> Critical priority for ICU bed & oxygen allocation.`;
-                exp.style.borderLeftColor = '#ea580c';
-            } else if (p === '2') {
-                exp.innerHTML = `<b>P2 - Telemedicine:</b> High priority for urgent doctor video triage.`;
-                exp.style.borderLeftColor = '#f59e0b';
-            } else if (p === '3') {
-                exp.innerHTML = `<b>P3 - Vaccination:</b> Medium priority for outbreak dose administration.`;
-                exp.style.borderLeftColor = '#3b82f6';
-            } else {
-                exp.innerHTML = `<b>P4 - Routine Consultation:</b> Normal priority. Protected by Aging (+1 priority boost every 2000ms wait) to eliminate starvation!`;
-                exp.style.borderLeftColor = '#10b981';
+        function logoutToRoleSelection() {
+            currentRole = null;
+            document.getElementById('userRoleBadge').style.display = 'none';
+            document.getElementById('btnLogout').style.display = 'none';
+            document.getElementById('btnRefresh').style.display = 'none';
+            document.getElementById('headerSubtitle').innerText = "Adaptive Dynamic Thread Pooling & Priority Healthcare Server";
+            showView('view-login');
+        }
+
+        function refreshCurrentView() {
+            fetchStats();
+            if (currentRole === 'patient') {
+                fetchAppointments();
+            } else if (currentRole === 'doctor') {
+                fetchQueue();
+                fetchDoctorSchedule();
+                fetchResources();
+                fetchThreads();
+            } else if (currentRole === 'admin') {
+                fetchThreads();
             }
         }
 
-        // Open/Close Registration Modal
-        function openRegistrationModal(preselectDoctorId = null) {
-            document.getElementById('modal-register').style.display = 'flex';
-            const defaultNames = ['Aarav Sharma', 'Devyani Patil', 'Rohan Mehta', 'Pooja Verma', 'Siddharth Rao', 'Ananya Deshmukh'];
-            document.getElementById('modal-patient-name').value = defaultNames[Math.floor(Math.random() * defaultNames.length)];
-            document.getElementById('modal-patient-phone').value = `+91-98${Math.floor(10000000 + Math.random() * 90000000)}`;
-
-            populateModalDoctors(preselectDoctorId);
-            updatePriorityExplainer();
-        }
-
-        function closeRegistrationModal() {
-            document.getElementById('modal-register').style.display = 'none';
-        }
-
-        function closeConfirmationModal() {
-            document.getElementById('modal-confirmation').style.display = 'none';
-        }
-
-        // Populate Doctors in Modal
-        function populateModalDoctors(preselectId) {
-            const docSelect = document.getElementById('modal-doctor-select');
-            docSelect.innerHTML = allDoctors.map(d => 
-                `<option value="${d.id}" ${d.id === preselectId ? 'selected' : ''}>${d.name} (${d.speciality} - ${d.fee})</option>`
-            ).join('');
-            updateModalSlots();
-        }
-
-        function updateModalSlots() {
-            const docId = parseInt(document.getElementById('modal-doctor-select').value);
-            const slotSelect = document.getElementById('modal-slot-select');
-            const slots = doctorSlotsMap[docId] || [];
-            const available = slots.filter(s => s.available === true || (s.available === undefined && !s.is_booked));
-
-            if (available.length === 0) {
-                slotSelect.innerHTML = '<option value="">No free slots for this doctor</option>';
-            } else {
-                slotSelect.innerHTML = available.map(s => 
-                    `<option value="${s.id}">${s.slot || (s.day + ' ' + s.start_time + ' - ' + s.end_time)}</option>`
-                ).join('');
+        // Preset Handler
+        function applyPreset(type) {
+            if (type === 'accident') {
+                document.getElementById('pRegName').value = currentPatientName || 'Rahul Sharma';
+                document.getElementById('pRegAge').value = '34';
+                document.getElementById('pRegSymptoms').value = 'Severe highway accident polytrauma, head injury, unconscious';
+                document.getElementById('pRegPriority').value = '0';
+                document.getElementById('pRegResource').value = 'icu_beds';
+            } else if (type === 'oxygen') {
+                document.getElementById('pRegName').value = 'Kavita Nair';
+                document.getElementById('pRegAge').value = '58';
+                document.getElementById('pRegSymptoms').value = 'Acute respiratory distress, severe hypoxemia SpO2 76%';
+                document.getElementById('pRegPriority').value = '0';
+                document.getElementById('pRegResource').value = 'oxygen_cylinders';
+            } else if (type === 'blood') {
+                document.getElementById('pRegName').value = 'Vikram Singh';
+                document.getElementById('pRegAge').value = '42';
+                document.getElementById('pRegSymptoms').value = 'Massive arterial hemorrhage, rapid blood loss, shock';
+                document.getElementById('pRegPriority').value = '0';
+                document.getElementById('pRegResource').value = 'blood_units';
+            } else if (type === 'fracture') {
+                document.getElementById('pRegName').value = 'Sneha Gilbile';
+                document.getElementById('pRegAge').value = '29';
+                document.getElementById('pRegSymptoms').value = 'Open compound tibia-fibula fracture, severe pain';
+                document.getElementById('pRegPriority').value = '1';
+                document.getElementById('pRegResource').value = 'general_beds';
+            } else if (type === 'fever') {
+                document.getElementById('pRegName').value = 'Devyani Patil';
+                document.getElementById('pRegAge').value = '21';
+                document.getElementById('pRegSymptoms').value = 'High fever 103F, dehydration, persistent vomiting';
+                document.getElementById('pRegPriority').value = '2';
+                document.getElementById('pRegResource').value = 'general_beds';
+            } else if (type === 'routine') {
+                document.getElementById('pRegName').value = 'Aarav Mehta';
+                document.getElementById('pRegAge').value = '28';
+                document.getElementById('pRegSymptoms').value = 'Weekly routine checkup, diabetes follow-up, BP check';
+                document.getElementById('pRegPriority').value = '3';
+                document.getElementById('pRegResource').value = 'none';
             }
         }
 
-        // Submit Patient Registration
-        async function submitPatientRegistration() {
-            const name = document.getElementById('modal-patient-name').value.trim();
-            const phone = document.getElementById('modal-patient-phone').value.trim();
-            const priority = parseInt(document.getElementById('modal-priority-select').value);
-            const docId = parseInt(document.getElementById('modal-doctor-select').value);
-            const slotSelect = document.getElementById('modal-slot-select');
-            const slotId = parseInt(slotSelect.value);
+        // Submit Case (Patient Portal)
+        async function handlePatientCaseSubmit(e) {
+            e.preventDefault();
+            const payload = {
+                patient_name: document.getElementById('pRegName').value,
+                phone: "+91-98200-11000",
+                age: parseInt(document.getElementById('pRegAge').value),
+                gender: "Other",
+                symptoms: document.getElementById('pRegSymptoms').value,
+                vitals: "Blood Pressure 120/80, SpO2 normal",
+                priority: parseInt(document.getElementById('pRegPriority').value),
+                priority_reason: "Clinical triage assessment",
+                required_resource: document.getElementById('pRegResource').value
+            };
+
+            try {
+                const res = await fetch('/api/request', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+
+                document.getElementById('pResName').innerText = data.patient_name;
+                document.getElementById('pResId').innerText = data.patient_id;
+                document.getElementById('pResReqId').innerText = data.request_id;
+                document.getElementById('pResWorker').innerText = data.worker_name;
+                document.getElementById('pResResource').innerText = data.resource_status;
+                document.getElementById('pResPriorityBadge').className = `prio-badge prio-p${data.priority}`;
+                document.getElementById('pResPriorityBadge').innerText = data.priority_label;
+
+                fetchStats();
+                fetchQueue();
+                fetchResources();
+
+                alert(`✅ Emergency Request Submitted!\n\nPatient: ${data.patient_name} (${data.request_id})\nAcuity: ${data.priority_label}\nWorker Assigned: ${data.worker_name}\nResource: ${data.resource_status}\n\n👉 This case is now live on the Doctor's Triage Board.`);
+            } catch (err) {}
+        }
+
+        // Load Doctors List
+        async function loadDoctorsList() {
+            try {
+                const res = await fetch('/api/doctors');
+                const data = await res.json();
+                const sel = document.getElementById('bookDoctorSelect');
+                sel.innerHTML = data.doctors.map(d => `
+                    <option value="${d.id}">${d.name} (${d.speciality} · ${d.fee})</option>
+                `).join('');
+
+                if (data.doctors.length > 0) {
+                    loadDoctorSlots(data.doctors[0].id);
+                }
+            } catch (e) {}
+        }
+
+        // Load Slots for Doctor
+        async function loadDoctorSlots(docId) {
+            try {
+                const res = await fetch(`/api/appointments/slots?doctor_id=${docId}`);
+                const data = await res.json();
+                const sel = document.getElementById('bookSlotSelect');
+
+                const availableSlots = (data.slots || []).filter(s => s.available);
+                if (availableSlots.length === 0) {
+                    sel.innerHTML = `<option value="">No slots currently available</option>`;
+                    return;
+                }
+
+                sel.innerHTML = availableSlots.map(s => `
+                    <option value="${s.id}">${s.slot}</option>
+                `).join('');
+            } catch (e) {}
+        }
+
+        // Book Appointment
+        async function handleAppointmentBooking(e) {
+            e.preventDefault();
+            const slotId = parseInt(document.getElementById('bookSlotSelect').value);
+            const docId = parseInt(document.getElementById('bookDoctorSelect').value);
+            const phone = document.getElementById('bookPhone').value;
 
             if (!slotId) {
-                showToast("Please choose an available slot.", true);
+                alert('Please select an available slot.');
                 return;
             }
 
-            closeRegistrationModal();
-            showToast(`Submitting registration for ${name} (Priority P${priority})...`);
-
             try {
-                const res = await fetch(`${API_BASE}/api/appointments`, {
+                const res = await fetch('/api/appointments', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         doctor_id: docId,
                         slot_id: slotId,
-                        patient_name: name,
-                        phone: phone,
-                        priority: priority,
-                        notes: `Priority P${priority} triage registration`
+                        patient_name: currentPatientName,
+                        patient_phone: phone,
+                        notes: "Booked via Patient Self-Service Portal"
                     })
                 });
-
                 const data = await res.json();
 
                 if (res.status === 201) {
-                    showConfirmationModal(true, data, priority);
-                    addOSLog('MUTEX', `✓ Thread acquired mutex lock: Booked Slot #${slotId} for ${name} [P${priority}]. Worker #${data.worker_id}`);
-                    loadDoctorsAndSlots();
-                    loadAppointmentsFeed();
-                } else if (res.status === 409) {
-                    showConfirmationModal(false, data, priority);
-                    addOSLog('MUTEX', `⚠️ Slot #${slotId} already locked/booked by another transaction! HTTP 409 Conflict.`);
-                    loadDoctorsAndSlots();
+                    alert(`✅ Appointment Confirmed!\nBooking Code: ${data.booking_code}\nSlot: ${data.slot}`);
+                    fetchAppointments();
+                    loadDoctorSlots(docId);
                 } else {
-                    showToast(`Booking error: ${data.error || 'Server error'}`, true);
+                    alert(`❌ Booking Conflict: ${data.error}`);
                 }
-            } catch (err) {
-                console.error(err);
-                showToast("Network error communicating with server.", true);
-            }
+            } catch (e) {}
         }
 
-        // Show Confirmation Pop-up
-        function showConfirmationModal(isSuccess, data, priority) {
-            const modal = document.getElementById('modal-confirmation');
-            const icon = document.getElementById('confirm-icon');
-            const title = document.getElementById('confirm-title');
-            const body = document.getElementById('confirm-body');
-
-            const prioNames = [
-                'P0: Accident / Trauma (Critical)',
-                'P1: Emergency Info (Critical)',
-                'P2: Telemedicine (Urgent)',
-                'P3: Vaccination (Medium)',
-                'P4: Routine Consultation (Normal)'
-            ];
-
-            if (isSuccess) {
-                icon.innerText = priority === 0 ? '🚨' : '✅';
-                title.innerText = priority === 0 ? 'P0 ACCIDENT TRIAGE DISPATCHED!' : 'Patient Registered Successfully!';
-                title.style.color = priority === 0 ? 'var(--accent-red)' : 'var(--accent-green)';
-
-                body.innerHTML = `
-                    <div class="confirm-row"><span>Patient Name:</span> <b>${data.patient_name}</b></div>
-                    <div class="confirm-row"><span>Triage Priority:</span> <b style="color:var(--accent-red);">${prioNames[priority] || 'P' + priority}</b></div>
-                    <div class="confirm-row"><span>Booking Code:</span> <b style="color:var(--accent-green);">${data.booking_code}</b></div>
-                    <div class="confirm-row"><span>Assigned Worker:</span> <b>Thread #${data.worker_id}</b></div>
-                    <div class="confirm-row"><span>Queue Wait:</span> <b>${data.queue_wait_ms} ms</b></div>
-                    <div class="confirm-row"><span>OS Synchronization:</span> <b style="color:var(--accent-blue);">pthread_mutex_t (Atomic)</b></div>
-                `;
-            } else {
-                icon.innerText = '⚠️';
-                title.innerText = 'Mutual Exclusion Protected (HTTP 409 Conflict)';
-                title.style.color = 'var(--accent-amber)';
-
-                body.innerHTML = `
-                    <div class="confirm-row"><span>Status:</span> <b style="color:var(--accent-red);">HTTP 409 CONFLICT</b></div>
-                    <div class="confirm-row"><span>Conflict Reason:</span> <span>${data.error || 'Slot already booked'}</span></div>
-                    <div class="confirm-row"><span>OS Concept:</span> <b style="color:var(--accent-blue);">Mutual Exclusion Enforced</b></div>
-                    <div style="font-size:10px; color:#9ca3af; margin-top:4px;">
-                        The SQLite write transaction serialized inside pthread_mutex_lock prevents double-booking race condition!
-                    </div>
-                `;
-            }
-
-            modal.style.display = 'flex';
-        }
-
-        // Quick Accident Emergency One-Click Trigger
-        async function quickAccidentEmergency() {
-            showToast("🚨 RAPID P0 ACCIDENT EMERGENCY DISPATCHED!");
-            addOSLog('EMERGENCY', "<b>[P0 ACCIDENT CASE]</b> Patient in critical trauma. Enqueuing directly into P0 priority slot.");
-
+        // ================= SIMULTANEOUS P0 EMERGENCY ARRIVAL DEMO (DOCTOR PORTAL) =================
+        async function runSimultaneousP0InDoctorPortal() {
             try {
-                const res = await fetch(`${API_BASE}/api/request`, {
+                // Call backend API
+                const res = await fetch('/api/simulate-tie-breaker', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: 'ACTION=ACCIDENT&PATIENT_ID=9999'
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ resource_type: "icu_beds" })
                 });
                 const data = await res.json();
-                addOSLog('EMERGENCY', `✓ P0 Accident processed by <b>Worker #${data.worker_id}</b> in ${data.execution_ms}ms.`);
-                showToast(`✓ P0 Accident Processed by Worker #${data.worker_id}!`);
-            } catch (e) {
-                console.error(e);
-            }
-        }
 
-        // Load Doctors and their available slots
-        async function loadDoctorsAndSlots() {
-            try {
-                const res = await fetch(`${API_BASE}/api/doctors`);
-                if (!res.ok) return;
-                const data = await res.json();
-                allDoctors = data.doctors || [];
+                const box = document.getElementById('simultaneousP0Card');
+                box.style.display = 'flex';
 
-                for (const doc of allDoctors) {
-                    try {
-                        const slotRes = await fetch(`${API_BASE}/api/appointments/slots?doctor_id=${doc.id}`);
-                        if (slotRes.ok) {
-                            const slotData = await slotRes.json();
-                            doctorSlotsMap[doc.id] = slotData.slots || [];
-                        }
-                    } catch (e) {
-                        doctorSlotsMap[doc.id] = [];
-                    }
-                }
+                const caseA = data.case_a;
+                const caseB = data.case_b;
+                const isShortageB = caseB.allocation_status === "SHORTAGE";
 
-                renderDoctors();
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        // Render Doctor Cards
-        function renderDoctors() {
-            const container = document.getElementById('doctors-list');
-            if (allDoctors.length === 0) {
-                container.innerHTML = '<div style="font-size:12px; color:var(--text-muted);">No doctors loaded.</div>';
-                return;
-            }
-
-            container.innerHTML = allDoctors.map(doc => {
-                const slots = doctorSlotsMap[doc.id] || [];
-                const availableSlots = slots.filter(s => s.available === true || (s.available === undefined && !s.is_booked));
-
-                let slotOptions = '';
-                if (availableSlots.length > 0) {
-                    slotOptions = availableSlots.map(s => 
-                        `<option value="${s.id}">${s.slot || (s.day + ' ' + s.start_time + ' - ' + s.end_time)}</option>`
-                    ).join('');
-                } else {
-                    slotOptions = '<option value="">No free slots</option>';
-                }
-
-                return `
-                    <div class="doc-item-card">
+                box.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--accent-red-border); padding-bottom: 10px;">
                         <div>
-                            <div class="doc-item-top">
-                                <div>
-                                    <div class="doc-item-name">${doc.name}</div>
-                                    <div class="doc-item-spec">${doc.speciality} • ${doc.experience}</div>
-                                </div>
-                                <div class="doc-item-rating">⭐ ${doc.rating.toFixed(1)}</div>
+                            <h3 style="color: var(--accent-red); font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;">
+                                <span>🚨</span> Simultaneous Dual P0 Emergency Arrival Handled
+                            </h3>
+                            <p style="font-size: 12px; color: var(--text-sub); margin-top: 2px;">
+                                Two life-threatening cases arrived at the exact same instant. Resolved via microsecond arrival timestamp tie-breaking and parallel POSIX worker threads.
+                            </p>
+                        </div>
+                        <span class="prio-badge prio-p0" style="font-size: 12px;">FIFO Microsecond Tie-Breaker</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <!-- Case A -->
+                        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid var(--accent-red); border-radius: 10px; padding: 14px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <strong style="font-size: 14px; color: var(--accent-red);">${caseA.patient_name}</strong>
+                                <span class="prio-badge prio-p0">Rank #1 (T0)</span>
                             </div>
-                            <div style="margin-top: 10px;">
-                                <label style="font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Available Slot:</label>
-                                <select class="doc-slot-dropdown" id="doc-card-slot-${doc.id}">
-                                    ${slotOptions}
-                                </select>
+                            <div style="font-size: 12px; color: var(--text-sub); display: flex; flex-direction: column; gap: 4px;">
+                                <div>Arrival Timestamp: <code>T0 (${caseA.arrival_timestamp_ms} ms)</code></div>
+                                <div>Assigned Thread: <strong style="color: #0369a1;">${caseA.assigned_worker}</strong> (Executing in Parallel)</div>
+                                <div>Resource Requested: <code>Critical Care ICU Bed</code></div>
+                                <div style="color: var(--accent-green); font-weight: 800; margin-top: 6px;">
+                                    Status: ALLOCATED (${caseA.allocation_code})
+                                </div>
                             </div>
                         </div>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="btn-card-book" style="flex: 1;" onclick="openRegistrationModal(${doc.id})">
-                                Register & Book (${doc.fee})
-                            </button>
+
+                        <!-- Case B -->
+                        <div id="caseBBox" style="background: #f8fafc; border: 1px solid ${isShortageB ? 'var(--accent-red-border)' : '#cbd5e1'}; border-left: 4px solid ${isShortageB ? 'var(--accent-amber)' : 'var(--accent-red)'}; border-radius: 10px; padding: 14px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <strong style="font-size: 14px; color: var(--accent-red);">${caseB.patient_name}</strong>
+                                <span class="prio-badge prio-p0">Rank #2 (T0 + 1ms)</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-sub); display: flex; flex-direction: column; gap: 4px;">
+                                <div>Arrival Timestamp: <code>T0 + 1ms (${caseB.arrival_timestamp_ms} ms)</code></div>
+                                <div>Assigned Thread: <strong style="color: #0369a1;">${caseB.assigned_worker}</strong> (Simultaneous Worker)</div>
+                                <div>Resource Requested: <code>Critical Care ICU Bed</code></div>
+                                ${isShortageB ? `
+                                    <div style="color: var(--accent-red); font-weight: 800; margin-top: 4px;">
+                                        ⚠️ SHORTAGE ALERT: Capacity Full (Mutex Locked)
+                                    </div>
+                                    <div style="font-size: 11px; color: var(--text-muted);">${caseB.shortage_reason}</div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+                                        <button onclick="deployAlternativeCare('oxygen_cylinders')" class="btn-action-sm" style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">🫁 Deploy Emergency High-Flow O2 & Vent</button>
+                                        <button onclick="deployAlternativeCare('transfer')" class="btn-action-sm" style="background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;">🏥 Inter-Hospital Transfer</button>
+                                        <button onclick="deployAlternativeCare('general_beds')" class="btn-action-sm" style="background: #f1f5f9; color: var(--text-sub); border: 1px solid #cbd5e1;">🛏️ Convert General Bed</button>
+                                    </div>
+                                ` : `
+                                    <div style="color: var(--accent-green); font-weight: 800; margin-top: 6px;">
+                                        Status: ALLOCATED (${caseB.allocation_code})
+                                    </div>
+                                `}
+                            </div>
                         </div>
                     </div>
                 `;
-            }).join('');
+
+                fetchResources();
+                fetchThreads();
+                fetchStats();
+                fetchQueue();
+            } catch (e) {}
         }
 
-        // Load Hospitals
-        async function loadHospitals() {
-            try {
-                const res = await fetch(`${API_BASE}/api/hospitals`);
-                if (!res.ok) return;
-                const data = await res.json();
-                const container = document.getElementById('hospitals-list');
-                const list = data.hospitals || [];
+        async function deployAlternativeCare(resType) {
+            if (resType === 'transfer') {
+                alert('Initiated Critical Care Transfer to Sister Trauma Hospital. Ambulatory escort dispatched.');
+            } else {
+                await quickAlloc(resType);
+                alert(`Allocated alternative emergency resource (${resType}) for Patient Vikram Singh.`);
+            }
 
-                container.innerHTML = list.map(h => `
-                    <div class="doc-item-card">
-                        <div>
-                            <div class="doc-item-top">
-                                <div class="doc-item-name">${h.name}</div>
-                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700;">Oxygen: ${h.oxygen}</div>
-                            </div>
-                            <div style="font-size: 11px; color: var(--text-sub); margin-top: 4px;">📍 ${h.distance} • ${h.address}</div>
+            const caseB = document.getElementById('caseBBox');
+            if (caseB) {
+                caseB.style.borderLeftColor = "var(--accent-green)";
+                caseB.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="font-size: 14px; color: var(--accent-green);">Vikram Singh (Arterial Bleed)</strong>
+                        <span class="prio-badge prio-p2">STABILIZED</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-sub); display: flex; flex-direction: column; gap: 4px;">
+                        <div>Assigned Worker: <strong>Worker W2</strong></div>
+                        <div style="color: var(--accent-green); font-weight: 800; margin-top: 4px;">
+                            ✅ Alternative Care Deployed: ${resType === 'transfer' ? 'Critical Care Transfer Protocol Active' : 'Emergency High-Flow Oxygen Manifold'}
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: #0f172a; padding: 8px 12px; border-radius: 8px;">
-                            <span style="font-size: 11px; color: var(--text-sub);">ICU Capacity:</span>
-                            <span style="font-size: 12px; font-weight: 800; color: var(--accent-blue); font-family: 'JetBrains Mono', monospace;">${h.icu_beds} Beds Free</span>
+                        <div style="font-size: 11px; color: var(--text-muted);">Vitals stabilized by clinical trauma team.</div>
+                    </div>
+                `;
+            }
+            fetchResources();
+        }
+
+        // Preemption Demo in Doctor Portal
+        async function runPreemptionInDoctorPortal() {
+            // First submit P3 Routine
+            await fetch('/api/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_name: "Aarav Mehta (Routine OPD)",
+                    phone: "+91-98200-33333",
+                    age: 28,
+                    gender: "Male",
+                    symptoms: "Weekly diabetes & BP follow-up consultation",
+                    vitals: "Normal vitals",
+                    priority: 3,
+                    priority_reason: "Routine OPD checkup",
+                    required_resource: "none"
+                })
+            });
+
+            // Immediately submit P0 Accident
+            await fetch('/api/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    patient_name: "Sneha Gilbile (Severe Accident)",
+                    phone: "+91-98200-44444",
+                    age: 26,
+                    gender: "Female",
+                    symptoms: "Pedestrian hit by truck, open skull trauma, unconscious",
+                    vitals: "BP 70/40, HR 145, SpO2 78%",
+                    priority: 0,
+                    priority_reason: "Critical emergency trauma",
+                    required_resource: "icu_beds"
+                })
+            });
+
+            alert('Preemption Scenario Executed:\n1. Aarav Mehta (P3 Routine) queued.\n2. Sneha Gilbile (P0 Accident) queued.\n\nObserve: Sneha Gilbile (P0) preempts routine consultation and jumps straight to Rank #1 on the Triage Board!');
+            fetchQueue();
+            fetchThreads();
+            fetchStats();
+        }
+
+        // Surge Demo in Doctor Portal
+        async function runSurgeInDoctorPortal() {
+            await simulateEmergencyTraffic(12);
+            alert('Surge Traffic Injected (12 Patients)!\nObserve: Worker threads dynamically autoscaling (W1–W4 baseline scaling up to W5, W6, W7, W8) to absorb the burst.');
+        }
+
+        // Concurrent Booking Demo in Doctor Portal
+        async function runConcurrentBookingInDoctorPortal() {
+            try {
+                const res = await fetch('/api/simulate-concurrent-booking', { method: 'POST' });
+                const data = await res.json();
+
+                const box = document.getElementById('docRaceResultCard');
+                box.style.display = 'block';
+                box.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <h4 style="font-size: 14px; font-weight: 800;">🔒 Concurrent Booking Race Condition Prevention Test</h4>
+                        <span class="prio-badge prio-p2" style="font-size: 11px;">0 Duplicate Bookings</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 12px;">
+                        Dispatched two simultaneous HTTP requests trying to reserve Doctor 1, Slot 1 at the exact same instant:
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                        <div style="background: #ffffff; border: 1px solid var(--accent-green-border); border-left: 4px solid var(--accent-green); border-radius: 8px; padding: 12px; font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between; font-weight: 800; color: var(--accent-green); margin-bottom: 4px;">
+                                <span>${data.patient_a.name}</span>
+                                <span>HTTP ${data.patient_a.http_status} ${data.patient_a.result}</span>
+                            </div>
+                            <div>Booking Code: <code>${data.patient_a.booking_code}</code></div>
+                            <div style="color: var(--text-muted); margin-top: 4px;">${data.patient_a.message}</div>
+                        </div>
+
+                        <div style="background: #ffffff; border: 1px solid var(--accent-red-border); border-left: 4px solid var(--accent-red); border-radius: 8px; padding: 12px; font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between; font-weight: 800; color: var(--accent-red); margin-bottom: 4px;">
+                                <span>${data.patient_b.name}</span>
+                                <span>HTTP ${data.patient_b.http_status} ${data.patient_b.result}</span>
+                            </div>
+                            <div>Outcome: <code>Conflict / Rejected Safely</code></div>
+                            <div style="color: var(--text-muted); margin-top: 4px;">${data.patient_b.message}</div>
                         </div>
                     </div>
-                `).join('');
-            } catch (e) {
-                console.error(e);
-            }
+                `;
+                fetchDoctorSchedule();
+            } catch (e) {}
         }
 
-        // Load Appointments Feed with Priorities
-        async function loadAppointmentsFeed() {
+        // Load Doctor's Schedule
+        async function fetchDoctorSchedule() {
             try {
-                const res = await fetch(`${API_BASE}/api/appointments?limit=15`);
-                if (!res.ok) return;
+                const res = await fetch('/api/appointments');
                 const data = await res.json();
-                const feed = document.getElementById('patient-feed');
-                const list = data.appointments || [];
+                const tbody = document.getElementById('doctorScheduleTableBody');
 
-                document.getElementById('feed-count-badge').innerText = `${list.length} Registered`;
+                const docAppts = (data.appointments || []).filter(a => a.doctor.includes(currentDoctorName) || currentDoctorName.includes(a.doctor));
 
-                if (list.length === 0) {
-                    feed.innerHTML = '<div style="font-size: 12px; color: var(--text-muted); text-align: center; padding: 20px;">No registered patients yet.</div>';
+                if (docAppts.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 16px;">No consultations scheduled for today.</td></tr>`;
                     return;
                 }
 
-                feed.innerHTML = list.map((a, idx) => {
-                    // Derive priority class
-                    let prio = 4;
-                    let prioTag = 'P4: ROUTINE';
-                    let prioClass = 'feed-p4';
-                    let tagClass = 'tag-p4';
+                tbody.innerHTML = docAppts.map(a => `
+                    <tr>
+                        <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--primary);">${a.booking_code}</td>
+                        <td><strong>${a.patient_name}</strong></td>
+                        <td><code>${a.slot}</code></td>
+                        <td><span class="prio-badge prio-p2">${a.status}</span></td>
+                    </tr>
+                `).join('');
+            } catch (e) {}
+        }
 
-                    if (a.notes && a.notes.includes('P0')) {
-                        prio = 0; prioTag = 'P0: ACCIDENT'; prioClass = 'feed-p0'; tagClass = 'tag-p0';
-                    } else if (a.notes && a.notes.includes('P1')) {
-                        prio = 1; prioTag = 'P1: ICU INFO'; prioClass = 'feed-p1'; tagClass = 'tag-p1';
-                    } else if (a.notes && a.notes.includes('P2')) {
-                        prio = 2; prioTag = 'P2: TELEMED'; prioClass = 'feed-p2'; tagClass = 'tag-p2';
-                    } else if (a.notes && a.notes.includes('P3')) {
-                        prio = 3; prioTag = 'P3: VACCINE'; prioClass = 'feed-p3'; tagClass = 'tag-p3';
+        // Fetch Queue & Live Triage Board from SQLite
+        async function fetchQueue() {
+            try {
+                const res = await fetch('/api/requests');
+                const data = await res.json();
+                const requests = data.requests || [];
+
+                const p0Count = requests.filter(i => i.priority === 0 && i.status !== 'DISCHARGED').length;
+                if (document.getElementById('docCriticalP0Count')) {
+                    document.getElementById('docCriticalP0Count').innerText = `${p0Count} P0 Critical Active`;
+                }
+
+                // Doctor Queue Table
+                const docTbody = document.getElementById('doctorQueueTableBody');
+                if (docTbody) {
+                    if (requests.length === 0) {
+                        docTbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 24px;">No patients currently in triage queue. All workers on standby.</td></tr>`;
+                    } else {
+                        docTbody.innerHTML = requests.map((item, idx) => {
+                            const isP0 = item.priority === 0;
+                            const hasAlloc = item.allocation_code && item.allocation_code !== 'NONE';
+                            const isDischarged = item.status === 'DISCHARGED';
+                            const isAttended = item.status === 'ATTENDED';
+
+                            let statusBadge = '';
+                            if (isDischarged) {
+                                statusBadge = `<span style="background: #f1f5f9; color: #64748b; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px;">Discharged</span>`;
+                            } else if (isAttended) {
+                                statusBadge = `<span style="background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px;">Under Medical Care</span>`;
+                            } else if (hasAlloc) {
+                                statusBadge = `<span style="background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px;">Bed Allocated (${item.allocation_code})</span>`;
+                            } else if (item.required_resource !== 'none' && isP0) {
+                                statusBadge = `<span style="background: #fee2e2; color: #b91c1c; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px;">Waiting Bed Triage</span>`;
+                            } else {
+                                statusBadge = `<span style="color: var(--text-muted); font-size: 12px;">Standard OPD</span>`;
+                            }
+
+                            let actionHtml = '';
+                            if (isDischarged) {
+                                actionHtml = `<span style="color: var(--text-muted); font-size: 12px; font-style: italic;">Care Completed</span>`;
+                            } else if (hasAlloc) {
+                                actionHtml = `
+                                    <button onclick="doctorDischargePatient('${item.request_id}', '${item.required_resource}', '${item.allocation_code}')" style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                                        🩺 Discharge
+                                    </button>`;
+                            } else {
+                                actionHtml = `
+                                    <button onclick="doctorClinicalAction('${item.request_id}', 'ATTENDED', 'Patient attended by doctor')" style="background: var(--primary-light); color: var(--primary-dark); border: 1px solid #bae6fd; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                                        🩺 Attend Case
+                                    </button>`;
+                            }
+
+                            return `
+                                <tr style="${isP0 ? 'background: #fff8f8;' : ''}">
+                                    <td style="font-family: 'JetBrains Mono', monospace; font-weight: 800; color: ${isP0 ? 'var(--accent-red)' : 'var(--text-main)'};">Rank #${idx + 1}</td>
+                                    <td><span class="prio-badge prio-p${item.priority}">${item.priority_label}</span></td>
+                                    <td>
+                                        <strong>${item.patient_name}</strong>
+                                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--primary);">${item.request_id} · ${item.patient_id}</div>
+                                    </td>
+                                    <td style="font-size: 12px; max-width: 200px;">
+                                        <div>${item.symptoms}</div>
+                                        <div style="color: var(--text-muted); font-size: 11px;">${item.vitals}</div>
+                                    </td>
+                                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">
+                                        <span style="font-weight: 700; color: var(--primary);">${item.worker_name}</span>
+                                        <div style="font-size: 11px; color: var(--text-muted);">${item.queue_wait_ms} ms wait</div>
+                                    </td>
+                                    <td>${statusBadge}</td>
+                                    <td>${actionHtml}</td>
+                                </tr>
+                            `;
+                        }).join('');
+                    }
+                }
+            } catch (e) {
+                console.error("fetchQueue error:", e);
+            }
+        }
+
+        async function doctorClinicalAction(reqId, action, note) {
+            try {
+                const res = await fetch('/api/requests/action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ request_id: reqId, action: action, note: note })
+                });
+                await res.json();
+                fetchQueue();
+                fetchResources();
+                fetchEvents();
+            } catch (e) {
+                alert('Clinical Action Error: ' + e);
+            }
+        }
+
+        async function doctorDischargePatient(reqId, resType, allocCode) {
+            if (!confirm(`Discharge patient ${reqId}? This will free the allocated ${resType} back to hospital stock.`)) return;
+            try {
+                const res = await fetch('/api/requests/discharge', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ request_id: reqId, action: 'DISCHARGED', resource_type: resType, allocation_code: allocCode })
+                });
+                await res.json();
+                fetchQueue();
+                fetchResources();
+                fetchEvents();
+            } catch (e) {
+                alert('Discharge Error: ' + e);
+            }
+        }
+
+        async function resetQueueAndResources() {
+            if (!confirm("Clear all active triage cases and restore all hospital beds to available?")) return;
+            try {
+                const res = await fetch('/api/queue/reset', { method: 'POST' });
+                await res.json();
+                fetchQueue();
+                fetchResources();
+                fetchStats();
+            } catch (e) {
+                alert('Reset error: ' + e);
+            }
+        }
+
+        // Fetch Resources
+        async function fetchResources() {
+            try {
+                const res = await fetch('/api/resources');
+                const data = await res.json();
+
+                const o2 = data.find(r => r.resource_type === 'oxygen_cylinders');
+                const bld = data.find(r => r.resource_type === 'blood_units');
+                const icu = data.find(r => r.resource_type === 'icu_beds');
+                const vents = data.find(r => r.resource_type === 'ventilators');
+                const beds = data.find(r => r.resource_type === 'general_beds');
+
+                // Update Doctor Stock Cards
+                if (document.getElementById('docO2Avail') && o2) document.getElementById('docO2Avail').innerText = `${o2.available} Avail`;
+                if (document.getElementById('docBloodAvail') && bld) document.getElementById('docBloodAvail').innerText = `${bld.available} Units`;
+                if (document.getElementById('docIcuAvail') && icu) document.getElementById('docIcuAvail').innerText = `${icu.available} Beds`;
+                if (document.getElementById('docVentsAvail') && vents) document.getElementById('docVentsAvail').innerText = `${vents.available} Units`;
+
+                // Update Admin Stock Card
+                if (o2 && bld && icu && document.getElementById('mCriticalAvail')) {
+                    document.getElementById('mCriticalAvail').innerText = `${o2.available} O₂ · ${bld.available} Blood · ${icu.available} ICU`;
+                }
+                if (vents && document.getElementById('mVentsAvail')) document.getElementById('mVentsAvail').innerText = `${vents.available} Vents Avail`;
+                if (beds && document.getElementById('mGenBedsAvail')) document.getElementById('mGenBedsAvail').innerText = `${beds.available} Ward Beds`;
+
+                // Populate Doctor Resource Grid
+                const docGrid = document.getElementById('doctorResourceGrid');
+                if (docGrid) {
+                    docGrid.innerHTML = data.map(r => `
+                        <div class="res-card">
+                            <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 13px;">
+                                <span>${r.display_name}</span>
+                                <span class="prio-badge ${r.available === 0 ? 'prio-p0' : 'prio-p2'}">${r.available} Avail</span>
+                            </div>
+                            <div style="font-size: 11px; color: var(--text-muted);">
+                                Occupied: ${r.occupied} / Total: ${r.total} ${r.unit}
+                            </div>
+                            <div style="display: flex; gap: 6px; margin-top: 4px;">
+                                <button onclick="quickAlloc('${r.resource_type}')" style="flex: 1; background: var(--primary-light); color: var(--primary-dark); border: 1px solid #bae6fd; padding: 4px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">+ Allocate 1</button>
+                                <button onclick="quickRelease('${r.resource_type}')" style="flex: 1; background: #f1f5f9; color: var(--text-sub); border: 1px solid #cbd5e1; padding: 4px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">- Release 1</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) {}
+        }
+
+        async function quickAlloc(resType) {
+            await fetch('/api/resources/allocate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resource_type: resType, patient_id: "PAT-SYS", patient_name: "Manual Department Dispatch" })
+            });
+            fetchResources();
+            fetchStats();
+        }
+
+        async function quickRelease(resType) {
+            await fetch('/api/resources/release', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ resource_type: resType, allocation_code: "" })
+            });
+            fetchResources();
+            fetchStats();
+        }
+
+        // Fetch Server Stats
+        async function fetchStats() {
+            try {
+                const res = await fetch('/api/stats');
+                const data = await res.json();
+
+                if (document.getElementById('mTotalWorkers')) {
+                    document.getElementById('mTotalWorkers').innerText = data.current_threads;
+                    document.getElementById('mBusyWorkers').innerText = `${data.busy_threads} Busy`;
+                    document.getElementById('mIdleWorkers').innerText = `${data.idle_threads} Idle Standby`;
+
+                    document.getElementById('mQueueDepth').innerText = data.queue_depth;
+                    document.getElementById('mQueueStatus').innerText = `${data.queue_depth} Waiting`;
+
+                    document.getElementById('mTotalProcessed').innerText = data.total_requests;
+                    document.getElementById('mSuccessCount').innerText = `${data.total_succeeded} Succeeded`;
+                    document.getElementById('mOverloadCount').innerText = `${data.total_failed} Overload (503)`;
+                }
+
+                if (document.getElementById('docWorkerFleetSummary')) {
+                    document.getElementById('docWorkerFleetSummary').innerText = 
+                        `${data.current_threads} Active Workers (${data.busy_threads} Busy · ${data.idle_threads} Idle Standby)`;
+                }
+            } catch (err) {}
+        }
+
+        // Fetch Worker Threads
+        async function fetchThreads() {
+            try {
+                const res = await fetch('/api/threads');
+                const data = await res.json();
+                const container = document.getElementById('docWorkerMatrix');
+                if (!container) return;
+
+                container.innerHTML = data.workers.map(w => {
+                    let boxClass = 'worker-box';
+                    if (w.alive) {
+                        boxClass += w.busy ? ' busy' : ' idle';
+                    } else {
+                        boxClass += ' pruned';
                     }
 
                     return `
-                        <div class="feed-item ${prioClass}">
-                            <div class="feed-item-header">
-                                <span class="feed-patient-name">${a.patient_name || 'Patient'}</span>
-                                <span class="feed-priority-tag ${tagClass}">${prioTag}</span>
+                        <div class="${boxClass}">
+                            <div class="w-top">
+                                <span>${w.name}</span>
+                                <span class="w-tag ${w.baseline ? 'w-tag-baseline' : 'w-tag-dynamic'}">${w.baseline ? 'Base' : 'Dyn'}</span>
                             </div>
-                            <div class="feed-details">
-                                <span>${a.doctor || a.doctor_name || 'Dr. Specialist'} (${a.speciality || 'Medicine'})</span>
-                                <span>${a.day || ''} ${a.time || ''}</span>
+                            <div style="font-size: 10px; font-weight: 800; color: ${w.busy ? 'var(--accent-amber)' : (w.alive ? 'var(--accent-green)' : 'var(--text-muted)')};">
+                                ${w.state}
                             </div>
-                            <div class="feed-footer">
-                                <span>Code: <b style="color:var(--accent-green);">${a.booking_code}</b></span>
-                                <span>Handled by: <b style="color:var(--accent-blue);">Worker #${a.handled_by_worker !== undefined ? a.handled_by_worker : 0}</b></span>
+                            <div style="font-size: 9px; color: var(--text-muted); margin-top: 2px;">
+                                <div>${w.current_task}</div>
+                                ${w.alive && !w.busy && !w.baseline ? `<div style="color: var(--accent-amber); font-weight: 700;">${w.idle_seconds}s (Retires 4s)</div>` : ''}
                             </div>
                         </div>
                     `;
                 }).join('');
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) {}
         }
 
-        // Live Poll Server Stats from /api/stats
-        async function pollStats() {
+        // Traffic Surge
+        async function simulateEmergencyTraffic(count = 12) {
             try {
-                const res = await fetch(`${API_BASE}/api/stats`);
-                if (!res.ok) {
-                    setOffline();
-                    return;
-                }
-                const data = await res.json();
-                setOnline();
-
-                // Top Metrics Strip
-                document.getElementById('top-threads').innerText = `${data.current_threads} / 16`;
-                document.getElementById('bar-threads').style.width = `${(data.current_threads / 16) * 100}%`;
-
-                document.getElementById('top-busy').innerText = data.busy_threads;
-                document.getElementById('top-idle').innerText = data.current_threads - data.busy_threads;
-                document.getElementById('bar-busy').style.width = `${(data.busy_threads / 16) * 100}%`;
-
-                const semEmpty = data.sem_empty !== undefined ? data.sem_empty : (64 - data.queue_depth);
-                const semFull = data.sem_full !== undefined ? data.sem_full : data.queue_depth;
-
-                document.getElementById('top-sem-empty').innerText = semEmpty;
-                document.getElementById('bar-sem-empty').style.width = `${(semEmpty / 64) * 100}%`;
-
-                document.getElementById('top-sem-full').innerText = semFull;
-                document.getElementById('bar-sem-full').style.width = `${(semFull / 64) * 100}%`;
-
-                // Mutex state
-                const mutexBadge = document.getElementById('top-mutex-badge');
-                const mutexVal = document.getElementById('top-mutex-val');
-                if (data.busy_threads > 0) {
-                    mutexBadge.innerText = 'LOCKED (ACTIVE)';
-                    mutexBadge.style.color = 'var(--accent-red)';
-                    mutexVal.innerText = 'pthread_mutex_lock';
-                    mutexVal.style.color = 'var(--accent-red)';
-                } else {
-                    mutexBadge.innerText = 'UNLOCKED';
-                    mutexBadge.style.color = 'var(--accent-green)';
-                    mutexVal.innerText = 'pthread_mutex_t';
-                    mutexVal.style.color = 'var(--accent-green)';
+                const log = document.getElementById('autoscalerLogBox');
+                if (log) {
+                    log.innerHTML += `<div>[${new Date().toLocaleTimeString()}] Traffic surge injected (${count} requests). Autoscaler evaluating queue depth...</div>`;
+                    log.scrollTop = log.scrollHeight;
                 }
 
-                // OS View Performance
-                document.getElementById('os-p50').innerText = `${data.p50_latency_ms.toFixed(1)} ms`;
-                document.getElementById('os-p95').innerText = `${data.p95_latency_ms.toFixed(1)} ms`;
-                document.getElementById('os-succeeded').innerText = data.total_succeeded;
-                document.getElementById('os-scaleup').innerText = data.scale_up;
-                document.getElementById('os-scaledown').innerText = data.scale_down;
-                document.getElementById('os-dropped').innerText = data.total_failed;
-
-                // Render 16 Worker Threads Matrix
-                const matrix = document.getElementById('workers-matrix');
-                matrix.innerHTML = '';
-                for (let i = 0; i < 16; i++) {
-                    const w = data.workers[i] || { alive: false, busy: false, baseline: (i < 4) };
-                    const box = document.createElement('div');
-                    let boxClass = 'worker-box ';
-                    let badgeClass = 'w-state-pruned';
-                    let statusText = 'PRUNED';
-
-                    if (!w.alive) {
-                        boxClass += 'pruned';
-                    } else if (w.busy) {
-                        boxClass += 'busy';
-                        badgeClass = 'w-state-busy';
-                        statusText = 'BUSY (RUNNING)';
-                    } else {
-                        boxClass += 'idle';
-                        badgeClass = 'w-state-idle';
-                        statusText = 'IDLE (READY)';
-                    }
-
-                    box.className = boxClass;
-                    box.innerHTML = `
-                        <div class="w-top">
-                            <span>Thread #${i}</span>
-                            <span class="w-state-badge ${badgeClass}">${statusText}</span>
-                        </div>
-                        <div class="w-desc">
-                            ${w.baseline ? 'Permanent Baseline Worker' : 'Autoscaled Dynamic Worker'}
-                        </div>
-                    `;
-                    matrix.appendChild(box);
-                }
-
-                // Render Live Priority Queue Track in Lab
-                const track = document.getElementById('lab-queue-track');
-                const items = data.queued_items || [];
-                if (items.length === 0) {
-                    track.innerHTML = `
-                        <div style="grid-column: span 8; color: var(--text-muted); font-size: 12px; text-align: center; padding: 24px;">
-                            Queue is empty. Worker threads are waiting on sem_timedwait(&sem_full).
-                        </div>
-                    `;
-                } else {
-                    track.innerHTML = items.map(it => {
-                        let pTag = `tag-p${it.eff_prio}`;
-                        let boostHtml = it.boost > 0 
-                            ? `<span style="color:var(--accent-purple); font-weight:800;">🚀 Boost +${it.boost}</span>` 
-                            : `<span style="color:var(--text-muted);">Base: P${it.base_prio}</span>`;
-                        return `
-                            <div class="q-card" style="border-left: 3px solid var(--accent-blue);">
-                                <div style="display:flex; justify-content:space-between; align-items:center;">
-                                    <span class="feed-priority-tag ${pTag}">P${it.eff_prio}</span>
-                                    <span style="font-size:9px; color:#38bdf8;">${it.wait_ms}ms</span>
-                                </div>
-                                <div style="font-weight:700; color:#fff; font-size:11px; margin-top:2px;">${it.type_name}</div>
-                                <div style="color:var(--text-sub); font-size:10px;">${it.patient || 'Patient'}</div>
-                                <div style="font-size:9px; margin-top:2px;">${boostHtml}</div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-            } catch (e) {
-                setOffline();
-            }
-        }
-
-        function setOnline() {
-            document.getElementById('server-pulse').className = 'pulse-dot';
-            document.getElementById('server-status-text').innerText = 'Engine Online';
-        }
-
-        function setOffline() {
-            document.getElementById('server-pulse').className = 'pulse-dot offline';
-            document.getElementById('server-status-text').innerText = 'Engine Disconnected';
-        }
-
-        // Outbreak Surge Simulation (80 requests)
-        async function triggerOutbreakSurge() {
-            showToast("🚨 SURGE: Bursting 80 Concurrent Requests to Thread Pool...");
-            addOSLog('SURGE', "Flooding 80 requests across P0 to P4 to trigger Dynamic Thread Pool scaling.");
-
-            for (let w = 0; w < 4; w++) {
-                for (let i = 0; i < 20; i++) {
-                    const reqTypes = ['ACCIDENT', 'EMERGENCY', 'TELEMEDICINE', 'VACCINE', 'APPOINTMENT'];
-                    const r = reqTypes[(w * 20 + i) % reqTypes.length];
-                    fetch(`${API_BASE}/api/request`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: `ACTION=${r}&PATIENT_ID=${2000 + (w * 20 + i)}`
-                    });
-                }
-                await new Promise(r => setTimeout(r, 20));
-            }
-
-            setTimeout(loadAppointmentsFeed, 1000);
-        }
-
-        // 4 One-Click Experiments
-        async function runOSExperiment(expId) {
-            switchView('lab');
-
-            if (expId === 1) {
-                // Priority Preemption & Aging
-                addOSLog('QUEUE', '<b>[EXP 1]</b> Testing Priority Scheduling & Dynamic Aging anti-starvation.');
-                addOSLog('QUEUE', '1. Enqueuing 1 LOW-PRIORITY (P4 Routine OPD) task...');
-                fetch(`${API_BASE}/api/request`, {
+                await fetch('/api/simulate-traffic', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: 'ACTION=APPOINTMENT&PATIENT_ID=1001'
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ count })
                 });
 
-                setTimeout(() => {
-                    addOSLog('QUEUE', '2. Bursting 8 HIGH-PRIORITY (P0 Accident) tasks into queue track...');
-                    for (let i = 0; i < 8; i++) {
-                        fetch(`${API_BASE}/api/request`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'text/plain' },
-                            body: `ACTION=ACCIDENT&PATIENT_ID=${3000 + i}`
-                        });
-                    }
-                    addOSLog('QUEUE', '3. Priority comparator serves P0 Accident tasks before P4.');
-                    addOSLog('AGING', '4. P4 task aging timer active: Boost = floor(wait_ms / 2000ms).');
-                    addOSLog('AGING', '5. Dynamic Aging promotes P4 ➔ P3 ➔ P2 ➔ P1 ➔ P0 to guarantee zero starvation!');
-                    showToast('Exp 1: Priority preemption & aging demonstrated!');
-                }, 100);
-
-            } else if (expId === 2) {
-                // Mutex Race Condition
-                addOSLog('MUTEX', '<b>[EXP 2]</b> Simulating simultaneous double-booking race condition.');
-                addOSLog('MUTEX', 'Firing 2 concurrent HTTP requests for Doctor 1, Slot 1 in exact same millisecond...');
-
-                try {
-                    const req1 = fetch(`${API_BASE}/api/appointments`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ doctor_id: 1, slot_id: 1, patient_name: "Client Alpha", phone: "+91-98765-00001", notes: "P4 Race Test" })
-                    });
-                    const req2 = fetch(`${API_BASE}/api/appointments`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ doctor_id: 1, slot_id: 1, patient_name: "Client Beta", phone: "+91-98765-00002", notes: "P4 Race Test" })
-                    });
-
-                    const [res1, res2] = await Promise.all([req1, req2]);
-                    const d1 = await res1.json();
-                    const d2 = await res2.json();
-
-                    if (res1.status === 201) addOSLog('MUTEX', `✓ Client Alpha acquired mutex: <b>HTTP 201 Created</b> (${d1.booking_code})`);
-                    else if (res1.status === 409) addOSLog('MUTEX', `⚠️ Client Alpha serialized behind mutex: <b>HTTP 409 Conflict</b>`);
-
-                    if (res2.status === 201) addOSLog('MUTEX', `✓ Client Beta acquired mutex: <b>HTTP 201 Created</b> (${d2.booking_code})`);
-                    else if (res2.status === 409) addOSLog('MUTEX', `⚠️ Client Beta serialized behind mutex: <b>HTTP 409 Conflict</b>`);
-
-                    addOSLog('MUTEX', '<b>RESULT:</b> Mutual exclusion enforced via pthread_mutex_t! Zero double-bookings.');
-                    showToast('Exp 2: Mutex serialized requests (201 Created vs 409 Conflict)!');
-                    loadAppointmentsFeed();
-                } catch (e) {
-                    console.error(e);
-                }
-
-            } else if (expId === 3) {
-                // Queue Overflow & HTTP 503
-                addOSLog('503', '<b>[EXP 3]</b> Flooding 70 rapid requests to overflow 64-capacity bounded queue...');
-                let ok = 0, dropped = 0;
-                const reqs = [];
-                for (let i = 0; i < 70; i++) {
-                    reqs.push(fetch(`${API_BASE}/api/request`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'text/plain' },
-                        body: `ACTION=TELEMEDICINE&PATIENT_ID=${5000 + i}`
-                    }).then(r => {
-                        if (r.status === 200) ok++;
-                        else if (r.status === 503) dropped++;
-                    }).catch(() => {}));
-                }
-                await Promise.all(reqs);
-                addOSLog('SEMAPHORE', `sem_empty exhausted when queue reached 64 items.`);
-                addOSLog('503', `<b>RESULT:</b> Processed: ${ok} | Load Shed (HTTP 503): ${dropped}`);
-                showToast(`Exp 3: ${dropped} requests shed via HTTP 503 without crash!`);
-
-            } else if (expId === 4) {
-                // Autoscaler & Pruning
-                addOSLog('AUTOSCALER', '<b>[EXP 4]</b> Autoscaling thread pool from 4 up to 16 workers, then pruning.');
-                triggerOutbreakSurge();
-                addOSLog('AUTOSCALER', 'Worker pool expanded. After 4s idle timeout, dynamic threads prune back to 4 baseline workers.');
-            }
+                fetchStats();
+                fetchThreads();
+            } catch (e) {}
         }
 
-        // Initialize on load
-        loadDoctorsAndSlots();
-        loadHospitals();
-        loadAppointmentsFeed();
-        setInterval(pollStats, 500);
-        pollStats();
+        // Fetch Appointments
+        async function fetchAppointments() {
+            try {
+                const res = await fetch('/api/appointments');
+                const data = await res.json();
+
+                const rowsHtml = (!data.appointments || data.appointments.length === 0)
+                    ? `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 16px;">No consultations recorded yet.</td></tr>`
+                    : data.appointments.map(a => `
+                        <tr>
+                            <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--primary);">${a.booking_code}</td>
+                            <td><strong>${a.patient_name}</strong></td>
+                            <td>${a.doctor} (${a.speciality})</td>
+                            <td><code>${a.slot}</code></td>
+                            <td>Worker W${a.worker + 1}</td>
+                            <td><span class="prio-badge prio-p2" style="font-size: 10px;">${a.status}</span></td>
+                        </tr>
+                    `).join('');
+
+                const pTbody = document.getElementById('patientApptsTableBody');
+                if (pTbody) pTbody.innerHTML = rowsHtml;
+            } catch (e) {}
+        }
+
+        // Periodic Background Sync
+        setInterval(() => {
+            if (currentRole) refreshCurrentView();
+        }, 2000);
     </script>
 </body>
 </html>

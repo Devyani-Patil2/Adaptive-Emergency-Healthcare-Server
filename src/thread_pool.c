@@ -1,5 +1,6 @@
 #include "thread_pool.h"
 #include "service_handler.h"
+#include "database.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,6 @@ static int compare_ints(const void *a, const void *b) {
 }
 
 DynamicThreadPool* thread_pool_create(int min_threads, int max_threads, int idle_timeout) {
-    // Parameter validation
     if (min_threads < MIN_WORKERS_ALLOWED) min_threads = DEFAULT_MIN_THREADS;
     if (max_threads > MAX_WORKERS_LIMIT) max_threads = MAX_WORKERS_LIMIT;
     if (max_threads < min_threads) max_threads = min_threads;
@@ -52,6 +52,11 @@ DynamicThreadPool* thread_pool_create(int min_threads, int max_threads, int idle
         pool->workers[i].is_busy = false;
         pool->workers[i].is_baseline = (i < min_threads);
         pool->workers[i].last_busy_time_ms = current_timestamp_ms();
+        pool->workers[i].spawn_time_ms = current_timestamp_ms();
+        pool->workers[i].requests_processed = 0;
+        memset(pool->workers[i].current_task_id, 0, sizeof(pool->workers[i].current_task_id));
+        memset(pool->workers[i].current_patient, 0, sizeof(pool->workers[i].current_patient));
+        pool->workers[i].current_priority = -1;
         pool->workers[i].pool = pool;
     }
 
@@ -73,9 +78,8 @@ DynamicThreadPool* thread_pool_create(int min_threads, int max_threads, int idle
 static bool spawn_worker_slot(DynamicThreadPool *pool, int worker_index, bool is_baseline) {
     WorkerThread *worker = &pool->workers[worker_index];
 
-    // If slot was previously used by an exited thread, join it before reusing
     if (worker->is_alive) {
-        return false; // Already running
+        return false;
     }
 
     if (worker->has_thread) {
@@ -88,6 +92,10 @@ static bool spawn_worker_slot(DynamicThreadPool *pool, int worker_index, bool is
     worker->is_busy = false;
     worker->is_baseline = is_baseline;
     worker->last_busy_time_ms = current_timestamp_ms();
+    worker->spawn_time_ms = current_timestamp_ms();
+    memset(worker->current_task_id, 0, sizeof(worker->current_task_id));
+    memset(worker->current_patient, 0, sizeof(worker->current_patient));
+    worker->current_priority = -1;
 
     if (pthread_create(&worker->thread_id, NULL, worker_routine, worker) != 0) {
         worker->is_alive = false;
@@ -132,8 +140,14 @@ static void* worker_routine(void *arg) {
                 pool->current_threads > pool->min_threads &&
                 idle_ms >= (long long)pool->idle_timeout_sec * 1000) {
 
-                printf("  [AUTOSCALER - SCALE DOWN] Worker #%d idle for %lld ms. Retiring dynamic thread. Total workers: %d -> %d\n",
-                       worker->worker_id, idle_ms, pool->current_threads, pool->current_threads - 1);
+                printf("  [AUTOSCALER - SCALE DOWN] Worker W%d idle for %lld ms. Retiring dynamic worker thread. Total workers: %d -> %d\n",
+                       worker->worker_id + 1, idle_ms, pool->current_threads, pool->current_threads - 1);
+
+                char event_msg[128];
+                snprintf(event_msg, sizeof(event_msg),
+                         "Idle worker W%d retired after %ds grace period. Workers: %d -> %d",
+                         worker->worker_id + 1, pool->idle_timeout_sec, pool->current_threads, pool->current_threads - 1);
+                db_log_event("THREAD_SCALED_DOWN", "INFO", event_msg, "AUTOSCALER");
 
                 worker->is_alive = false;
                 worker->is_busy = false;
@@ -146,9 +160,15 @@ static void* worker_routine(void *arg) {
             continue;
         }
 
-        // Mark worker as active
+        // Mark worker as active & update task metadata
         worker->is_busy = true;
         pool->busy_threads++;
+        snprintf(worker->current_task_id, sizeof(worker->current_task_id), "%s",
+                 strlen(task.request_id) > 0 ? task.request_id : "REQ-ACTIVE");
+        snprintf(worker->current_patient, sizeof(worker->current_patient), "%s",
+                 strlen(task.patient_name) > 0 ? task.patient_name : "Patient");
+        worker->current_priority = (int)task.type;
+        worker->requests_processed++;
         pthread_mutex_unlock(&pool->pool_lock);
 
         // Process healthcare transaction
@@ -158,6 +178,9 @@ static void* worker_routine(void *arg) {
         pthread_mutex_lock(&pool->pool_lock);
         worker->is_busy = false;
         worker->last_busy_time_ms = current_timestamp_ms();
+        memset(worker->current_task_id, 0, sizeof(worker->current_task_id));
+        memset(worker->current_patient, 0, sizeof(worker->current_patient));
+        worker->current_priority = -1;
         pool->busy_threads--;
         pthread_mutex_unlock(&pool->pool_lock);
     }
@@ -173,11 +196,12 @@ bool thread_pool_submit(DynamicThreadPool *pool, Task task) {
     if (!pool || pool->is_shutdown) return false;
 
     // Push into thread-safe bounded priority queue
-    // Uses queue_push_try so if queue is full (overload), it returns false immediately
+    // Uses queue_push_try so if queue is full (64 items), it returns false immediately
     if (!queue_push_try(&pool->queue, task)) {
         pthread_mutex_lock(&pool->pool_lock);
         pool->total_requests_failed++;
         pthread_mutex_unlock(&pool->pool_lock);
+        db_log_event("QUEUE_OVERLOAD", "CRITICAL", "Bounded queue full (64/64). Overload protection rejected request with HTTP 503.", "OVERFLOW");
         return false; // Queue full -> triggers HTTP 503 Overload response
     }
 
@@ -190,7 +214,7 @@ bool thread_pool_submit(DynamicThreadPool *pool, Task task) {
     // Scale up if:
     // 1. All currently active workers are busy (or queue depth > active workers).
     // 2. Queue backlog exists (queue_depth >= 1).
-    // 3. Pool is below max_threads.
+    // 3. Pool is below max_threads (16).
     // 4. Cooldown window has elapsed since last scale event (hysteresis).
     if ((pool->busy_threads >= pool->current_threads || queue_depth >= 2) &&
         pool->current_threads < pool->max_threads &&
@@ -199,8 +223,8 @@ bool thread_pool_submit(DynamicThreadPool *pool, Task task) {
 
         // Determine step size: scale aggressively during sudden bursts
         int workers_to_add = 2;
-        if (queue_depth >= 10) workers_to_add = 6;
-        else if (queue_depth >= 4) workers_to_add = 4;
+        if (queue_depth >= 10) workers_to_add = 4;
+        else if (queue_depth >= 4) workers_to_add = 2;
 
         if (pool->current_threads + workers_to_add > pool->max_threads) {
             workers_to_add = pool->max_threads - pool->current_threads;
@@ -221,6 +245,12 @@ bool thread_pool_submit(DynamicThreadPool *pool, Task task) {
             pool->last_scale_time_ms = now_ms;
             printf("  [AUTOSCALER - SCALE UP] Backlog detected (Queue: %d, Busy: %d). Spawned %d worker(s). Total workers: %d\n",
                    queue_depth, pool->busy_threads, added, pool->current_threads);
+
+            char event_msg[128];
+            snprintf(event_msg, sizeof(event_msg),
+                     "Backlog detected (Queue: %d). Autoscaler spawned +%d workers. Active total: %d / %d",
+                     queue_depth, added, pool->current_threads, pool->max_threads);
+            db_log_event("THREAD_SCALED_UP", "WARNING", event_msg, "AUTOSCALER");
         }
     }
 
@@ -240,7 +270,6 @@ void thread_pool_record_completion(DynamicThreadPool *pool, int turnaround_ms, b
 
     pool->total_turnaround_time_ms += turnaround_ms;
 
-    // Record sample for percentiles
     if (pool->latency_sample_count < LATENCY_SAMPLES_CAP) {
         pool->latency_samples[pool->latency_sample_count++] = turnaround_ms;
     } else {
@@ -265,7 +294,6 @@ void thread_pool_print_stats(DynamicThreadPool *pool) {
     long scale_downs = pool->total_scale_down_events;
     double avg_resp = reqs > 0 ? (pool->total_turnaround_time_ms / reqs) : 0.0;
 
-    // Calculate P50 and P95
     double p50 = 0.0;
     double p95 = 0.0;
     if (pool->latency_sample_count > 0) {
@@ -365,13 +393,51 @@ int thread_pool_get_stats_json(DynamicThreadPool *pool, char *buffer, int max_le
     return offset;
 }
 
-/*
- * Graceful deterministic shutdown:
- * 1. Sets is_shutdown flag.
- * 2. Unblocks any threads waiting on queue.
- * 3. Joins all worker threads deterministically (no arbitrary sleep).
- * 4. Releases all synchronization primitives and memory.
- */
+int thread_pool_get_workers_json(DynamicThreadPool *pool, char *buffer, int max_len) {
+    if (!pool || !buffer || max_len <= 0) return 0;
+
+    pthread_mutex_lock(&pool->pool_lock);
+
+    int active = pool->busy_threads;
+    int current = pool->current_threads;
+    long long now_ms = current_timestamp_ms();
+
+    int offset = snprintf(buffer, max_len,
+        "{\"min_workers\":%d,\"max_workers\":%d,\"current_workers\":%d,\"busy_workers\":%d,\"idle_workers\":%d,\"workers\":[",
+        pool->min_threads, pool->max_threads, current, active, (current - active));
+
+    for (int i = 0; i < pool->max_threads && offset < max_len - 250; i++) {
+        WorkerThread *w = &pool->workers[i];
+        const char *state_str = "RETIRED";
+        if (w->is_alive) {
+            state_str = w->is_busy ? "BUSY" : "IDLE";
+        }
+
+        long long idle_sec = (w->is_alive && !w->is_busy) ? (now_ms - w->last_busy_time_ms) / 1000 : 0;
+        if (idle_sec < 0) idle_sec = 0;
+
+        offset += snprintf(buffer + offset, max_len - offset,
+            "%s{\"id\":%d,\"name\":\"Worker W%d\",\"alive\":%s,\"busy\":%s,\"baseline\":%s,\"state\":\"%s\","
+            "\"processed_count\":%ld,\"current_task\":\"%s\",\"current_patient\":\"%s\",\"current_priority\":%d,\"idle_seconds\":%lld}",
+            (i > 0 ? "," : ""),
+            w->worker_id,
+            w->worker_id + 1,
+            w->is_alive ? "true" : "false",
+            w->is_busy ? "true" : "false",
+            w->is_baseline ? "true" : "false",
+            state_str,
+            w->requests_processed,
+            strlen(w->current_task_id) > 0 ? w->current_task_id : "-",
+            strlen(w->current_patient) > 0 ? w->current_patient : "-",
+            w->current_priority,
+            idle_sec);
+    }
+
+    offset += snprintf(buffer + offset, max_len - offset, "]}");
+    pthread_mutex_unlock(&pool->pool_lock);
+    return offset;
+}
+
 void thread_pool_destroy(DynamicThreadPool *pool) {
     if (!pool) return;
 

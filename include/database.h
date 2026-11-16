@@ -34,4 +34,36 @@ int db_book_appointment(int doctor_id, int slot_id, const char *patient_name,
                           char *out_booking_code, size_t code_len,
                           char *err_msg, size_t err_len);
 
+int db_reset_slot_for_demo(int slot_id);
+int db_reset_queue(void);
+
+/* Patient & Triage Requests Persistence */
+int db_record_patient(const char *patient_id, const char *name, int age,
+                      const char *gender, const char *phone);
+
+int db_record_request(const char *req_id, const char *patient_id, const char *patient_name,
+                      int priority, const char *priority_name, const char *symptoms,
+                      const char *vitals, const char *priority_reason, const char *required_resource);
+
+int db_update_request_status(const char *req_id, const char *status, int worker_id, int queue_wait_ms);
+
+int db_get_requests_json(int limit, char *buf, size_t max_len);
+
+/* Hospital Resources Management */
+int db_get_resources_json(char *buf, size_t max_len);
+
+int db_allocate_resource(const char *resource_type, const char *patient_id, const char *patient_name,
+                         char *out_code, size_t code_len, char *err_msg, size_t err_len);
+
+int db_release_resource(const char *allocation_code, const char *resource_type,
+                        char *err_msg, size_t err_len);
+
+int db_get_allocations_json(int limit, char *buf, size_t max_len);
+
+/* System Events / Notifications Log */
+int db_log_event(const char *event_type, const char *severity,
+                 const char *message, const char *related_id);
+
+int db_get_events_json(int limit, char *buf, size_t max_len);
+
 #endif // DATABASE_H

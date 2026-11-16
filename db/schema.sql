@@ -52,5 +52,64 @@ CREATE TABLE IF NOT EXISTS appointments (
     FOREIGN KEY(slot_id) REFERENCES appointment_slots(id)
 );
 
+-- Core Healthcare Application Tables (Supporting Concurrency Demos)
+CREATE TABLE IF NOT EXISTS patients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    patient_id TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    age INTEGER NOT NULL,
+    gender TEXT,
+    phone TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS requests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    request_id TEXT NOT NULL UNIQUE,
+    patient_id TEXT NOT NULL,
+    patient_name TEXT NOT NULL,
+    priority INTEGER NOT NULL,
+    priority_name TEXT NOT NULL,
+    symptoms TEXT,
+    vitals TEXT,
+    priority_reason TEXT,
+    required_resource TEXT,
+    status TEXT NOT NULL DEFAULT 'QUEUED',
+    worker_id INTEGER DEFAULT -1,
+    queue_wait_ms INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS hospital_resources (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    resource_type TEXT NOT NULL UNIQUE,
+    display_name TEXT NOT NULL,
+    total_quantity INTEGER NOT NULL,
+    occupied_quantity INTEGER NOT NULL DEFAULT 0,
+    unit TEXT NOT NULL DEFAULT 'Units'
+);
+
+CREATE TABLE IF NOT EXISTS resource_allocations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    allocation_code TEXT NOT NULL UNIQUE,
+    patient_id TEXT NOT NULL,
+    patient_name TEXT NOT NULL,
+    resource_type TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'ALLOCATED',
+    allocated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    released_at TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS system_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type TEXT NOT NULL,
+    severity TEXT NOT NULL,
+    message TEXT NOT NULL,
+    related_id TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_slots_doc_avail ON appointment_slots(doctor_id, is_booked);
 CREATE INDEX IF NOT EXISTS idx_appointments_code ON appointments(booking_code);
+CREATE INDEX IF NOT EXISTS idx_requests_priority ON requests(priority, status);
+CREATE INDEX IF NOT EXISTS idx_events_created ON system_events(created_at DESC);

@@ -31,7 +31,7 @@ void* monitor_routine(void *arg) {
     return NULL;
 }
 
-/* Simple helper to parse query string / form-urlencoded key-value pairs */
+/* Simple helper to parse query string / form-urlencoded key-value pairs or JSON */
 static void extract_param(const char *src, const char *key, char *dest, size_t dest_len) {
     char search_key[64];
     snprintf(search_key, sizeof(search_key), "%s=", key);
@@ -62,10 +62,11 @@ static void extract_param(const char *src, const char *key, char *dest, size_t d
 
 /* Parses HTTP request buffer into structured Task */
 static bool parse_http_request(int client_sock, const char *raw_data, int data_len, Task *task) {
+    (void)data_len;
     memset(task, 0, sizeof(Task));
     task->client_socket = client_sock;
     gettimeofday(&task->arrival_time, NULL);
-    task->type = REQ_APPOINTMENT; // default lowest priority
+    task->type = REQ_P3_ROUTINE; // default routine priority
 
     // Parse Request Line: METHOD PATH HTTP/X.X
     char method[16] = {0};
@@ -76,7 +77,7 @@ static bool parse_http_request(int client_sock, const char *raw_data, int data_l
     snprintf(task->http_method, sizeof(task->http_method), "%s", method);
     snprintf(task->path, sizeof(task->path), "%s", path);
 
-    // Extract query string parameters if GET /api/appointments/slots?doctor_id=1
+    // Extract query string parameters if any
     char *query = strchr(task->path, '?');
     if (query) {
         *query = '\0';
@@ -92,12 +93,19 @@ static bool parse_http_request(int client_sock, const char *raw_data, int data_l
         snprintf(task->body, sizeof(task->body), "%s", body_start);
     }
 
-    // Extract healthcare parameters from query/body
     const char *payload = (strlen(task->body) > 0) ? task->body : raw_data;
     char doc_str[32] = {0};
     char slot_str[32] = {0};
     char patient_str[64] = {0};
     char phone_str[32] = {0};
+    char age_str[16] = {0};
+    char gender_str[16] = {0};
+    char symp_str[128] = {0};
+    char vit_str[128] = {0};
+    char reason_str[128] = {0};
+    char res_str[64] = {0};
+    char pat_id_str[32] = {0};
+    char req_id_str[32] = {0};
 
     extract_param(payload, "doctor_id", doc_str, sizeof(doc_str));
     if (strlen(doc_str) > 0) task->doctor_id = atoi(doc_str);
@@ -106,15 +114,13 @@ static bool parse_http_request(int client_sock, const char *raw_data, int data_l
     if (strlen(slot_str) > 0) task->slot_id = atoi(slot_str);
 
     extract_param(payload, "patient_name", patient_str, sizeof(patient_str));
+    if (strlen(patient_str) == 0) extract_param(payload, "patient", patient_str, sizeof(patient_str));
     if (strlen(patient_str) == 0) {
-        extract_param(payload, "patient", patient_str, sizeof(patient_str));
-    }
-    if (strlen(patient_str) == 0) {
-        static const char *patient_list[] = {
-            "Aarav Sharma", "Devyani Patil", "Rohan Mehta", "Pooja Verma",
+        static const char *default_names[] = {
+            "Rahul Sharma", "Devyani Patil", "Aarav Mehta", "Pooja Verma",
             "Siddharth Rao", "Ananya Deshmukh", "Aditya Kulkarni", "Neha Iyer"
         };
-        snprintf(task->patient_name, sizeof(task->patient_name), "%s", patient_list[rand() % 8]);
+        snprintf(task->patient_name, sizeof(task->patient_name), "%s", default_names[rand() % 8]);
     } else {
         snprintf(task->patient_name, sizeof(task->patient_name), "%s", patient_str);
     }
@@ -122,32 +128,83 @@ static bool parse_http_request(int client_sock, const char *raw_data, int data_l
     extract_param(payload, "phone", phone_str, sizeof(phone_str));
     snprintf(task->patient_phone, sizeof(task->patient_phone), "%s", strlen(phone_str) > 0 ? phone_str : "+91-98200-11000");
 
-    // Triage Priority Determination (P0 to P4):
-    // P0: ACCIDENT / TRAUMA / ICU CRITICAL
-    // P1: EMERGENCY_INFO / Bed & Oxygen lookup
-    // P2: TELEMEDICINE / Urgent Video Consultation
-    // P3: VACCINATION / Outbreak Immunization
-    // P4: ROUTINE APPOINTMENT
+    extract_param(payload, "age", age_str, sizeof(age_str));
+    task->patient_age = (strlen(age_str) > 0) ? atoi(age_str) : 34;
+
+    extract_param(payload, "gender", gender_str, sizeof(gender_str));
+    snprintf(task->patient_gender, sizeof(task->patient_gender), "%s", strlen(gender_str) > 0 ? gender_str : "Other");
+
+    extract_param(payload, "symptoms", symp_str, sizeof(symp_str));
+    snprintf(task->symptoms, sizeof(task->symptoms), "%s", strlen(symp_str) > 0 ? symp_str : "General checkup and consultation");
+
+    extract_param(payload, "vitals", vit_str, sizeof(vit_str));
+    snprintf(task->vitals, sizeof(task->vitals), "%s", strlen(vit_str) > 0 ? vit_str : "BP: 120/80, SpO2: 98%, HR: 72");
+
+    extract_param(payload, "priority_reason", reason_str, sizeof(reason_str));
+    snprintf(task->priority_reason, sizeof(task->priority_reason), "%s", strlen(reason_str) > 0 ? reason_str : "Triage assessment completed by authorized hospital staff");
+
+    extract_param(payload, "required_resource", res_str, sizeof(res_str));
+    snprintf(task->required_resource, sizeof(task->required_resource), "%s", strlen(res_str) > 0 ? res_str : "none");
+
+    extract_param(payload, "patient_id", pat_id_str, sizeof(pat_id_str));
+    if (strlen(pat_id_str) > 0) {
+        snprintf(task->patient_id, sizeof(task->patient_id), "%s", pat_id_str);
+    } else {
+        long p_num = rand() % 9000 + 1000;
+        snprintf(task->patient_id, sizeof(task->patient_id), "PAT-%ld", p_num);
+    }
+
+    extract_param(payload, "request_id", req_id_str, sizeof(req_id_str));
+    if (strlen(req_id_str) > 0) {
+        snprintf(task->request_id, sizeof(task->request_id), "%s", req_id_str);
+    } else {
+        long r_num = rand() % 9000 + 2000;
+        snprintf(task->request_id, sizeof(task->request_id), "REQ-%ld", r_num);
+    }
+
+    // Triage Priority Determination (P0 to P3)
+    // Section 3.2: Configurable demonstration rules + Authorized staff confirmation
     char prio_str[16] = {0};
     extract_param(payload, "priority", prio_str, sizeof(prio_str));
     if (strlen(prio_str) > 0) {
         int p = atoi(prio_str);
-        if (p >= 0 && p <= 4) {
+        if (p >= 0 && p <= 3) {
             task->type = (RequestType)p;
-            return true;
+        } else {
+            task->type = REQ_P3_ROUTINE;
+        }
+    } else {
+        // Triage keyword evaluation:
+        // Life-threatening symptoms -> P0
+        if (strstr(raw_data, "unconscious") || strstr(raw_data, "cardiac") ||
+            strstr(raw_data, "severe bleeding") || strstr(raw_data, "head trauma") ||
+            strstr(raw_data, "CRITICAL") || strstr(raw_data, "critical") ||
+            (strstr(raw_data, "accident") && strstr(raw_data, "severe"))) {
+            task->type = REQ_P0_CRITICAL;
+        } else if (strstr(raw_data, "serious injury") || strstr(raw_data, "severe pain") ||
+                   strstr(raw_data, "chest pain") || strstr(raw_data, "shortness of breath") ||
+                   strstr(raw_data, "URGENT") || strstr(raw_data, "urgent")) {
+            task->type = REQ_P1_HIGH;
+        } else if (strstr(raw_data, "stable") || strstr(raw_data, "telemedicine") ||
+                   strstr(raw_data, "fever") || strstr(raw_data, "vaccine")) {
+            task->type = REQ_P2_MODERATE;
+        } else {
+            task->type = REQ_P3_ROUTINE;
         }
     }
 
-    if (strstr(raw_data, "ACCIDENT") || strstr(raw_data, "accident") || strstr(raw_data, "TRAUMA") || strstr(raw_data, "trauma") || strstr(task->path, "accident")) {
-        task->type = REQ_EMERGENCY_ACCIDENT;
-    } else if (strstr(raw_data, "EMERGENCY") || strstr(raw_data, "emergency") || strstr(task->path, "emergency")) {
-        task->type = REQ_EMERGENCY_INFO;
-    } else if (strstr(raw_data, "TELEMEDICINE") || strstr(raw_data, "telemedicine") || strstr(task->path, "telemedicine")) {
-        task->type = REQ_TELEMEDICINE;
-    } else if (strstr(raw_data, "VACCINE") || strstr(raw_data, "vaccine") || strstr(task->path, "vaccine")) {
-        task->type = REQ_VACCINATION;
-    } else {
-        task->type = REQ_APPOINTMENT;
+    // Persist patient & request in SQLite for traceability
+    if (strcmp(task->path, "/api/request") == 0 || strcmp(task->path, "/api/healthcare") == 0) {
+        db_record_patient(task->patient_id, task->patient_name, task->patient_age, task->patient_gender, task->patient_phone);
+        db_record_request(task->request_id, task->patient_id, task->patient_name,
+                          (int)task->type, request_type_to_str(task->type),
+                          task->symptoms, task->vitals, task->priority_reason, task->required_resource);
+        
+        char log_msg[128];
+        snprintf(log_msg, sizeof(log_msg), "Patient %s registered with %s", task->patient_name, request_type_to_str(task->type));
+        db_log_event(task->type == REQ_P0_CRITICAL ? "P0_EMERGENCY" : "PATIENT_REGISTERED",
+                     task->type == REQ_P0_CRITICAL ? "CRITICAL" : "INFO",
+                     log_msg, task->request_id);
     }
 
     return true;
@@ -242,7 +299,7 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        // Apply read and write timeouts to prevent slowloris/hung connections from blocking workers
+        // Apply read and write timeouts to prevent hung connections
         struct timeval tv_timeout;
         tv_timeout.tv_sec = 5;
         tv_timeout.tv_usec = 0;
@@ -260,7 +317,6 @@ int main(int argc, char *argv[]) {
 
         Task task;
         if (!parse_http_request(client_sock, buffer, bytes_received, &task)) {
-            // Malformed HTTP request: 400 Bad Request
             const char *bad_req = "HTTP/1.1 400 Bad Request\r\nContent-Type: application/json\r\nConnection: close\r\n\r\n{\"error\":\"Malformed HTTP request\"}";
             send(client_sock, bad_req, strlen(bad_req), 0);
             close(client_sock);
@@ -277,7 +333,7 @@ int main(int argc, char *argv[]) {
                 "Retry-After: 2\r\n"
                 "Access-Control-Allow-Origin: *\r\n"
                 "Connection: close\r\n\r\n"
-                "{\"status\":\"OVERLOAD\",\"error\":\"Server queue full. Autoscaling capacity reached.\"}";
+                "{\"status\":\"OVERLOAD\",\"error\":\"Server queue full (64/64). Autoscaling capacity reached. Overload protection applied.\"}";
 
             send(client_sock, overload_resp, strlen(overload_resp), 0);
             close(client_sock);

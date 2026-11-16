@@ -220,3 +220,49 @@ int queue_get_items_json(PriorityTaskQueue *q, char *buf, size_t max_len) {
     pthread_mutex_unlock(&q->mutex);
     return (int)offset;
 }
+
+int queue_get_detailed_json(PriorityTaskQueue *q, char *buf, size_t max_len) {
+    pthread_mutex_lock(&q->mutex);
+    long long now_ms = current_timestamp_ms();
+    int sem_emp = 0, sem_ful = 0;
+    sem_getvalue(&q->sem_empty, &sem_emp);
+    sem_getvalue(&q->sem_full, &sem_ful);
+    if (sem_emp < 0) sem_emp = 0;
+    if (sem_ful < 0) sem_ful = 0;
+
+    size_t offset = snprintf(buf, max_len,
+        "{\"count\":%d,\"capacity\":%d,\"sem_empty\":%d,\"sem_full\":%d,\"items\":[",
+        q->count, QUEUE_CAPACITY, sem_emp, sem_ful);
+
+    for (int i = 0; i < q->count && offset < max_len - 250; i++) {
+        long long arr_ms = (long long)q->tasks[i].arrival_time.tv_sec * 1000 + (q->tasks[i].arrival_time.tv_usec / 1000);
+        long long wait_ms = now_ms - arr_ms;
+        if (wait_ms < 0) wait_ms = 0;
+        int eff = calculate_effective_priority(&q->tasks[i], now_ms);
+        int boost = (int)q->tasks[i].type - eff;
+
+        offset += snprintf(buf + offset, max_len - offset,
+            "%s{\"index\":%d,\"request_id\":\"%s\",\"patient_id\":\"%s\",\"patient_name\":\"%s\","
+            "\"type\":%d,\"priority_label\":\"%s\",\"base_priority\":%d,\"effective_priority\":%d,"
+            "\"wait_time_ms\":%lld,\"aging_boost\":%d,\"symptoms\":\"%s\",\"priority_reason\":\"%s\","
+            "\"required_resource\":\"%s\"}",
+            (i > 0 ? "," : ""),
+            i + 1,
+            strlen(q->tasks[i].request_id) > 0 ? q->tasks[i].request_id : "REQ-WAIT",
+            strlen(q->tasks[i].patient_id) > 0 ? q->tasks[i].patient_id : "PAT-WAIT",
+            q->tasks[i].patient_name,
+            (int)q->tasks[i].type,
+            request_type_to_str(q->tasks[i].type),
+            (int)q->tasks[i].type,
+            eff,
+            wait_ms,
+            boost,
+            q->tasks[i].symptoms,
+            q->tasks[i].priority_reason,
+            q->tasks[i].required_resource);
+    }
+
+    offset += snprintf(buf + offset, max_len - offset, "]}");
+    pthread_mutex_unlock(&q->mutex);
+    return (int)offset;
+}
