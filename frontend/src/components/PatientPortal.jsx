@@ -317,40 +317,6 @@ export default function PatientPortal({ patientName, doctors, appointments, requ
         </div>
       </div>
 
-      {/* Non-Emergency Notice */}
-      <div style={{
-        marginBottom: '20px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        background: '#f0fdf4',
-        border: '1px solid #bbf7d0',
-        borderRadius: '12px',
-        padding: '14px 20px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ background: '#dcfce7', width: '38px', height: '38px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Calendar size={20} color="#15803d" />
-          </div>
-          <div>
-            <h4 style={{ fontSize: '14px', fontWeight: 700, color: '#166534', margin: '0 0 2px 0' }}>
-              Looking for a Scheduled Doctor Visit?
-            </h4>
-            <p style={{ fontSize: '12px', color: '#15803d', margin: 0 }}>
-              Book an OPD appointment with a Specialist (Cardiology, Trauma, Surgery, Gastro) without emergency queuing.
-            </p>
-          </div>
-        </div>
-        <button 
-          type="button" 
-          className="btn-submit-main" 
-          onClick={() => setIsModalOpen(true)}
-          style={{ width: 'auto', margin: 0, padding: '9px 18px', fontSize: '13px', background: 'linear-gradient(135deg, #16a34a, #15803d)', whiteSpace: 'nowrap' }}
-        >
-          Book Specialist Slot →
-        </button>
-      </div>
-
       {/* Main Form: Clean Standard Emergency Registration Form */}
       <div className="content-card">
         <div className="card-header-clean">
