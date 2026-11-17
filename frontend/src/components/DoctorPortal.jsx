@@ -235,13 +235,13 @@ export default function DoctorPortal({ doctorId, doctors, requests, appointments
                 textAlign: 'center'
               }}>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
-                  {key.replace('_', ' ')}
+                  {val.display_name || key.replace(/_/g, ' ')}
                 </div>
                 <div style={{ fontSize: '24px', fontWeight: 800, color: val.available === 0 ? 'var(--accent-red)' : 'var(--accent-green)', margin: '6px 0' }}>
                   {val.available} / {val.total}
                 </div>
                 <div style={{ fontSize: '11px', color: 'var(--text-sub)' }}>
-                  {val.in_use} In Use
+                  {val.occupied ?? val.in_use ?? 0} In Use · {val.unit || ''}
                 </div>
               </div>
             ))

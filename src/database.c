@@ -753,27 +753,63 @@ int db_get_least_loaded_doctor_id(void) {
         pthread_mutex_unlock(&g_db_lock);
         return 0;
     }
-    int loads[4] = {0, 0, 0, 0};
+
+    /*
+     * OS CONCEPT: Priority-Weighted Least Loaded Core Scheduling
+     * -----------------------------------------------------------
+     * Problem: Plain count treats P0 and P3 patients equally per doctor.
+     * This caused P1 (emergency) patients to queue behind P0 at a busy
+     * doctor while another doctor was only handling a P3 (routine) patient.
+     *
+     * Fix: Compute a weighted load score per doctor (worker_id 0-3):
+     *   P0 = weight 8  (critical emergency  - very heavy)
+     *   P1 = weight 4  (high priority       - heavy)
+     *   P2 = weight 2  (moderate            - medium)
+     *   P3 = weight 1  (routine             - light)
+     *
+     * Only active (non-DISCHARGED, non-COMPLETED, non-CANCELLED) patients
+     * are counted. Assign new patient to doctor with LOWEST weighted score.
+     * Ties broken by worker_id (lower = senior doctor, e.g. W1 Trauma Core).
+     */
+    int weighted_loads[4] = {0, 0, 0, 0};
     sqlite3_stmt *stmt;
-    const char *sql = "SELECT worker_id, COUNT(*) FROM requests WHERE status != 'DISCHARGED' AND worker_id >= 0 AND worker_id < 4 GROUP BY worker_id;";
+
+    /* Query: for each active doctor core, sum priority weights */
+    const char *sql =
+        "SELECT worker_id, priority, COUNT(*) as cnt "
+        "FROM requests "
+        "WHERE status NOT IN ('DISCHARGED','COMPLETED','CANCELLED') "
+        "  AND worker_id >= 0 AND worker_id < 4 "
+        "GROUP BY worker_id, priority;";
+
     if (sqlite3_prepare_v2(g_db, sql, -1, &stmt, NULL) == SQLITE_OK) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
-            int wid = sqlite3_column_int(stmt, 0);
-            int cnt = sqlite3_column_int(stmt, 1);
+            int wid      = sqlite3_column_int(stmt, 0);
+            int priority = sqlite3_column_int(stmt, 1);
+            int cnt      = sqlite3_column_int(stmt, 2);
             if (wid >= 0 && wid < 4) {
-                loads[wid] = cnt;
+                /* Priority weights: P0=8, P1=4, P2=2, P3=1 */
+                int weight = 1;
+                if      (priority == 0) weight = 8;
+                else if (priority == 1) weight = 4;
+                else if (priority == 2) weight = 2;
+                else                   weight = 1;
+                weighted_loads[wid] += weight * cnt;
             }
         }
         sqlite3_finalize(stmt);
     }
-    int min_load = loads[0];
+
+    /* Find the doctor core with the lowest weighted load */
+    int min_load = weighted_loads[0];
     int best_doc = 0;
     for (int i = 1; i < 4; i++) {
-        if (loads[i] < min_load) {
-            min_load = loads[i];
+        if (weighted_loads[i] < min_load) {
+            min_load = weighted_loads[i];
             best_doc = i;
         }
     }
+
     pthread_mutex_unlock(&g_db_lock);
     return best_doc;
 }

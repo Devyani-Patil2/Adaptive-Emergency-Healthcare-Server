@@ -42,8 +42,14 @@ export default function App() {
       if (reqRes.status === 'fulfilled' && reqRes.value.requests) {
         setRequests(reqRes.value.requests);
       }
-      if (resRes.status === 'fulfilled' && resRes.value.resources) {
-        setResources(resRes.value.resources);
+      if (resRes.status === 'fulfilled') {
+        const resData = resRes.value;
+        // API returns either an array directly or {resources: [...]}
+        const resArray = Array.isArray(resData) ? resData : (resData.resources || []);
+        // Convert array to keyed object for DoctorPortal
+        const resObj = {};
+        resArray.forEach(r => { resObj[r.resource_type] = r; });
+        setResources(resObj);
       }
       if (statsRes.status === 'fulfilled') {
         setStats(statsRes.value);
